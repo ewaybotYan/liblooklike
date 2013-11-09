@@ -28,25 +28,23 @@ permutation_matrix <- function( n, i, j ){
 	return(per)
 }
 
-random_deflation_matrix <- function(p,z,h){
-#set.seed(1)
+random_deflation_matrix <- function(z, h){
 	n <- length(z)
+	
+	#generation of a diagonal matrix with deflation properties
+	D <- diag( runif(n,0,1) )
 
-#generation of a diagonal matrix with deflation properties
-	for (i in 1:n){
-		D[i,i]<-runif(1,0,1)
-	}
-
-	for (i in 1:floor(runif(1,n/2,n)){
+	for(i in 1:floor(runif(1,n/2,n)) ){
 		j<-floor(runif(1,1,n))
 		k<-floor(runif(1,1,n))
-		D[k,k]<-(D[j,j]+((h*sqrt(z[k]^2+z[j]^2)/(abs(z[k]*z[j]))) #almost the same eigenvalues
+		D[k,k]<-( D[j,j] + (h * sqrt(z[k]^2+z[j]^2) / ( abs(z[k]*z[j]) ) ) ) #almost the same eigenvalues
 		m<-floor(runif(1,1,n))
 		r<-floor(runif(1,1,n))
 		D[m,m]<-D[r,r] #same eigenvalues
 	}
 
-P <- matrix(runif(n*n,-10,10),n,n)
-
-return(solve(P) %*% D %*% P)
+	#random base 
+	P <- matrix(runif(n*n,-10,10),n,n)
+	P <- P + t(P)
+	return(solve(P) %*% D %*% P)
 }
