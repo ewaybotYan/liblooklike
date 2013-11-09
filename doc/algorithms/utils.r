@@ -48,5 +48,5 @@ random_deflation_matrix <- function(p,z,h){
 
 P <- matrix(runif(n*n,-10,10),n,n)
 
-return(ginv(P) %*% D %*% P)
+return(solve(P) %*% D %*% P)
 }
