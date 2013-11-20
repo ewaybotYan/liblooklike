@@ -17,5 +17,5 @@ make_random_tridiag_sym_matrix <- function (n){
 		}
 	}
 
-	return(A)
+	A
 }
