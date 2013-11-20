@@ -13,16 +13,15 @@ P_k <- function( A, k ){
 }
 
 householder_matrix <- function( A ){
-	n<-sqrt(length(A))
+	n <- sqrt(length(A))
 
-	H<-P(A,1)
-	A<-H%*%A%*%t(H)
+	H <- diag(n)
 
-	for (i in 2:n){
-		P<-P_k(A,i)
-		H<-P%*%H
-		A<-P%*%A%*%t(P)
+	for (i in 1:(n-1)){
+		P <- P_k(A,i)
+		H <- P %*% H
+		A <- P %*% A %*% P
 	}
-	A
-	return(H)
+
+	return( list(A=A,H=H) )
 }
