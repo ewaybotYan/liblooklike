@@ -19,3 +19,11 @@ make_random_tridiag_sym_matrix <- function (n){
 
 	return(A)
 }
+
+permutation_matrix <- function( n, i, j ){
+	ei  <- 1:n == i
+	ej  <- 1:n == j
+	m   <- ei - ej
+	per <- diag(n) - m %*% t(m)
+	return(per)
+}
