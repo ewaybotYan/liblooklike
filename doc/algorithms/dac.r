@@ -48,7 +48,7 @@ dac <- function( T ){
 	i <- 1 # active column
 	j <- n # target column for switching
 	while( i < j ){
-		if( abs(p*v[i]) < h ){
+		if( abs(p*v[i]) < h || abs(D[i,i]) <h ){
 			while( abs(p*v[j]) < h && j > i ){
 				j <- j-1
 			}
@@ -70,6 +70,10 @@ dac <- function( T ){
 	}
 
 	#debug (test permutation matrix)
+	print(D)
+	print(v)
+	print(P)
+	print(j)
 	#return(list(D=D,v=v,P=P))
 
 	
@@ -79,25 +83,36 @@ dac <- function( T ){
 	while( m < j ){
 		for( k in seq(m+1,j) ){
 			if( 
-			   abs( v[i]*v[k] 
-				* ( D[i,i] - D[k,k] ) 
-				* sqrt( v[i]^2 + v[k]^2 ) ) < h ){
+			   abs( v[m]*v[k] 
+				* ( D[m,m] - D[k,k] ) 
+				* sqrt( v[m]^2 + v[k]^2 ) ) < h ){
+				print(m)
+				print(k)
+				print(v[m])
+				print(v[k])
+				print(D[m,m])
+				print(D[k,k])
 				# rotatea with givens
 				v[k] <- 0 
 				# D is not changed by Givens rotations
-				P <- P %*% givens_rotation( v, i, k )
+				P <- P %*% givens_rotation( v, m, k )
+				print(P)
 				# move diagonal part in the down right part of T
 				if( k != j ){
 					v[k] <- v[j]
 					v[j] <- 0
 					D[k,k] <- D[j,j]
 					D[j,j] <- D[m,m]
-					P <- P %*% permutation_matrix(n,i,j)
+					P <- P %*% permutation_matrix(n,m,j)
 				}
 				j <- j-1
 			}
 		}
 		m <- m+1
 	}
+	return(list(D=D,v=v,Q=Q,P=P,p=p))
 
+	#debug 
+	# return( Q %*% P %*% ( D + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
 }
+

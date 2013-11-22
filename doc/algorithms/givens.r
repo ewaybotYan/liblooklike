@@ -1,9 +1,3 @@
-u1 <- c(6,5,0)
-u2 <- c(5,1,4)
-u3 <- c(0,4,3)
-
-A <- matrix(c(6,5,0,5,1,4,0,4,3),nrow=3,ncol=3)
-
 givens_rotation <- function( v, i, j ){
 	n <- length(v)
 	G <- diag(n) #generation of the givens rotation matrix
