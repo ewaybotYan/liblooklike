@@ -12,6 +12,8 @@ dac <- function( T ){
 	# at this stage T = [T1  ] + p * u %*% t(u)
 	#                   [  T2]
 
+	print('cuppen')
+
 	#debug (rebuild T with the expression above)
 	#Id    <- diag(1,k,n)
 	#check <- t(Id) %*% T1 %*% Id
@@ -29,26 +31,73 @@ dac <- function( T ){
 	Id   <- array( c( 1:(k*(n-k)) * 0, 1:(n-k)^2 %% (n-k+1) == 1 ) , dim=c(n-k,n) )
 	Q    <- Q + t(Id) %*% Q2 %*% Id
 	v    <- t(Q) %*% u
-	# at this stage T = Q %*% [D1  ] %*% t(Q) + p * v %*% t(v)
+	# at this stage T = Q %*% ( [D1  ]  + p * v %*% t(v) ) %*% t(Q)
 	D     <- diag( c( eigen(T1,symmetric=TRUE)$values,
 			 eigen(T2,symmetric=TRUE)$values ) )
 
 	#debug (check that we actually find T with the expression above)
-	check <- Q %*% ( D + p * v %*% t(v) ) %*% t(Q) 
-	return(check)
+	#check <- Q %*% ( D + p * v %*% t(v) ) %*% t(Q) 
+	#return(check)
 
+	print('deflation part 1')
 	# deflation
 	P <- diag(n) # deflation  operations
 	# zero out values too small for single precision
 	eps <- 10^-20
-	h <- eps * norm( D + p * v %*% t(v) )
+	h <- eps * sqrt(sum( ( D + p * v %*% t(v) )^2 ) )
 	i <- 1 # active column
 	j <- n # target column for switching
 	while( i < j ){
-		while( v[i] < h )
-			
+		if( abs(p*v[i]) < h ){
+			while( abs(p*v[j]) < h && j > i ){
+				j <- j-1
+			}
+			if( i != j ){
+				# switch values manually
+				v[i] <- v[j]
+				v[j] <- 0
+				tmp  <- D[i,i]
+				D[i,i] <- D[j,j]
+				D[j,j] <- tmp
+				# save permutation matrix
+				P <- P %*% permutation_matrix(n,i,j)
+				j <- j-1
+				# todo i<- i+1 ??
+			}
+		}else{
+			i <- i+1
+		}
 	}
-	# zero multiple eigen values
 
+	#debug (test permutation matrix)
+	#return(list(D=D,v=v,P=P))
+
+	
+	# erase multiple eigen values
+	print('deflation part2')
+	m <- 1
+	while( m < j ){
+		for( k in seq(m+1,j) ){
+			if( 
+			   abs( v[i]*v[k] 
+				* ( D[i,i] - D[k,k] ) 
+				* sqrt( v[i]^2 + v[k]^2 ) ) < h ){
+				# rotatea with givens
+				v[k] <- 0 
+				# D is not changed by Givens rotations
+				P <- P %*% givens_rotation( v, i, k )
+				# move diagonal part in the down right part of T
+				if( k != j ){
+					v[k] <- v[j]
+					v[j] <- 0
+					D[k,k] <- D[j,j]
+					D[j,j] <- D[m,m]
+					P <- P %*% permutation_matrix(n,i,j)
+				}
+				j <- j-1
+			}
+		}
+		m <- m+1
+	}
 
 }
