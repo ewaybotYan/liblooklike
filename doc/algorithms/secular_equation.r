@@ -47,11 +47,11 @@ psi <- function(v,d,i,x){
 	return( list(Psi1=Psi1,Psi2=Psi2) )
 }
 
-roots_secular_equation <- function (p,v,D,rate){ #d trié ou non? ATT: rate compris entre 0 et 1 + ATT: valeurs aux bornes à gérer avec p
+roots_secular_equation <- function (p,v,d,rate){ #d trié ou non? ATT: rate compris entre 0 et 1 + ATT: valeurs aux bornes à gérer avec p
 
 	n <- length(v)
-	sum <- trace(D)
-	d... #à voir
+	sm <- sum(D) #sum of eigenvalues
+	d <- sort(d,decreasing=false)
 	j <- 0
 	i<-0 #number of eigenvalues found
 
@@ -61,7 +61,7 @@ roots_secular_equation <- function (p,v,D,rate){ #d trié ou non? ATT: rate comp
 
 	#et si p=0?
 	if (p>0){
-		lambda <- #?
+		lambda <- d[n]+p*(v[n])^2
 		sum_lambdak <- lambda
 		i<-i+1
 		lambda_k[n+1-i]<-lambda
@@ -71,7 +71,7 @@ roots_secular_equation <- function (p,v,D,rate){ #d trié ou non? ATT: rate comp
 	}
 
 
-	while ( ((sum_k/sum)<rate) '&& (j>n-1)' ){
+	while ( ((sum_lambdak/sm)<rate) && (j>n-1) ){
 
 		lambda <- (d[n-j-1]+d[n-j])/2
 
@@ -79,7 +79,7 @@ roots_secular_equation <- function (p,v,D,rate){ #d trié ou non? ATT: rate comp
 		Psi <- psi(v,d,n-j-1,lambda)
 		DPsi <- dPsi(v,d,n-j-1,lambda)
 		c1 <- DPsi[1]*((d[n-j-1]-lambda)^2)
-		c2 <- DPsi[1]*((d[n-j]-lambda)^2)
+		c2 <- DPsi[2]*((d[n-j]-lambda)^2)
 		c3 <- 1+Psi[1]+Psi[2]-DPsi[1]*(d[n-j-1]-lambda)-DPsi[2]*(d[n-j]-lambda)
 		lambda=find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
 		}
@@ -91,8 +91,8 @@ roots_secular_equation <- function (p,v,D,rate){ #d trié ou non? ATT: rate comp
 	}
 
 
-	if (p<0){
-		lambda <- #?
+	if ((p<0) && (sum_k/sm)<rate)){
+		lambda <- d[1]+p*(v[1])^2
 		sum_lambdak <- sum_lambdak+lambda
 		i<-i+1
 		lambda_k[n+1-i]<-lambda
