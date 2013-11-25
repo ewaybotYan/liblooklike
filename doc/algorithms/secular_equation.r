@@ -10,7 +10,7 @@ find_approx_lambda <- function(c1,c2,c3,di,dj){
 		lambda1=(b-sqrt(delta))/2*c3
 		lambda2=(b+sqrt(delta))/2*c3
 
-		if (c3>=0){
+		if ((lambda2>=di)&&(lambda2<=dj)){
 			return(lambda2)
 		}
 		else{
