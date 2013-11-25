@@ -1,4 +1,6 @@
-dac <- function( T ){
+source('secular_equation.r')
+
+dac <- function( T, inertia, epsilon){
 	n <- dim(T)[1]
 
 	# cuppen method to represent the matrix
@@ -32,8 +34,8 @@ dac <- function( T ){
 	Q    <- Q + t(Id) %*% Q2 %*% Id
 	v    <- t(Q) %*% u
 	# at this stage T = Q %*% ( [D1  ]  + p * v %*% t(v) ) %*% t(Q)
-	D     <- diag( c( eigen(T1,symmetric=TRUE)$values,
-			 eigen(T2,symmetric=TRUE)$values ) )
+	d     <- c( eigen(T1,symmetric=TRUE)$values,
+			 eigen(T2,symmetric=TRUE)$values )
 
 	#debug (check that we actually find T with the expression above)
 	#check <- Q %*% ( D + p * v %*% t(v) ) %*% t(Q) 
@@ -43,12 +45,11 @@ dac <- function( T ){
 	# deflation
 	P <- diag(n) # deflation  operations
 	# zero out values too small for single precision
-	eps <- 10^-20
-	h <- eps * sqrt(sum( ( D + p * v %*% t(v) )^2 ) )
+	h <- epsilon * sqrt(sum( ( diag(d) + p * v %*% t(v) )^2 ) )
 	i <- 1 # active column
 	j <- n # target column for switching
 	while( i < j ){
-		if( abs(p*v[i]) < h || abs(D[i,i]) <h ){
+		if( abs(p*v[i]) < h || abs(d[i]) <h ){
 			while( abs(p*v[j]) < h && j > i ){
 				j <- j-1
 			}
@@ -56,9 +57,9 @@ dac <- function( T ){
 				# switch values manually
 				v[i] <- v[j]
 				v[j] <- 0
-				tmp  <- D[i,i]
-				D[i,i] <- D[j,j]
-				D[j,j] <- tmp
+				tmp  <- d[i]
+				d[i] <- d[j]
+				d[j] <- tmp
 				# save permutation matrix
 				P <- P %*% permutation_matrix(n,i,j)
 				j <- j-1
@@ -70,10 +71,10 @@ dac <- function( T ){
 	}
 
 	#debug (test permutation matrix)
-	print(D)
-	print(v)
-	print(P)
-	print(j)
+	#print(D)
+	#print(v)
+	#print(P)
+	#print(j)
 	#return(list(D=D,v=v,P=P))
 
 	
@@ -84,25 +85,26 @@ dac <- function( T ){
 		for( k in seq(m+1,j) ){
 			if( 
 			   abs( v[m]*v[k] 
-				* ( D[m,m] - D[k,k] ) 
+				* ( d[m] - d[k] ) 
 				* sqrt( v[m]^2 + v[k]^2 ) ) < h ){
-				print(m)
-				print(k)
-				print(v[m])
-				print(v[k])
-				print(D[m,m])
-				print(D[k,k])
+				print('deflation part 2 happened')
+				#print(m)
+				#print(k)
+				#print(v[m])
+				#print(v[k])
+				#print(D[m,m])
+				#print(D[k,k])
 				# rotatea with givens
 				v[k] <- 0 
 				# D is not changed by Givens rotations
 				P <- P %*% givens_rotation( v, m, k )
-				print(P)
+				#print(P)
 				# move diagonal part in the down right part of T
 				if( k != j ){
 					v[k] <- v[j]
 					v[j] <- 0
-					D[k,k] <- D[j,j]
-					D[j,j] <- D[m,m]
+					d[k] <- d[j]
+					d[j] <- d[m]
 					P <- P %*% permutation_matrix(n,m,j)
 				}
 				j <- j-1
@@ -110,9 +112,19 @@ dac <- function( T ){
 		}
 		m <- m+1
 	}
-	return(list(D=D,v=v,Q=Q,P=P,p=p))
 
 	#debug 
 	# return( Q %*% P %*% ( D + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
+	print( "finding eigen vectors" )
+	ordered <- sort( d, index.return = TRUE, decreasing=TRUE )
+	dsort <- ordered$x
+	order <- ordered$ix
+	vsort <- v[order]
+	lambdas <- roots_secular_equation(p, vsort, dsort, inertia)
+	eigenVectors <- eigen_vector(p,n,dsort,lambdas[1])
+
+	return(list( vec=eigenVectors, val=lambdas, d=d ) )
+	
+#	return(list(d=d,v=v,Q=Q,P=P,p=p))
 }
 
