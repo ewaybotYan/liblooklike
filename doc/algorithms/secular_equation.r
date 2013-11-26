@@ -30,7 +30,7 @@ dPsi <- function(v,d,i,x){ #attention, d est le vecteur TRIE des dk
 		DPsi2 <- DPsi2+((v[k]^2) / ((d[k]-x)^2))
 	}
 
-	return( list(DPsi1=DPsi1,DPsi2=DPsi2) )
+	return( c(DPsi1,DPsi2) )
 }
 
 psi <- function(v,d,i,x){
@@ -44,42 +44,53 @@ psi <- function(v,d,i,x){
 		Psi2 <- Psi2+((v[k]^2) / (d[k]-x))
 	}
 
-	return( list(Psi1=Psi1,Psi2=Psi2) )
+	return( c(Psi1,Psi2) )
 }
 
 roots_secular_equation <- function (p,v,d,rate){ #d trié ou non? ATT: rate compris entre 0 et 1 + ATT: valeurs aux bornes à gérer avec p
+	if(p == 0){
+		return(d)
+	}
 
-	n <- length(v)
+	n  <- length(v)
 	sm <- sum(d) #sum of eigenvalues
-	d <- sort(d,decreasing=FALSE)
-	j <- 0
-	i<-0 #number of eigenvalues found
+	d  <- sort(d, decreasing=FALSE)
+	j  <- 0
+	i  <- 0 #number of eigenvalues found
 
 	lambda_k = (1:n) *0
 
 	#et si p=0?
 	if (p>0){
 		lambda <- d[n]+p*(v[n])^2
+		print(c("#",d[n]))
+		for(i in 1:5){
+			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
+			c1 <- 1 - p * sum( (1-lambda+d[n]) * v / (lambda-d))
+			i <- i+1
+			lambda <- p * c2 / c1 + d[n]
+			print(lambda)
+		}
+		lambda_k[n] <- lambda
 		sum_lambdak <- lambda
-		i<-i+1
-		lambda_k[n+1-i]<-lambda
 	}
 	else{
 		sum_lambdak <- 0
 	}
 
 
-	while ( ((sum_lambdak/sm)<rate) && (j>n-1) ){
+	while ( ((sum_lambdak/sm)<rate) && (j<n) ){
 
 		lambda <- (d[n-j-1]+d[n-j])/2
-
+		print(c("#",d[n-j-1],d[n-j]))
 		for (k in 1:3){
 			Psi <- psi(v,d,n-j-1,lambda)
 			DPsi <- dPsi(v,d,n-j-1,lambda)
-			c1 <- DPsi[1]*((d[n-j-1]-lambda)^2)
-			c2 <- DPsi[2]*((d[n-j]-lambda)^2)
+			c1 <- DPsi[1] * ( ( d[n-j-1] - lambda )^2 )
+			c2 <- DPsi[2] * ((d[n-j]-lambda)^2)
 			c3 <- 1+Psi[1]+Psi[2]-DPsi[1]*(d[n-j-1]-lambda)-DPsi[2]*(d[n-j]-lambda)
-			lambda=find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
+			lambda <- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
+			print(lambda)
 		}
 
 		sum_lambdak <- sum_lambdak+lambda
@@ -125,6 +136,7 @@ eigen_vector <- function(p,n,d,lambda){ #d trié
 				p4 <- p4*(d[j]-d[k])
 			}
 		}
+		print(c(p1,p2,p3,p4,p))
 		v[k] <- sqrt( (p1*p2) / (p*p3*p4) )
 	}
 

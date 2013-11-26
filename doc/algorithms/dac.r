@@ -121,9 +121,9 @@ dac <- function( T, inertia, epsilon){
 	order <- ordered$ix
 	vsort <- v[order]
 	lambdas <- roots_secular_equation(p, vsort, dsort, inertia)
-	eigenVectors <- eigen_vector(p,n,dsort,lambdas[1])
+	v2 <- eigen_vector(p,n,dsort,lambdas)
 
-	return(list( vec=eigenVectors, val=lambdas, d=d ) )
+	return(list( vec=v2, val=lambdas, d=d ) )
 	
 #	return(list(d=d,v=v,Q=Q,P=P,p=p))
 }
