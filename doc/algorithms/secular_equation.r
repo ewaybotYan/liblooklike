@@ -19,7 +19,7 @@ find_approx_lambda <- function(c1,c2,c3,di,dj){
 	}
 }
 
-dPsi <- function(v,d,i,x){ #attention, d est le vecteur TRIE des dk
+dPsi <- function(v,d,p,i,x){ #attention, d est le vecteur TRIE des dk
 	n <- length(v)
 	DPsi1 <- 0
 	DPsi2 <- 0
@@ -31,10 +31,10 @@ dPsi <- function(v,d,i,x){ #attention, d est le vecteur TRIE des dk
 		DPsi2 <- (DPsi2+((v[k]^2) / ((d[k]-x)^2)))
 	}
 
-	return( c(DPsi1,DPsi2) )
+	return(p * c(DPsi1,DPsi2) )
 }
 
-psi <- function(v,d,i,x){
+psi <- function(v,d,p,i,x){
 	n <- length(v)
 	Psi1 <- 0
 	Psi2 <- 0
@@ -46,7 +46,7 @@ psi <- function(v,d,i,x){
 		Psi2 <- (Psi2+((v[k]^2) / (d[k]-x)))
 	}
 
-	return( c(Psi1,Psi2) )
+	return( p*c(Psi1,Psi2) )
 }
 
 
@@ -86,8 +86,8 @@ roots_secular_equation <- function (p, v, d, rate){
 		lambda <- (d[n-j-1]+d[n-j])/2
 		print(c("#",d[n-j-1],d[n-j]))
 		for (k in 1:3){
-			Psi <- psi(v,d,n-j-1,lambda)
-			DPsi <- dPsi(v,d,n-j-1,lambda)
+			Psi <- psi(v,d,p,n-j-1,lambda)
+			DPsi <- dPsi(v,d,p,n-j-1,lambda)
 			c1 <-DPsi[1] * ( ( d[n-j-1] - lambda )^2 )
 			c2 <- DPsi[2] * ((d[n-j]-lambda)^2)
 			c3 <- 1+Psi[1]+Psi[2]-DPsi[1]*(d[n-j-1]-lambda)-DPsi[2]*(d[n-j]-lambda)
