@@ -7,8 +7,8 @@ find_approx_lambda <- function(c1,c2,c3,di,dj){
 		return((b)/(2*c3))
 	}
 	else{ #pb
-		lambda1 <- ((b-sqrt(delta))/2*c3)
-		lambda2 <- ((b+sqrt(delta))/2*c3)
+		lambda1 <- ((-b-sqrt(delta))/(2*c3))
+		lambda2 <- ((-b+sqrt(delta))/(2*c3))
 
 		if ((lambda2>=di)&&(lambda2<=dj)){
 			return(lambda2)
@@ -66,9 +66,10 @@ roots_secular_equation <- function (p,v,d,rate){ #d trié ou non? ATT: rate comp
 	if (p>0){
 		lambda <- d[n]+p*(v[n])^2
 		print(c("#",d[n]))
-		for(i in 1:5){
+		for(i in 1:3){
 			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
-			c1 <- 1 - p * sum( (1-lambda+d[n]) * v / (lambda-d))
+			c1 <- 1 - p * 
+			( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
 			i <- i+1
 			lambda <- p * c2 / c1 + d[n]
 			print(lambda)
@@ -85,7 +86,7 @@ roots_secular_equation <- function (p,v,d,rate){ #d trié ou non? ATT: rate comp
 
 		lambda <- (d[n-j-1]+d[n-j])/2
 		print(c("#",d[n-j-1],d[n-j]))
-		for (k in 1:3){
+		for (k in 1:20){
 			Psi <- psi(v,d,n-j-1,lambda)
 			DPsi <- dPsi(v,d,n-j-1,lambda)
 			c1 <- DPsi[1] * ( ( d[n-j-1] - lambda )^2 )
