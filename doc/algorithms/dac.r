@@ -115,12 +115,13 @@ dac <- function( T, inertia, epsilon){
 
 	#debug 
 	# return( Q %*% P %*% ( D + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
-	print( "finding eigen vectors" )
-	ordered <- sort( d, index.return = TRUE, decreasing=TRUE )
+	print( "finding eigen values" )
+	ordered <- sort( d, index.return = TRUE, decreasing=FALSE )
 	dsort <- ordered$x
 	order <- ordered$ix
 	vsort <- v[order]
 	lambdas <- roots_secular_equation(p, vsort, dsort, inertia)
+	print( "finding eigen vectors" )
 	v2 <- eigen_vector(p,n,dsort,lambdas)
 
 	return(list( vec=v2, val=lambdas, d=d ) )

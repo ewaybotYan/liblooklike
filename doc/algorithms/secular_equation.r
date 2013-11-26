@@ -1,6 +1,6 @@
 
 find_approx_lambda <- function(c1,c2,c3,di,dj){
-	b <- (c1+c2+c3*(di+dj))
+	b <- -1 * (c1+c2+c3*(di+dj))
 	delta <- ((b)^2 - 4*c3*(c1*dj+c2*di+c3*di*dj))
 
 	if (delta==0){
@@ -10,7 +10,7 @@ find_approx_lambda <- function(c1,c2,c3,di,dj){
 		lambda1 <- ((-b-sqrt(delta))/(2*c3))
 		lambda2 <- ((-b+sqrt(delta))/(2*c3))
 
-		if ((lambda2>=di)&&(lambda2<=dj)){
+		if ((lambda2>di)&&(lambda2<dj)){
 			return(lambda2)
 		}
 		else{
@@ -49,63 +49,64 @@ psi <- function(v,d,i,x){
 	return( c(Psi1,Psi2) )
 }
 
-roots_secular_equation <- function (p,v,d,rate){ #d trié ou non? ATT: rate compris entre 0 et 1 + ATT: valeurs aux bornes à gérer avec p
+
+# d must be sorted before calling this function!
+roots_secular_equation <- function (p, v, d, rate){ 
+
+	# eliminate trivial case
 	if(p == 0){
 		return(d)
 	}
 
 	n  <- length(v)
-	sm <- sum(d) #sum of eigenvalues
-	d  <- sort(d, decreasing=FALSE)
-	j  <- 0
+	inertia <- sum( diag( abs( diag(d) + p * v %*% t(v) ) ) )
+	print(c("inertia",inertia))
+	found_inertia <- 0
 	i  <- 0 #number of eigenvalues found
+	j  <- 0 # d[n-j-1] d[n-j] is the interval in which we look for a root
 
-	lambda_k <- (1:n) *0
+	lambda_k <- (1:n) * 0
 
-	#et si p=0?
-	if (p>0){
+	if (p > 0){
 		lambda <- d[n]+p*(v[n])^2
 		print(c("#",d[n]))
-		for(i in 1:3){
+		for(k in 1:3){
 			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
-			c1 <- 1 - p * 
-			( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
-			i <- i+1
+			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
 			lambda <- p * c2 / c1 + d[n]
 			print(lambda)
 		}
-		lambda_k[n] <- lambda
-		sum_lambdak <- lambda
-	}
-	else{
-		sum_lambdak <- 0
+		i <- i + 1
+		lambda_k[n]   <- lambda
+		found_inertia <- abs(lambda)
 	}
 
-
-	while ( ((sum_lambdak/sm)<rate) && (j<n) ){
+	while ( ((found_inertia / inertia) < rate)  && (j < n) ){
 
 		lambda <- (d[n-j-1]+d[n-j])/2
 		print(c("#",d[n-j-1],d[n-j]))
-		for (k in 1:20){
+		for (k in 1:3){
 			Psi <- psi(v,d,n-j-1,lambda)
 			DPsi <- dPsi(v,d,n-j-1,lambda)
-			c1 <- DPsi[1] * ( ( d[n-j-1] - lambda )^2 )
+			c1 <-DPsi[1] * ( ( d[n-j-1] - lambda )^2 )
 			c2 <- DPsi[2] * ((d[n-j]-lambda)^2)
 			c3 <- 1+Psi[1]+Psi[2]-DPsi[1]*(d[n-j-1]-lambda)-DPsi[2]*(d[n-j]-lambda)
-			lambda <- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
+			lambda	<- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
 			print(lambda)
 		}
 
-		sum_lambdak <- (sum_lambdak+lambda)
+		found_inertia <- (found_inertia+abs(lambda))
 		j <- j+1
 		i<-i+1
 		lambda_k[n+1-i]<-lambda
 	}
 
 
-	if ((p<0) && (sum_k/sm)<rate){
+
+
+	if ((p<0) && found_inertia / inertia <rate){
 		lambda <- (d[1]+p*(v[1])^2)
-		sum_lambdak <- (sum_lambdak+lambda)
+		sum_lambdak <- (sum_lambdak+abs(lambda))
 		i <- (i+1)
 		lambda_k[n+1-i] <- lambda
 	}
