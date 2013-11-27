@@ -86,7 +86,7 @@ dac <- function( T, inertia, epsilon){
 			if( 
 			   abs( v[m]*v[k] 
 				* ( d[m] - d[k] ) 
-				* sqrt( v[m]^2 + v[k]^2 ) ) < h ){
+				/ sqrt( v[m]^2 + v[k]^2 ) ) < h ){
 				print('deflation part 2 happened')
 				#print(m)
 				#print(k)
