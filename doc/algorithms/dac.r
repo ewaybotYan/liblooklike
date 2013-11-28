@@ -122,6 +122,9 @@ dac <- function( T, inertia, epsilon){
 	lambdas <- roots_secular_equation(p, vsort, dsort, inertia)
 	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
+	print("gu and eisenstat method")
+	v <- gu_eisenstat_vector( p, n, d, lambdas )
+
 	#print( "finding eigen vectors" )
 	eigen_vector <- function(k){
 			r <-  (diag (1/(lambdas[k] - d)) %*% v )
@@ -129,7 +132,7 @@ dac <- function( T, inertia, epsilon){
 			return(r)
 	}
 	A <- sapply(1:n,eigen_vector)
-	print(A)
+	#print(A)
 	U <- ( diag(d) + p * v %*% t(v) )
 	return( Q %*% P %*% A )
 

@@ -60,7 +60,7 @@ roots_secular_equation <- function (p, v, d, rate){
 
 	n  <- length(v)
 	inertia <- sum( diag( abs( diag(d) + p * v %*% t(v) ) ) )
-	print(c("inertia",inertia))
+	#print(c("inertia",inertia))
 	found_inertia <- 0
 	i  <- 0 #number of eigenvalues found
 	j  <- 0 # d[n-j-1] d[n-j] is the interval in which we look for a root
@@ -69,12 +69,12 @@ roots_secular_equation <- function (p, v, d, rate){
 
 	if (p > 0){
 		lambda <- d[n]+p*(v[n])^2
-		print(c("#",d[n]))
+		#print(c("#",d[n]))
 		for(k in 1:3){
 			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
 			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
 			lambda <- p * c2 / c1 + d[n]
-			print(lambda)
+			#print(lambda)
 		}
 		i <- i + 1
 		lambda_k[n]   <- lambda
@@ -84,7 +84,7 @@ roots_secular_equation <- function (p, v, d, rate){
 	while ( ((found_inertia / inertia) < rate)  && (j < n) ){
 
 		lambda <- (d[n-j-1]+d[n-j])/2
-		print(c("#",d[n-j-1],d[n-j]))
+		#print(c("#",d[n-j-1],d[n-j]))
 		for (k in 1:3){
 			Psi <- psi(v,d,p,n-j-1,lambda)
 			DPsi <- dPsi(v,d,p,n-j-1,lambda)
@@ -92,7 +92,7 @@ roots_secular_equation <- function (p, v, d, rate){
 			c2 <- DPsi[2] * ((d[n-j]-lambda)^2)
 			c3 <- 1+Psi[1]+Psi[2]-DPsi[1]*(d[n-j-1]-lambda)-DPsi[2]*(d[n-j]-lambda)
 			lambda	<- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
-			print(lambda)
+			#print(lambda)
 		}
 
 		found_inertia <- (found_inertia+abs(lambda))
@@ -110,7 +110,7 @@ roots_secular_equation <- function (p, v, d, rate){
 			c2 <- sum( (v * (lambda - d[1]) / ( lambda - d ) )^2 ) #d?
 			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[1]) )
 			lambda <- p * c2 / c1 + d[1]
-			print(lambda)
+			#print(lambda)
 		}
 		i <- i + 1
 		lambda_k[n+1-i]   <- lambda
@@ -120,7 +120,7 @@ roots_secular_equation <- function (p, v, d, rate){
 	return (lambda_k)
 }
 
-eigen_vector <- function(p,n,d,lambda){ #d trié
+gu_eisenstat_vector <- function(p,n,d,lambda){ #d trié
 	v <- 1:n
 	for (k in 1:n){
 		p1 <- 1 
@@ -146,7 +146,7 @@ eigen_vector <- function(p,n,d,lambda){ #d trié
 				p4 <- p4*(d[j]-d[k])
 			}
 		}
-		print(c(p1,p2,p3,p4,p))
+		#print(c(p1,p2,p3,p4,p))
 		v[k] <- sqrt( (p1*p2) / (p*p3*p4) )
 	}
 
