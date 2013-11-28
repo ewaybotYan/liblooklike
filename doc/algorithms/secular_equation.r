@@ -78,7 +78,7 @@ roots_secular_equation <- function (p, v, d, rate){
 		}
 		i <- i + 1
 		lambda_k[n]   <- lambda
-		found_inertia <- abs(lambda)
+		found_inertia <- (found_inertia+abs(lambda))
 	}
 
 	while ( ((found_inertia / inertia) < rate)  && (j < n) ){
@@ -106,9 +106,15 @@ roots_secular_equation <- function (p, v, d, rate){
 
 	if ((p<0) && found_inertia / inertia <rate){
 		lambda <- (d[1]+p*(v[1])^2)
-		sum_lambdak <- (sum_lambdak+abs(lambda))
-		i <- (i+1)
-		lambda_k[n+1-i] <- lambda
+		for(k in 1:3){
+			c2 <- sum( (v * (lambda - d[1]) / ( lambda - d ) )^2 ) #d?
+			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[1]) )
+			lambda <- p * c2 / c1 + d[1]
+			print(lambda)
+		}
+		i <- i + 1
+		lambda_k[n+1-i]   <- lambda
+		found_inertia <- (found_inertia+abs(lambda))
 	}
 
 	return (lambda_k)
