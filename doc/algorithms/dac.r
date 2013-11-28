@@ -87,7 +87,6 @@ dac <- function( T, inertia, epsilon){
 			   abs( v[m]*v[k] 
 				* ( d[m] - d[k] ) 
 				/ sqrt( v[m]^2 + v[k]^2 ) ) < h ){
-				print('deflation part 2 happened')
 				#print(m)
 				#print(k)
 				#print(v[m])
@@ -114,18 +113,26 @@ dac <- function( T, inertia, epsilon){
 	}
 
 	#debug 
-	# return( Q %*% P %*% ( D + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
+	#return( Q %*% P %*% ( diag(d) + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
 	print( "finding eigen values" )
 	ordered <- sort( d, index.return = TRUE, decreasing=FALSE )
 	dsort <- ordered$x
 	order <- ordered$ix
 	vsort <- v[order]
 	lambdas <- roots_secular_equation(p, vsort, dsort, inertia)
-	print( "finding eigen vectors" )
-	v2 <- eigen_vector(p,n,dsort,lambdas)
+	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
-	return(list( vec=v2, val=lambdas, d=d ) )
+	#print( "finding eigen vectors" )
+	eigen_vector <- function(k){
+			r <-  (diag (1/(lambdas[k] - d)) %*% v )
+			r <- r / sqrt((t(r)%*%r)[1])
+			return(r)
+	}
+	A <- sapply(1:n,eigen_vector)
+	print(A)
+	U <- ( diag(d) + p * v %*% t(v) )
+	return( Q %*% P %*% A )
+
 	
 #	return(list(d=d,v=v,Q=Q,P=P,p=p))
 }
-
