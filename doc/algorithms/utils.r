@@ -1,5 +1,5 @@
 make_random_sym_matrix <- function( n ){
-	A <- array( sample(0:128,n*n), dim=c(n,n) )
+	A <- array( sample(0:128,n*n), dim=c(n,n) ) #que des nombres positfs?
 	return( A %*% t(A) )
 }
 
