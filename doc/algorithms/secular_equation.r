@@ -14,6 +14,9 @@ find_approx_lambda <- function(c1,c2,c3,di,dj){
 			return(lambda2)
 		}
 		else{
+			#if( (lambda1 < di) || (lambda1 >dj) ){
+			#	print("wtf???", di, lambda1, lambda2 ,dj)
+			#}
 			return(lambda1)
 		}
 	}
@@ -130,6 +133,8 @@ gu_eisenstat_vector <- function(p,n,d,lambda){ #d trié
 
 		if( k!=1 ){
 			for (j in 1:(k-1)){
+				if(sign(d[k+1]-lambda[j]) != sign(d[k]-lambda[j]))
+					print(c("!", j,k,d[k],lambda[j]))
 				p1 <- p1*(d[k]-lambda[j])
 			}
 		}
@@ -146,7 +151,8 @@ gu_eisenstat_vector <- function(p,n,d,lambda){ #d trié
 				p4 <- p4*(d[j]-d[k])
 			}
 		}
-		#print(c(p1,p2,p3,p4,p))
+		if( p1 *p2*p3*p4*p< 0 )
+			print(c(p1,p2,p3,p4,p))
 		v[k] <- sqrt( (p1*p2) / (p*p3*p4) )
 	}
 

@@ -17,10 +17,6 @@ dac <- function( T, inertia, epsilon){
 	print('cuppen')
 
 	#debug (rebuild T with the expression above)
-	#Id    <- diag(1,k,n)
-	#check <- t(Id) %*% T1 %*% Id
-	#Id    <- array( c( 1:(k*(n-k)) * 0, 1:(n-k)^2 %% (n-k+1) == 1 ) , dim=c(n-k,n) )
-	#check <- check + t(Id) %*% T2 %*% Id
 	#check <- check + p * u %*% t(u)
 	#return( check )
 
@@ -53,6 +49,7 @@ dac <- function( T, inertia, epsilon){
 			while( abs(p*v[j]) < h && j > i ){
 				j <- j-1
 			}
+			print("deflation part1 triggered")
 			if( i != j ){
 				# switch values manually
 				v[i] <- v[j]
@@ -71,10 +68,6 @@ dac <- function( T, inertia, epsilon){
 	}
 
 	#debug (test permutation matrix)
-	#print(D)
-	#print(v)
-	#print(P)
-	#print(j)
 	#return(list(D=D,v=v,P=P))
 
 	
@@ -87,13 +80,8 @@ dac <- function( T, inertia, epsilon){
 			   abs( v[m]*v[k] 
 				* ( d[m] - d[k] ) 
 				/ sqrt( v[m]^2 + v[k]^2 ) ) < h ){
-				#print(m)
-				#print(k)
-				#print(v[m])
-				#print(v[k])
-				#print(D[m,m])
-				#print(D[k,k])
-				# rotatea with givens
+				print("deflation part1 triggered")
+				# rotate with givens
 				v[k] <- 0 
 				# D is not changed by Givens rotations
 				P <- P %*% givens_rotation( v, m, k )
@@ -123,19 +111,19 @@ dac <- function( T, inertia, epsilon){
 	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
 	print("gu and eisenstat method")
-	v <- gu_eisenstat_vector( p, n, d, lambdas )
+	v2 <- gu_eisenstat_vector( p, n, d, lambdas )
 
 	#print( "finding eigen vectors" )
 	eigen_vector <- function(k){
-			r <-  (diag (1/(lambdas[k] - d)) %*% v )
+			r <-  (diag (1/(lambdas[k] - d)) %*% v2 )
 			r <- r / sqrt((t(r)%*%r)[1])
 			return(r)
 	}
-	A <- sapply(1:n,eigen_vector)
+	V <- sapply(1:n,eigen_vector)
 	#print(A)
-	U <- ( diag(d) + p * v %*% t(v) )
-	return( Q %*% P %*% A )
+	U1 <- ( diag(d) + p * v %*% t(v) )
+	U2 <- ( diag(d) + p * v2 %*% t(v2) )
 
 	
-#	return(list(d=d,v=v,Q=Q,P=P,p=p))
+	return(list(Q=Q,P=P,U1=U1,U2=U2,V=V,p=p,d=d,v=v,v2=v2))
 }
