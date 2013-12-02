@@ -60,8 +60,8 @@ dac <- function( T, inertia, epsilon){
 	# deflation
 	P <- diag(n) # deflation  operations
 	# zero out values too small for single precision
-	h <- epsilon * max(sapply(1:n,function(k){return
-				  (norm((diag(d)+p*v%*%t(v))[,k]))}))
+	h <- epsilon * max(abs(sapply(1:n,function(k){return
+				  (norm((diag(d)+p*v%*%t(v))[,k]))})))
 	i <- 1 # active column
 	j <- n # target column for switching
 	while( i < j ){
@@ -158,7 +158,7 @@ dac <- function( T, inertia, epsilon){
 		r <-  (diag (1/(lambdas[k] - dsort)) %*% v2 )
 		r <- r / sqrt((t(r)%*%r)[1])
 		if( is.nan(sum(r)) )
-			print(c("!ev", k, lambdas,d))
+			print(c("!ev", k,h, lambdas,d))
 		return(r)
 	}
 	V <- sapply(1:j,eigen_vector)
