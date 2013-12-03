@@ -1,11 +1,19 @@
 source('secular_equation.r')
 
 dac <- function( T, inertia, epsilon){
-	n <- dim(T)[1]
+	print(T)
+	n <- dim(cbind(T))[1]
+	if( n == 1 ){
+		#return( list(values=diag(1), vectors=diag(T)) )
+		 return(eigen(T))
+	}
+	if( n == 2 ){
+		 return(eigen(T))
+	}
 
 	# cuppen method to represent the matrix
 	k    <- round( n / 2 )
-	beta <- sign( T[k,k] ) # todo : limit cancelation for real
+	beta <- sign( T[k,k] ) # todo : limit cancellation for real
 	p    <- beta * T[k,k+1]
 	u    <- beta * ((1:n)==k) + ((1:n) == k+1)
 	Tmp  <- T - p * u %*% t(u)
@@ -22,19 +30,28 @@ dac <- function( T, inertia, epsilon){
 
 	# apply divide and conquer
 	# note we rely on internal R function, so no actual recursion here
-	Q1   <- eigen(T1,symmetric=TRUE)$vectors
-	Q2   <- eigen(T2,symmetric=TRUE)$vectors
+	#res1   <- eigen(T1,symmetric=TRUE)
+	#res2   <- eigen(T2,symmetric=TRUE)
+	res1    <- dac(T1, inertia, epsilon )
+	res2    <- dac(T2, inertia, epsilon )
+	Q1      <- res1$vectors
+	Q2      <- res2$vectors
+	# r1     <- dac(T1, 1.1, epsilon)
 	ctor <- diag(1,k,n) # used to construct Q
 	Q    <- t(ctor) %*% Q1 %*% ctor
 	Id   <- array( c( 1:(k*(n-k)) * 0, 1:(n-k)^2 %% (n-k+1) == 1 ) , dim=c(n-k,n) )
 	Q    <- Q + t(Id) %*% Q2 %*% Id
 	v    <- t(Q) %*% u
 	# at this stage T = Q %*% ( [D1  ]  + p * v %*% t(v) ) %*% t(Q)
-	d     <- c( eigen(T1,symmetric=TRUE)$values,
-			 eigen(T2,symmetric=TRUE)$values )
+	#                           [  D2]
+	d     <- c( res1$values, res2$values )
 
+	# we want positive values on s
+	S    <- diag( sapply(v,sign) )
+	d    <- d  # is not changed in this new base
+	v    <- S %*% v
 	#debug (check that we actually find T with the expression above)
-	#check <- Q %*% ( D + p * v %*% t(v) ) %*% t(Q) 
+	#check <- Q %*% ( diag(d) + p * v %*% t(v) ) %*% t(Q) 
 	#return(check)
 
 	print('deflation part 1')
@@ -70,7 +87,7 @@ dac <- function( T, inertia, epsilon){
 	#debug (test permutation matrix)
 	#return(list(D=D,v=v,P=P))
 
-	
+
 	# erase multiple eigen values
 	print('deflation part2')
 	m <- 1
@@ -78,9 +95,9 @@ dac <- function( T, inertia, epsilon){
 		for( k in seq(m+1,j) ){
 			if( 
 			   abs( v[m]*v[k] 
-				* ( d[m] - d[k] ) 
-				/ sqrt( v[m]^2 + v[k]^2 ) ) < h ){
-				print("deflation part1 triggered")
+			       * ( d[m] - d[k] ) 
+			       / sqrt( v[m]^2 + v[k]^2 ) ) < h ){
+				print("deflation part2 triggered")
 				# rotate with givens
 				v[k] <- 0 
 				# D is not changed by Givens rotations
@@ -110,20 +127,29 @@ dac <- function( T, inertia, epsilon){
 	lambdas <- roots_secular_equation(p, vsort, dsort, inertia)
 	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
-	print("gu and eisenstat method")
-	v2 <- gu_eisenstat_vector( p, n, d, lambdas )
+	print(c("@@",dsort))
+	print(c("##",lambdas))
 
+	print("gu and eisenstat method")
+	v2 <- gu_eisenstat_vector( p, n, dsort, lambdas )
 	#print( "finding eigen vectors" )
 	eigen_vector <- function(k){
-			r <-  (diag (1/(lambdas[k] - d)) %*% v2 )
-			r <- r / sqrt((t(r)%*%r)[1])
-			return(r)
+		r <-  (diag (1/(lambdas[k] - dsort)) %*% v2 )
+		r <- r / sqrt((t(r)%*%r)[1])
+		return(r)
 	}
 	V <- sapply(1:n,eigen_vector)
 	#print(A)
 	U1 <- ( diag(d) + p * v %*% t(v) )
-	U2 <- ( diag(d) + p * v2 %*% t(v2) )
 
-	
-	return(list(Q=Q,P=P,U1=U1,U2=U2,V=V,p=p,d=d,v=v,v2=v2))
+	# permutation matrix to restore order
+	O  <- sapply(1:n, function(k){ 1:n == order[k] } )
+
+	U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
+
+
+	#return(list(Q=Q,P=P,S=S,O=O,U1=U1,U2=U2,V=V,lambdas=lambdas,v=v,v2=v2,p=p,d=dsort))
+	#V <- res$O %*% res$V %*% t(S)
+	return( list(vectors = Q %*% S %*% P %*% O %*% V, values=lambdas, U2=U2,
+		     U1=U1, V=V, O=O ) )
 }
