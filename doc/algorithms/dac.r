@@ -1,7 +1,7 @@
 source('secular_equation.r')
 
 dac <- function( T, inertia, epsilon){
-	print(T)
+	#print(T)
 	n <- dim(cbind(T))[1]
 	if( n == 1 ){
 		#return( list(values=diag(1), vectors=diag(T)) )
@@ -127,8 +127,8 @@ dac <- function( T, inertia, epsilon){
 	lambdas <- roots_secular_equation(p, vsort, dsort, inertia)
 	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
-	print(c("@@",dsort))
-	print(c("##",lambdas))
+	#print(c("@@",dsort))
+	#print(c("##",lambdas))
 
 	print("gu and eisenstat method")
 	v2 <- gu_eisenstat_vector( p, n, dsort, lambdas )

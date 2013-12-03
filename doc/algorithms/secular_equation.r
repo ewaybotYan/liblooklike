@@ -17,6 +17,7 @@ find_approx_lambda <- function(c1,c2,c3,di,dj){
 			if( (lambda1 < di) || (lambda1 >dj) ){
 				print(c("wtf???", di, lambda1, lambda2 ,dj))
 				print("wtf")
+				exit()
 			}
 			return(lambda1)
 		}
@@ -75,7 +76,7 @@ roots_secular_equation <- function (p, v, d, rate){
 		lambda <- d[n]+p*(v[n])^2
 		#print(c("#",d[n]))
 		for(k in 1:10){
-			print(lambda)
+		#	print(lambda)
 			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
 			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
 			lambda <- p * c2 / c1 + d[n]
@@ -84,7 +85,7 @@ roots_secular_equation <- function (p, v, d, rate){
 		lambda_k[n]   <- lambda
 		found_inertia <- (found_inertia+abs(lambda))
 		if( lambda < d[n] ){
-			print(c("wtf???", d[n], lambda ))
+			print(c("wtf????", d[n], lambda ))
 		}
 	}
 
@@ -99,7 +100,7 @@ roots_secular_equation <- function (p, v, d, rate){
 			c2 <- DPsi[2] * ((d[n-j]-lambda)^2)
 			c3 <- 1+Psi[1]+Psi[2]-DPsi[1]*(d[n-j-1]-lambda)-DPsi[2]*(d[n-j]-lambda)
 			lambda	<- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
-			print(lambda)
+		#	print(lambda)
 		}
 
 		found_inertia <- (found_inertia+abs(lambda))
@@ -164,9 +165,7 @@ gu_eisenstat_vector <- function(p,n,d,lambda){ #d trié
 				p4 <- p4*(d[j]-d[k])
 			}
 		}
-		print(c(n,p,p1,p2,p3,p4))
-		print(c("@",d))
-		print(c("#",lambda))
+		#print(c(n,p,p1,p2,p3,p4))
 		v[k] <- sqrt( (p1*p2) / (p*p3*p4) )
 	}
 
