@@ -66,27 +66,14 @@ roots_secular_equation <- function (p, v, d, rate){
 	n  <- length(v)
 	inertia <- sum( diag( abs( diag(d) + p * v %*% t(v) ) ) )
 	#print(c("inertia",inertia))
-	found_inertia <- 0
+	found_rank <- 0
 	i  <- 0 #number of eigenvalues found
 	j  <- 0 # d[n-j-1] d[n-j] is the interval in which we look for a root
 
 	lambda_k <- (1:n) * 1
 
-	if (p > 0){
-		lambda <- d[n]+p*(v[n])^2
-		#print(c("#",d[n]))
-		for(k in 1:10){
-		#	print(lambda)
-			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
-			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
-			lambda <- p * c2 / c1 + d[n]
-		}
-		i <- i + 1
-		lambda_k[n]   <- lambda
-		found_inertia <- (found_inertia+abs(lambda))
-		if( lambda < d[n] ){
-			print(c("wtf????", d[n], lambda ))
-		}
+	if(p>0){
+		i <- i+1
 	}
 
 	while (j < n -1){
@@ -103,30 +90,51 @@ roots_secular_equation <- function (p, v, d, rate){
 		#	print(lambda)
 		}
 
-		found_inertia <- (found_inertia+abs(lambda))
+		found_rank <- (found_rank+lambda)
 		j <- j+1
 		i<-i+1
 		lambda_k[n+1-i]<-lambda
 	}
 
-
-
-
-	if ((p<0) && found_inertia / inertia <rate){
-		lambda <- (d[1]+p*(v[1])^2)
-		for(k in 1:6){
-			c2 <- sum( (v * (lambda - d[1]) / ( lambda - d ) )^2 ) #d?
-			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[1]) )
-			lambda <- p * c2 / c1 + d[1]
-			#print(lambda)
+	if (p > 0){
+		lambda <- d[n]+p*(v[n])^2
+		#print(c("#",d[n]))
+		for(k in 1:10){
+			print(c(d[n],lambda))
+			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
+			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
+			#c1 <- d[n] + p * ( sum( ( v * (lambda - d[n] / ( lambda - d
+			#						)))^2) / ( 1 + p * sum( (lambda-d[n]) * ( v /
+			#(lambda - d))^2) - p * sum( v^2 /( lambda - d))))
+			lambda <- p * c2 / c1 + d[n]
 		}
 		i <- i + 1
-		lambda_k[n+1-i]   <- lambda
-		found_inertia <- (found_inertia+abs(lambda))
-		if( lambda > d[1] ){
-			print(c("wtf???", d[1], lambda ))
+		lambda_k[n]   <- lambda
+		if( is.nan(lambda) || lambda < d[n] ){
+			lambda_k[n] <- sum( diag(d) + p * v %*% t(v) ) -
+			sum(lambda_k)
+			print(c("wtf????", d[n], lambda, lambda_k[n] ))
 		}
+	}else{
+		lambda_k[1] <- sum( diag(d) + p * v %*% t(v) ) - found_rank
 	}
+
+		if ((p<0) && found_inertia / inertia <rate){
+			print("unchecked")
+			lambda <- (d[1]+p*(v[1])^2)
+			for(k in 1:6){
+				c2 <- sum( (v * (lambda - d[1]) / ( lambda - d ) )^2 ) #d?
+				c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[1]) )
+				lambda <- p * c2 / c1 + d[1]
+				#print(lambda)
+			}
+			i <- i + 1
+			lambda_k[n+1-i]   <- lambda
+			found_inertia <- (found_inertia+abs(lambda))
+			if( lambda > d[1] ){
+				print(c("wtf???", d[1], lambda ))
+			}
+		}
 
 	return (lambda_k)
 }
@@ -136,17 +144,17 @@ gu_eisenstat_vector <- function(p,n,d,lambda){ #d trié
 	for (k in 1:n){
 		p1 <- 1
 		p2 <- 1
-#		p2 <- prod( (lambda - d[k])[seq(k,n)] )
+		#		p2 <- prod( (lambda - d[k])[seq(k,n)] )
 		p2 <- 1 
 		p3 <- 1
 		p4 <- 1
-#		if( k != 1 ){
-#			p1 <- prod( (lambda - d[k])[1:k-1] )
-#			p3 <- prod( (d - d[k])[1:k-1] )
-#		}
-#		if( k!= n ){
-#			p4 <- prod( (d - d[k])[seq(k+1,n)])
-#		}
+		#		if( k != 1 ){
+		#			p1 <- prod( (lambda - d[k])[1:k-1] )
+		#			p3 <- prod( (d - d[k])[1:k-1] )
+		#		}
+		#		if( k!= n ){
+		#			p4 <- prod( (d - d[k])[seq(k+1,n)])
+		#		}
 		if( k!=1 ){
 			for (j in 1:(k-1)){
 				p1 <- p1*(d[k]-lambda[j])
