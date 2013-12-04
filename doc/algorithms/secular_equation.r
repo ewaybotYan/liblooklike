@@ -56,7 +56,7 @@ psi <- function(v,d,p,i,x){
 
 
 # d must be sorted before calling this function!
-roots_secular_equation <- function (p, v, d, rate){ 
+roots_secular_equation <- function (p, v, d, trace){ 
 
 	# eliminate trivial case
 	if(p == 0){
@@ -70,7 +70,7 @@ roots_secular_equation <- function (p, v, d, rate){
 	i  <- 0 #number of eigenvalues found
 	j  <- 0 # d[n-j-1] d[n-j] is the interval in which we look for a root
 
-	lambda_k <- (1:n) * 1
+	lambda_k <- (1:n) * 0
 
 	if(p>0){
 		i <- i+1
@@ -97,44 +97,49 @@ roots_secular_equation <- function (p, v, d, rate){
 	}
 
 	if (p > 0){
-		lambda <- d[n]+p*(v[n])^2
-		#print(c("#",d[n]))
-		for(k in 1:10){
-			print(c(d[n],lambda))
-			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
-			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
-			#c1 <- d[n] + p * ( sum( ( v * (lambda - d[n] / ( lambda - d
-			#						)))^2) / ( 1 + p * sum( (lambda-d[n]) * ( v /
-			#(lambda - d))^2) - p * sum( v^2 /( lambda - d))))
-			lambda <- p * c2 / c1 + d[n]
+		#		lambda <- d[n]+p*(v[n])^2
+		#		#print(c("#",d[n]))
+		#		for(k in 1:10){
+		#			print(c(d[n],lambda))
+		#			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
+		#			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
+		#			#c1 <- d[n] + p * ( sum( ( v * (lambda - d[n] / ( lambda - d
+		#			#						)))^2) / ( 1 + p * sum( (lambda-d[n]) * ( v /
+		#			#(lambda - d))^2) - p * sum( v^2 /( lambda - d))))
+		#			lambda <- p * c2 / c1 + d[n]
+		#		}
+		#		i <- i + 1
+		#		lambda_k[n]   <- lambda
+		#		if( is.nan(lambda) || lambda < d[n] ){
+		#			lambda_k[n] <- sum( diag(d) + p * v %*% t(v) ) -
+		#			sum(lambda_k)
+		#			print(c("wtf????", d[n], lambda, lambda_k[n] ))
+		lambda_k[n] <- trace - sum(lambda_k)
+		if( is.nan(lambda_k[n]) || lambda_k[n] < d[n] ){
+			print(c("wtf????.", d[n], lambda_k[n], sum(lambda_k) ))
 		}
-		i <- i + 1
-		lambda_k[n]   <- lambda
-		if( is.nan(lambda) || lambda < d[n] ){
-			lambda_k[n] <- sum( diag(d) + p * v %*% t(v) ) -
-			sum(lambda_k)
-			print(c("wtf????", d[n], lambda, lambda_k[n] ))
-		}
-	}else{
-		lambda_k[1] <- sum( diag(d) + p * v %*% t(v) ) - found_rank
-	}
 
-		if ((p<0) && found_inertia / inertia <rate){
-			print("unchecked")
-			lambda <- (d[1]+p*(v[1])^2)
-			for(k in 1:6){
-				c2 <- sum( (v * (lambda - d[1]) / ( lambda - d ) )^2 ) #d?
-				c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[1]) )
-				lambda <- p * c2 / c1 + d[1]
-				#print(lambda)
-			}
-			i <- i + 1
-			lambda_k[n+1-i]   <- lambda
-			found_inertia <- (found_inertia+abs(lambda))
-			if( lambda > d[1] ){
-				print(c("wtf???", d[1], lambda ))
-			}
-		}
+
+	}else{
+		lambda_k[1] <- trace - sum(lambda_k)
+	}
+	#
+	#		if ((p<0) && found_inertia / inertia <rate){
+	#			print("unchecked")
+	#			lambda <- (d[1]+p*(v[1])^2)
+	#			for(k in 1:6){
+	#				c2 <- sum( (v * (lambda - d[1]) / ( lambda - d ) )^2 ) #d?
+	#				c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[1]) )
+	#				lambda <- p * c2 / c1 + d[1]
+	#				#print(lambda)
+	#			}
+	#			i <- i + 1
+	#			lambda_k[n+1-i]   <- lambda
+	#			found_inertia <- (found_inertia+abs(lambda))
+	#			if( lambda > d[1] ){
+	#				print(c("wtf???", d[1], lambda ))
+	#			}
+	#		}
 
 	return (lambda_k)
 }

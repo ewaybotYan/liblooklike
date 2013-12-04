@@ -124,7 +124,8 @@ dac <- function( T, inertia, epsilon){
 	dsort <- ordered$x
 	order <- ordered$ix
 	vsort <- v[order]
-	lambdas <- roots_secular_equation(p, vsort, dsort, inertia)
+	trace <- sum( diag( diag(d) + p * v %*% t(v)))
+	lambdas <- roots_secular_equation(p, vsort, dsort, trace)
 	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
 	#print(c("@@",dsort))
