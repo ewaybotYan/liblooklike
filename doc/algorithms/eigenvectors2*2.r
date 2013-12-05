@@ -41,7 +41,7 @@ find_eigens22<-function(A){
 	return(list(values=c(lambda1,lambda2),vectors=cbind(eigenvector1,eigenvector2)))
 }
 
-A<-matrix(c(1,4,4,3),nrow=2,ncol=2,byrow=TRUE)
-print(A)
-res<-find_eigens22(A)
-print(res)
+#A<-matrix(c(1,4,4,3),nrow=2,ncol=2,byrow=TRUE)
+#print(A)
+#res<-find_eigens22(A)
+#print(res)
