@@ -95,8 +95,8 @@ dac <- function( T, inertia, epsilon){
 		for( k in seq(m+1,j) ){
 			if( 
 			   abs( v[m]*v[k] 
-			       * ( d[m] - d[k] ) 
-			       / sqrt( v[m]^2 + v[k]^2 ) ) < h ){
+			       * ( d[m] - d[k] ) )
+			       / sqrt( v[m]^2 + v[k]^2 ) < h ){
 				print("deflation part2 triggered")
 				# rotate with givens
 				v[k] <- 0 
