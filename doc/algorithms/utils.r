@@ -1,12 +1,12 @@
 make_random_sym_matrix <- function( n ){
-	A <- array( sample(0:255,n*n), dim=c(n,n) )
+	A <- array( sample(seq(-128:128),n*n,replace=TRUE), dim=c(n,n) )
 	return( A %*% t(A) )
 }
 
 make_random_tridiag_sym_matrix <- function (n){
 	X <- n
-	A <- matrix(runif(X*X,0,1),X,X)
- 	A<-(A+t(A))/2
+	A <- matrix(runif(X*X,-1,1),X,X)
+ 	A<-(A%*%t(A))
 
 	for (i in 1:n){
 		for (j in i:n){

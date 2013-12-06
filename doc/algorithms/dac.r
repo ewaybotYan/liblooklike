@@ -11,6 +11,7 @@ dac <- function( T, inertia, epsilon){
 		 return(eigen(T))
 	}
 
+
 	# cuppen method to represent the matrix
 	k    <- round( n / 2 )
 	beta <- sign( T[k,k] ) # todo : limit cancellation for real
@@ -22,7 +23,7 @@ dac <- function( T, inertia, epsilon){
 	# at this stage T = [T1  ] + p * u %*% t(u)
 	#                   [  T2]
 
-	print('cuppen')
+#	print('cuppen')
 
 	#debug (rebuild T with the expression above)
 	#check <- check + p * u %*% t(u)
@@ -54,16 +55,18 @@ dac <- function( T, inertia, epsilon){
 	#check <- Q %*% ( diag(d) + p * v %*% t(v) ) %*% t(Q) 
 	#return(check)
 
-	print('deflation part 1')
+	#print(c("d",d,"v",v,"Q1",Q1,"Q2",Q2))
+#	print('deflation part 1')
 	# deflation
 	P <- diag(n) # deflation  operations
 	# zero out values too small for single precision
-	h <- epsilon * sqrt(sum( ( diag(d) + p * v %*% t(v) )^2 ) )
+	h <- epsilon * max(sapply(1:n,function(k){return
+				  (norm((diag(d)+p*v%*%t(v))[,k]))}))
 	i <- 1 # active column
 	j <- n # target column for switching
 	while( i < j ){
-		if( abs(p*v[i]) < h || abs(d[i]) <h ){
-			while( abs(p*v[j]) < h && j > i ){
+		if( abs(p*v[i]^2) < h ){
+			while( abs(p*(v[j])^2) < h && j > i ){
 				j <- j-1
 			}
 			print("deflation part1 triggered")
@@ -84,12 +87,18 @@ dac <- function( T, inertia, epsilon){
 		}
 	}
 
+	# check matrix state
+	for( i in 1:n )
+		for( j in 1:n)
+			if( is.nan(P[i,j]))
+				print(c("!",i,j ))
+
 	#debug (test permutation matrix)
 	#return(list(D=D,v=v,P=P))
 
 
 	# erase multiple eigen values
-	print('deflation part2')
+#	print('deflation part2')
 	m <- 1
 	while( m < j ){
 		for( k in seq(m+1,j) ){
@@ -117,34 +126,63 @@ dac <- function( T, inertia, epsilon){
 		m <- m+1
 	}
 
+	# check matrix state
+	for( i in 1:n )
+		for( j in 1:n)
+			if( is.nan(P[i,j]))
+				print(c("!d2",i,j ))
+
 	#debug 
 	#return( Q %*% P %*% ( diag(d) + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
-	print( "finding eigen values" )
-	ordered <- sort( d, index.return = TRUE, decreasing=FALSE )
+#	print( "finding eigen values" )
+	ordered <- sort( d[1:j], index.return = TRUE, decreasing=FALSE )
 	dsort <- ordered$x
 	order <- ordered$ix
 	vsort <- v[order]
-	trace <- sum( diag( diag(d) + p * v %*% t(v)))
+	trace <- sum( diag( diag(d[1:j]) + p * v[1:j] %*% t(v[1:j])))
 	lambdas <- roots_secular_equation(p, vsort, dsort, trace)
+
+
 	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
 	#print(c("@@",dsort))
 	#print(c("##",lambdas))
 
-	print("gu and eisenstat method")
-	v2 <- gu_eisenstat_vector( p, n, dsort, lambdas )
+#	print("gu and eisenstat method")
+	v2 <- gu_eisenstat_vector( p, j, dsort, lambdas )
 	#print( "finding eigen vectors" )
 	eigen_vector <- function(k){
 		r <-  (diag (1/(lambdas[k] - dsort)) %*% v2 )
 		r <- r / sqrt((t(r)%*%r)[1])
 		return(r)
 	}
-	V <- sapply(1:n,eigen_vector)
+	V <- sapply(1:j,eigen_vector)
+
+	# bring back deflated values
+	if(j<n)
+		lambdas <- cbind( c(lambdas, d[seq(j+1,n)]) )
+
+	# check matrix state
+	for( i in 1:n )
+		if( is.nan(lambdas[i]))
+			print(c("!l",i))
+
+	V <- cbind( V, diag(0,j,n-j) )
+	V <- rbind( V, diag(0,n-j,n) )
+	V <- V + diag( (1:n>j) )
+
+	# check matrix state
+	for( i in 1:n )
+		for( j in 1:n)
+			if( is.nan(V[i,j]))
+				print(c("!V",i,j ))
+
 	#print(A)
 	U1 <- ( diag(d) + p * v %*% t(v) )
 
 	# permutation matrix to restore order
-	O  <- sapply(1:n, function(k){ 1:n == order[k] } )
+	O  <- cbind(sapply(1:j, function(k){ return(1:n == order[k]) }
+			   ),rbind(matrix(0,j,n-j),diag(n-j)))
 
 	U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
 

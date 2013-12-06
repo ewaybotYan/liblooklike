@@ -17,7 +17,6 @@ find_approx_lambda <- function(c1,c2,c3,di,dj){
 			if( (lambda1 < di) || (lambda1 >dj) ){
 				print(c("wtf???", di, lambda1, lambda2 ,dj))
 				print("wtf")
-				exit()
 			}
 			return(lambda1)
 		}
@@ -34,6 +33,10 @@ dPsi <- function(v,d,p,i,x){ #attention, d est le vecteur TRIE des dk
 	}
 	for (k in (i+1):n){
 		DPsi2 <- (DPsi2+((v[k]^2) / ((d[k]-x)^2)))
+	}
+
+	if( is.nan(DPsi1 + DPsi2)) {
+		print(c("!dpsi",d,x))
 	}
 
 	return(p * c(DPsi1,DPsi2) )
@@ -64,7 +67,6 @@ roots_secular_equation <- function (p, v, d, trace){
 	}
 
 	n  <- length(v)
-	inertia <- sum( diag( abs( diag(d) + p * v %*% t(v) ) ) )
 	#print(c("inertia",inertia))
 	found_rank <- 0
 	i  <- 0 #number of eigenvalues found
@@ -86,6 +88,9 @@ roots_secular_equation <- function (p, v, d, trace){
 			c1 <-DPsi[1] * ( ( d[n-j-1] - lambda )^2 )
 			c2 <- DPsi[2] * ((d[n-j]-lambda)^2)
 			c3 <- 1+Psi[1]+Psi[2]-DPsi[1]*(d[n-j-1]-lambda)-DPsi[2]*(d[n-j]-lambda)
+			if( is.nan(c1 * c2 * c3* d[n-j-1] * d[n-j]) ){
+				print( c( "! ",j,c1 , c2 , c3, d[n-j-1] , d[n-j]))
+			}
 			lambda	<- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
 		#	print(lambda)
 		}
@@ -97,49 +102,17 @@ roots_secular_equation <- function (p, v, d, trace){
 	}
 
 	if (p > 0){
-		#		lambda <- d[n]+p*(v[n])^2
-		#		#print(c("#",d[n]))
-		#		for(k in 1:10){
-		#			print(c(d[n],lambda))
-		#			c2 <- sum( (v * (lambda - d[n]) / ( lambda - d ) )^2 )
-		#			c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[n]) )
-		#			#c1 <- d[n] + p * ( sum( ( v * (lambda - d[n] / ( lambda - d
-		#			#						)))^2) / ( 1 + p * sum( (lambda-d[n]) * ( v /
-		#			#(lambda - d))^2) - p * sum( v^2 /( lambda - d))))
-		#			lambda <- p * c2 / c1 + d[n]
-		#		}
-		#		i <- i + 1
-		#		lambda_k[n]   <- lambda
-		#		if( is.nan(lambda) || lambda < d[n] ){
-		#			lambda_k[n] <- sum( diag(d) + p * v %*% t(v) ) -
-		#			sum(lambda_k)
-		#			print(c("wtf????", d[n], lambda, lambda_k[n] ))
 		lambda_k[n] <- trace - sum(lambda_k)
 		if( is.nan(lambda_k[n]) || lambda_k[n] < d[n] ){
 			print(c("wtf????.", d[n], lambda_k[n], sum(lambda_k) ))
+			print(v)
+			print(d - lambda_k)
 		}
 
 
 	}else{
 		lambda_k[1] <- trace - sum(lambda_k)
 	}
-	#
-	#		if ((p<0) && found_inertia / inertia <rate){
-	#			print("unchecked")
-	#			lambda <- (d[1]+p*(v[1])^2)
-	#			for(k in 1:6){
-	#				c2 <- sum( (v * (lambda - d[1]) / ( lambda - d ) )^2 ) #d?
-	#				c1 <- 1 - p * ( sum(v^2 / (lambda - d)) - c2 / (lambda - d[1]) )
-	#				lambda <- p * c2 / c1 + d[1]
-	#				#print(lambda)
-	#			}
-	#			i <- i + 1
-	#			lambda_k[n+1-i]   <- lambda
-	#			found_inertia <- (found_inertia+abs(lambda))
-	#			if( lambda > d[1] ){
-	#				print(c("wtf???", d[1], lambda ))
-	#			}
-	#		}
 
 	return (lambda_k)
 }
