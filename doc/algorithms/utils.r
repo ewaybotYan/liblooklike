@@ -1,5 +1,5 @@
 make_random_sym_matrix <- function( n ){
-	A <- array( sample(seq(-128:128),n*n,replace=TRUE), dim=c(n,n) )
+	A <- matrix( runif(n^2,-1,1), n,n)
 	return( A %*% t(A) )
 }
 

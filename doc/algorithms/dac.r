@@ -102,11 +102,10 @@ dac <- function( T, inertia, epsilon){
 	m <- 1
 	while( m < j ){
 		for( k in seq(m+1,j) ){
-			if( 
-			   abs( v[m]*v[k] 
-			       * ( d[m] - d[k] ) )
-			       / sqrt( v[m]^2 + v[k]^2 ) < h ){
-				print("deflation part2 triggered")
+			if( abs( 1
+			    * ( d[m] - d[k] ) )
+			    < h ){
+				print(c("deflation part2 triggered",m,k,v[m]))
 				# rotate with givens
 				v[k] <- 0 
 				# D is not changed by Givens rotations
@@ -136,8 +135,12 @@ dac <- function( T, inertia, epsilon){
 	#return( Q %*% P %*% ( diag(d) + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
 #	print( "finding eigen values" )
 	ordered <- sort( d[1:j], index.return = TRUE, decreasing=FALSE )
-	dsort <- ordered$x
 	order <- ordered$ix
+	dsort <- d[order]
+	print("aaaaa")
+	print(order)
+	print(dsort)
+	print(j)
 	vsort <- v[order]
 	trace <- sum( diag( diag(d[1:j]) + p * v[1:j] %*% t(v[1:j])))
 	lambdas <- roots_secular_equation(p, vsort, dsort, trace)
@@ -154,28 +157,38 @@ dac <- function( T, inertia, epsilon){
 	eigen_vector <- function(k){
 		r <-  (diag (1/(lambdas[k] - dsort)) %*% v2 )
 		r <- r / sqrt((t(r)%*%r)[1])
+		if( is.nan(sum(r)) )
+			print(c("!ev", k, lambdas,d))
 		return(r)
 	}
 	V <- sapply(1:j,eigen_vector)
 
 	# bring back deflated values
-	if(j<n)
+	if(j<n){
 		lambdas <- cbind( c(lambdas, d[seq(j+1,n)]) )
+		print(V)
+		V <- cbind( V, diag(0,j,n-j) )
+		print(V)
+		V <- rbind( V, diag(0,n-j,n) )
+		print(V)
+		V <- V + diag( (1:n>j) )
+		print(V)
+	}
 
 	# check matrix state
 	for( i in 1:n )
 		if( is.nan(lambdas[i]))
 			print(c("!l",i))
 
-	V <- cbind( V, diag(0,j,n-j) )
-	V <- rbind( V, diag(0,n-j,n) )
-	V <- V + diag( (1:n>j) )
 
 	# check matrix state
 	for( i in 1:n )
 		for( j in 1:n)
-			if( is.nan(V[i,j]))
-				print(c("!V",i,j ))
+			if( is.nan(V[i,j])){
+				print(c("!!V",i,j ))
+				print(V)
+				return(V)
+			}
 
 	#print(A)
 	U1 <- ( diag(d) + p * v %*% t(v) )
