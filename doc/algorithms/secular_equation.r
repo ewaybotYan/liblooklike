@@ -14,10 +14,6 @@ find_approx_lambda <- function(c1,c2,c3,di,dj){
 			return(lambda2)
 		}
 		else{
-			if( (lambda1 < di) || (lambda1 >dj) ){
-				print(c("wtf???", di, lambda1, lambda2 ,dj))
-				print("wtf")
-			}
 			return(lambda1)
 		}
 	}
@@ -92,6 +88,11 @@ roots_secular_equation <- function (p, v, d, trace){
 				print( c( "! ",j,c1 , c2 , c3, d[n-j-1] , d[n-j]))
 			}
 			lambda	<- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
+			if( (lambda < d[n-j-1]) || (lambda >d[n-j]) ){
+				print(c("wtf???", d[n-j-1], lambda, d[n-j] ))
+				print(c("d=",d))
+				exit()
+			}
 		#	print(lambda)
 		}
 

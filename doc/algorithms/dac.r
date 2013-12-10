@@ -23,7 +23,7 @@ dac <- function( T, inertia, epsilon){
 	# at this stage T = [T1  ] + p * u %*% t(u)
 	#                   [  T2]
 
-#	print('cuppen')
+	print('cuppen')
 
 	#debug (rebuild T with the expression above)
 	#check <- check + p * u %*% t(u)
@@ -55,8 +55,10 @@ dac <- function( T, inertia, epsilon){
 	#check <- Q %*% ( diag(d) + p * v %*% t(v) ) %*% t(Q) 
 	#return(check)
 
+
+
 	#print(c("d",d,"v",v,"Q1",Q1,"Q2",Q2))
-#	print('deflation part 1')
+	print('deflation part 1')
 	# deflation
 	P <- diag(n) # deflation  operations
 	# zero out values too small for single precision
@@ -65,7 +67,7 @@ dac <- function( T, inertia, epsilon){
 	i <- 1 # active column
 	j <- n # target column for switching
 	while( i < j ){
-		if( abs(p*v[i]^2) < h ){
+		if( abs(p*v[i]) < h ){
 			while( abs(p*(v[j])^2) < h && j > i ){
 				j <- j-1
 			}
@@ -80,7 +82,6 @@ dac <- function( T, inertia, epsilon){
 				# save permutation matrix
 				P <- P %*% permutation_matrix(n,i,j)
 				j <- j-1
-				# todo i<- i+1 ??
 			}
 		}else{
 			i <- i+1
@@ -88,91 +89,113 @@ dac <- function( T, inertia, epsilon){
 	}
 
 	# check matrix state
-	for( i in 1:n )
-		for( j in 1:n)
-			if( is.nan(P[i,j]))
-				print(c("!",i,j ))
+	for( l in 1:n )
+		for( k in 1:n)
+			if( is.nan(P[l,k]))
+				print(c("!",l,k ))
 
 	#debug (test permutation matrix)
 	#return(list(D=D,v=v,P=P))
 
 
+	# we sort d values
+	print("sort")
+	ordered <- sort( d[1:j], index.return = TRUE, decreasing=FALSE )
+	order <- ordered$ix
+	if(j<n){
+		order <- c(order,seq(j+1,n))
+	}
+	d <- d[order]
+	v <- v[order]
+	#print(order)
+
+	# permutation matrix to restore order
+	O  <- cbind(sapply(1:j, function(k){ return(1:n == order[k]) }
+			   ),rbind(matrix(0,j,n-j),diag(n-j)))
+
 	# erase multiple eigen values
-#	print('deflation part2')
+	print('deflation part2')
 	m <- 1
 	while( m < j ){
-		for( k in seq(m+1,j) ){
-			if( abs( 1
-			    * ( d[m] - d[k] ) )
-			    < h ){
-				print(c("deflation part2 triggered",m,k,v[m]))
-				# rotate with givens
-				v[k] <- 0 
-				# D is not changed by Givens rotations
-				P <- P %*% givens_rotation( v, m, k )
-				#print(P)
-				# move diagonal part in the down right part of T
-				if( k != j ){
-					v[k] <- v[j]
-					v[j] <- 0
-					d[k] <- d[j]
-					d[j] <- d[m]
-					P <- P %*% permutation_matrix(n,m,j)
-				}
-				j <- j-1
+		k <- m+1
+		while( (k<=j) &&
+		      (abs(d[m] - d[k]) * v[m]*v[k] / sqrt(v[m] * v[k]))  < h ){
+			print(c("deflation part2 triggered",m,k,v[m]))
+			# rotate with givens
+			v[k] <- 0 
+			# D is not changed by Givens rotations
+			P <- P %*% givens_rotation( v, m, k )
+			#print(P)
+			# move diagonal part in the down right part of T
+			if( k != j ){
+				v[k] <- v[j]
+				v[j] <- 0
+				d[k] <- d[j]
+				d[j] <- d[m]
+				P <- P %*% permutation_matrix(n,m,j)
 			}
+			j <- j-1
+			k <- k+1
 		}
 		m <- m+1
 	}
 
+	# we sort d values
+	print("sort")
+	ordered <- sort( d[1:j], index.return = TRUE, decreasing=FALSE )
+	order <- ordered$ix
+	if(j<n){
+		order <- c(order,seq(j+1,n))
+	}
+	d <- d[order]
+	v <- v[order]
+
+
+	# permutation matrix to restore order
+	O  <- O %*% cbind(sapply(1:j, function(k){ return(1:n == order[k]) }
+			   ),rbind(matrix(0,j,n-j),diag(n-j)))
+
 	# check matrix state
-	for( i in 1:n )
-		for( j in 1:n)
-			if( is.nan(P[i,j]))
-				print(c("!d2",i,j ))
+	for( k in 1:n )
+		for( l in 1:n)
+			if( is.nan(P[k,l]))
+				print(c("!d2",k,l ))
 
 	#debug 
 	#return( Q %*% P %*% ( diag(d) + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
-#	print( "finding eigen values" )
-	ordered <- sort( d[1:j], index.return = TRUE, decreasing=FALSE )
-	order <- ordered$ix
-	dsort <- d[order]
-	print("aaaaa")
-	print(order)
-	print(dsort)
-	print(j)
-	vsort <- v[order]
-	trace <- sum( diag( diag(d[1:j]) + p * v[1:j] %*% t(v[1:j])))
-	lambdas <- roots_secular_equation(p, vsort, dsort, trace)
+	print( "finding eigen values" )
 
+	V <- diag(n)
+
+	if(j != 0){
+	trace <- sum( diag( diag(d[1:j]) + p * v[1:j] %*% t(v[1:j])))
+	lambdas <- roots_secular_equation(p, v[1:j], d[1:j], trace)
 
 	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
 	#print(c("@@",dsort))
 	#print(c("##",lambdas))
 
-#	print("gu and eisenstat method")
-	v2 <- gu_eisenstat_vector( p, j, dsort, lambdas )
-	#print( "finding eigen vectors" )
+	print("gu and eisenstat method")
+	v2 <- gu_eisenstat_vector( p, j, d[1:j], lambdas )
+	print( "finding eigen vectors" )
 	eigen_vector <- function(k){
-		r <-  (diag (1/(lambdas[k] - dsort)) %*% v2 )
+		r <-  diag(1/(lambdas[k] - d[1:j])) %*% v2
 		r <- r / sqrt((t(r)%*%r)[1])
-		if( is.nan(sum(r)) )
+		if( is.nan(sum(r)) ){
 			print(c("!ev", k,h, lambdas,d))
+			exit()
+		}
 		return(r)
 	}
 	V <- sapply(1:j,eigen_vector)
-
+	}
 	# bring back deflated values
 	if(j<n){
 		lambdas <- cbind( c(lambdas, d[seq(j+1,n)]) )
-		print(V)
 		V <- cbind( V, diag(0,j,n-j) )
-		print(V)
 		V <- rbind( V, diag(0,n-j,n) )
-		print(V)
 		V <- V + diag( (1:n>j) )
-		print(V)
 	}
 
 	# check matrix state
@@ -187,21 +210,16 @@ dac <- function( T, inertia, epsilon){
 			if( is.nan(V[i,j])){
 				print(c("!!V",i,j ))
 				print(V)
-				return(V)
+				exit()
 			}
 
 	#print(A)
 	U1 <- ( diag(d) + p * v %*% t(v) )
 
-	# permutation matrix to restore order
-	O  <- cbind(sapply(1:j, function(k){ return(1:n == order[k]) }
-			   ),rbind(matrix(0,j,n-j),diag(n-j)))
-
-	U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
+	#U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
 
 
 	#return(list(Q=Q,P=P,S=S,O=O,U1=U1,U2=U2,V=V,lambdas=lambdas,v=v,v2=v2,p=p,d=dsort))
 	#V <- res$O %*% res$V %*% t(S)
-	return( list(vectors = Q %*% S %*% P %*% O %*% V, values=lambdas, U2=U2,
-		     U1=U1, V=V, O=O ) )
+	return( list(vectors = Q %*% S %*% P %*% O %*% V, values=lambdas ) )
 }
