@@ -1,3 +1,14 @@
+###########################
+# environment configuration
+
+# for OpenCL
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/findopencl/")
+
+find_package( OpenCL REQUIRED )
+
+if( !OPENCL_HAS_CPP_BINDINGS )
+	message(ERROR "OpenCL c++ bindings not found")
+endif( !OPENCL_HAS_CPP_BINDINGS )
 
 # for qt precompliation operations
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -18,11 +29,8 @@ include_directories(
 	${OPENGL_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}/include 
 	"/usr/include/qt"
+	${OPENCL_INCLUDE_DIRS}
 	)
-
-#link_directories(${Qt5Gui_LIBRARIES})
-
-message( STATUS "include path ${Qt5Gui_INCLUDES}" )
 
 add_definitions(${Qt5Gui_DEFINITIONS})
 
@@ -37,6 +45,12 @@ file(
 	${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp
 	)
 
+
+#############
+# executables
+
+# test_preview
+
 add_executable(
 	test_preview 
 	test_preview.cpp 
@@ -47,3 +61,14 @@ add_executable(
 target_link_libraries(test_preview ${OPENGL_LIBRARIES})
 
 qt5_use_modules(test_preview Gui)
+
+# test_cl
+
+add_executable(
+	test_cl
+	test_cl.cpp
+	)
+
+file(COPY test_kernel.cl DESTINATION "${PROJECT_BINARY_DIR}/tests")
+
+target_link_libraries(test_cl ${OPENCL_LIBRARIES})
