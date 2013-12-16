@@ -166,36 +166,39 @@ dac <- function( T, inertia, epsilon){
 	print( "finding eigen values" )
 
 	V <- diag(n)
+	lambdas <- d
 
 	if(j != 0){
-	trace <- sum( diag( diag(d[1:j]) + p * v[1:j] %*% t(v[1:j])))
-	lambdas <- roots_secular_equation(p, v[1:j], d[1:j], trace)
+		trace <- sum( diag( diag(d[1:j]) + p * v[1:j] %*% t(v[1:j])))
+		lambdas <- roots_secular_equation(p, v[1:j], d[1:j], trace)
 
-	# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
+		# return(list(v=v, val=lambdas, d=d, H=Q%*%P, p=p ) )
 
-	#print(c("@@",dsort))
-	#print(c("##",lambdas))
+		#print(c("@@",dsort))
+		#print(c("##",lambdas))
 
-	print("gu and eisenstat method")
-	v2 <- gu_eisenstat_vector( p, j, d[1:j], lambdas )
-	print( "finding eigen vectors" )
-	eigen_vector <- function(k){
-		r <-  diag(1/(lambdas[k] - d[1:j])) %*% v2
-		r <- r / sqrt((t(r)%*%r)[1])
-		if( is.nan(sum(r)) ){
-			print(c("!ev", k,h, lambdas,d))
-			exit()
+		print("gu and eisenstat method")
+		v2 <- gu_eisenstat_vector( p, j, d[1:j], lambdas )
+		print( "finding eigen vectors" )
+		eigen_vector <- function(k){
+			r <-  diag(1/(lambdas[k] - d[1:j])) %*% v2
+			r <- r / sqrt((t(r)%*%r)[1])
+			if( is.nan(sum(r)) ){
+				print(c("!ev", k,h))
+			       	print(c("lambdas=",lambdas))
+				print(c("d=",d))
+				exit()
+			}
+			return(r)
 		}
-		return(r)
-	}
-	V <- sapply(1:j,eigen_vector)
-	}
-	# bring back deflated values
-	if(j<n){
-		lambdas <- cbind( c(lambdas, d[seq(j+1,n)]) )
-		V <- cbind( V, diag(0,j,n-j) )
-		V <- rbind( V, diag(0,n-j,n) )
-		V <- V + diag( (1:n>j) )
+		V <- sapply(1:j,eigen_vector)
+		# bring back deflated values
+		if(j<n){
+			lambdas <- cbind( c(lambdas, d[seq(j+1,n)]) )
+			V <- cbind( V, diag(0,j,n-j) )
+			V <- rbind( V, diag(0,n-j,n) )
+			V <- V + diag( (1:n>j) )
+		}
 	}
 
 	# check matrix state
@@ -214,7 +217,7 @@ dac <- function( T, inertia, epsilon){
 			}
 
 	#print(A)
-	U1 <- ( diag(d) + p * v %*% t(v) )
+	#U1 <- ( diag(d) + p * v %*% t(v) )
 
 	#U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
 
