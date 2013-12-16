@@ -1,0 +1,3 @@
+[submodule "findopencl"]
+	path = findopencl
+	url = git://gitorious.org/findopencl/findopencl.git
