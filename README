@@ -1,1 +1,52 @@
-test
+===========
+LIBLOOKLIKE
+===========
+
+
+REQUIREMENTS
+============
+
+The following packages are required in order to build and use the project files:
+
+* cmake
+
+* an opencl sdk
+* an opencl library
+* an icd loader (might be included in the opencl library)
+
+There are several providers for this triplet, nvidia, amd and optionnaly intel.
+Nvidia opencl library only support Nvidia hardware. It is likely to be package
+for your distribution because the licence permits it.
+AMD's has support for both AMD graphic cards and any sse3 compatible processor.
+You should choose this if you don't have an Nvidia graphic card.
+Note that AMD license prevents most linux distribution to package it in the
+repositories.
+POCL looks promising, at least for developpement and testing.
+Intel sdk for Opencl not available on linux.
+
+BUILDING
+========
+
+In order to build, you need to create a build directory:
+
+ mkdir build
+ cd build
+
+generate makefiles with cmake:
+
+  cmake (path to the project root dir)
+  # if build is insinde the project:
+  cmake ../
+
+then make any taget, for example:
+  make test_cl
+
+  you can execute it:
+  ./tests/test_cl
+
+TARGETS
+=======
+
+* test_cl (tests/test_cl)
+  It is a quick and simple OpenCL HelloWorld program.
+  Use it to test your OpenCL environment.
