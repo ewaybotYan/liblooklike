@@ -38,7 +38,7 @@ generate makefiles with cmake:
   # if build is insinde the project:
   cmake ../
 
-then make any taget, for example:
+then make any target, for example:
   make test_cl
 
   you can execute it:
