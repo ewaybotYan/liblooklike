@@ -31,10 +31,10 @@ dac <- function( T, inertia, epsilon){
 
 	# apply divide and conquer
 	# note we rely on internal R function, so no actual recursion here
-	#res1   <- eigen(T1,symmetric=TRUE)
-	#res2   <- eigen(T2,symmetric=TRUE)
-	res1    <- dac(T1, inertia, epsilon )
-	res2    <- dac(T2, inertia, epsilon )
+	res1   <- eigen(T1,symmetric=TRUE)
+	res2   <- eigen(T2,symmetric=TRUE)
+	#res1    <- dac(T1, inertia, epsilon )
+	#res2    <- dac(T2, inertia, epsilon )
 	Q1      <- res1$vectors
 	Q2      <- res2$vectors
 	# r1     <- dac(T1, 1.1, epsilon)
@@ -217,7 +217,7 @@ dac <- function( T, inertia, epsilon){
 			}
 
 	#print(A)
-	#U1 <- ( diag(d) + p * v %*% t(v) )
+	U1 <- ( diag(d) + p * v %*% t(v) )
 
 	#U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
 
