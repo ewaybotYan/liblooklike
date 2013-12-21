@@ -4,11 +4,19 @@
 # for OpenCL
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/findopencl/")
 
-find_package( OpenCL REQUIRED )
+SET(USE_POCL FALSE CACHE STRING "Wether pocl or a normal OpenCL library is used")
 
-if( !OPENCL_HAS_CPP_BINDINGS )
-	message(ERROR "OpenCL c++ bindings not found")
-endif( !OPENCL_HAS_CPP_BINDINGS )
+if(USE_POCL)
+  find_package(PkgConfig)
+  pkg_check_modules(OPENCL pocl)
+  pkg_search_module(OPENCL pocl)
+else(USE_POCL)
+  find_package( OpenCL REQUIRED )
+  if( !OPENCL_HAS_CPP_BINDINGS )
+    message(ERROR "OpenCL c++ bindings not found")
+  endif( !OPENCL_HAS_CPP_BINDINGS )
+endif(USE_POCL)
+
 
 # for qt precompliation operations
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -19,18 +27,18 @@ find_package(Qt5Gui REQUIRED)
 find_package(OpenGL REQUIRED)
 
 if (Qt5Gui_FOUND)
-	message(STATUS "qt5 found")
+  message(STATUS "qt5 found")
 else (Qt5Gui_FOUND)
-	message(ERROR "qt5 not found") 
+  message(ERROR "qt5 not found") 
 endif (Qt5Gui_FOUND)
 
 include_directories(
-	${Qt5Gui_INCLUDES}
-	${OPENGL_INCLUDE_DIRS}
-	${CMAKE_CURRENT_SOURCE_DIR}/include 
-	"/usr/include/qt"
-	${OPENCL_INCLUDE_DIRS}
-	)
+  ${Qt5Gui_INCLUDES}
+  ${OPENGL_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include 
+  "/usr/include/qt"
+  ${OPENCL_INCLUDE_DIRS}
+  )
 
 add_definitions(${Qt5Gui_DEFINITIONS})
 
@@ -39,11 +47,11 @@ set(CMAKE_CXX_FLAGS "${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
 
 file(
-	GLOB
-	SOURCES
-	${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp
-	)
+  GLOB
+  SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp
+  )
 
 
 #############
@@ -52,11 +60,11 @@ file(
 # test_preview
 
 add_executable(
-	test_preview 
-	test_preview.cpp 
-	../src/openglwindow.cpp
-	../src/previewwindow.cpp
-	)
+  test_preview 
+  test_preview.cpp 
+  ../src/openglwindow.cpp
+  ../src/previewwindow.cpp
+  )
 
 target_link_libraries(test_preview ${OPENGL_LIBRARIES})
 
@@ -65,9 +73,9 @@ qt5_use_modules(test_preview Gui)
 # test_cl
 
 add_executable(
-	test_cl
-	test_cl.cpp
-	)
+  test_cl
+  test_cl.cpp
+  )
 
 file(COPY test_kernel.cl DESTINATION "${PROJECT_BINARY_DIR}/tests")
 
