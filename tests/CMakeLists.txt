@@ -17,41 +17,33 @@ else(USE_POCL)
   endif( !OPENCL_HAS_CPP_BINDINGS )
 endif(USE_POCL)
 
+if(USE_GUI)
+  # for qt precompliation operations
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  set(CMAKE_AUTOMOC ON)
 
-## for qt precompliation operations
-#set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#set(CMAKE_AUTOMOC ON)
-#
-## find include dir
-#find_package(Qt5Gui REQUIRED)
-#find_package(OpenGL REQUIRED)
-#
-#if (Qt5Gui_FOUND)
-#  message(STATUS "qt5 found")
-#else (Qt5Gui_FOUND)
-#  message(ERROR "qt5 not found") 
-#endif (Qt5Gui_FOUND)
-#
-#include_directories(
-#  ${Qt5Gui_INCLUDES}
-#  ${OPENGL_INCLUDE_DIRS}
-#  ${CMAKE_CURRENT_SOURCE_DIR}/include 
-#  "/usr/include/qt"
-#  ${OPENCL_INCLUDE_DIRS}
-#  )
-#
-#add_definitions(${Qt5Gui_DEFINITIONS})
+  # find include dir
+  find_package(Qt5Gui REQUIRED)
+  find_package(OpenGL REQUIRED)
+
+  if (Qt5Gui_FOUND)
+    message(STATUS "qt5 found")
+  else (Qt5Gui_FOUND)
+    message(ERROR "qt5 not found") 
+  endif (Qt5Gui_FOUND)
+
+  add_definitions(${Qt5Gui_DEFINITIONS})
+endif(USE_GUI)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}")
 #set(CMAKE_CXX_FLAGS "${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}")
 set(CMAKE_CXX_FLAGS "${OPENCL_INCLUDE_DIRS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
 
 file(
   GLOB
   SOURCES
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp
+  ${CMAKE_PROJECT_SOURCE_DIR}/src/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
   )
 
 
@@ -60,24 +52,45 @@ file(
 
 # test_preview
 
-#add_executable(
-#  test_preview 
-#  test_preview.cpp 
-#  ../src/openglwindow.cpp
-#  ../src/previewwindow.cpp
-#  )
-#
-#target_link_libraries(test_preview ${OPENGL_LIBRARIES})
-#
-#qt5_use_modules(test_preview Gui)
+if(USE_GUI)
+  include_directories(
+    ${Qt5Gui_INCLUDES}
+    ${OPENGL_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include 
+    "/usr/include/qt"
+    )
 
-# test_cl
+  add_executable(
+    test_preview 
+    test_preview.cpp 
+    ../src/openglwindow.cpp
+    ../src/previewwindow.cpp
+    )
 
-add_executable(
-  test_cl
-  test_cl.cpp
+  target_link_libraries(test_preview ${OPENGL_LIBRARIES})
+
+  qt5_use_modules(test_preview Gui)
+endif(USE_GUI)
+
+# test_context
+
+include_directories(
+  ${OPENCL_INCLUDE_DIRS}
   )
 
-file(COPY test_kernel.cl DESTINATION "${PROJECT_BINARY_DIR}/tests")
+add_executable(
+  test_context
+  test_cl.cpp
+  context.cpp
+  )
 
-target_link_libraries(test_cl ${OPENCL_LIBRARIES})
+target_link_libraries(test_context ${OPENCL_LIBRARIES})
+
+
+#######
+# tests
+
+enable_testing()
+
+# test_context
+add_test( test_context "${CURRENT_SOURCE_DIR}/test_kernel.cl" )
