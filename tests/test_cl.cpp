@@ -3,13 +3,14 @@
 #include<iterator>
 #include<string>
 #include <utility>
-#define __NO_STD_VECTOR // Use cl::vector instead of STL version
+//#define __NO_STD_VECTOR // Use std::vector instead of STL version
+#include<vector>
 
 #include<CL/cl.hpp>
 
 using namespace std;
 
-void printPlatforms( cl::vector<cl::Platform> platformList ){
+void printPlatforms( std::vector<cl::Platform> platformList ){
 	for(  auto plf : platformList ){
 		std::string platformVendor;
 		std::string platformName;
@@ -23,7 +24,7 @@ void printPlatforms( cl::vector<cl::Platform> platformList ){
 	}
 }
 
-void printDevices( cl::vector<cl::Device> devices, cl::Platform platform ){
+void printDevices( std::vector<cl::Device> devices, cl::Platform platform ){
 
 	// name of the current platform for debugging messages
 	std::string platformName;
@@ -37,7 +38,7 @@ void printDevices( cl::vector<cl::Device> devices, cl::Platform platform ){
 		string devProfile;
 		string devVersion;
 		string driverVersion;
-		cl::vector<size_t> maxWorkItemSizes;
+		std::vector<size_t> maxWorkItemSizes;
 		dev.getInfo( CL_DEVICE_MAX_WORK_ITEM_SIZES, &maxWorkItemSizes );
 		dev.getInfo( CL_DEVICE_NAME             , &devName );
 		dev.getInfo( CL_DEVICE_OPENCL_C_VERSION , &devOpenCLVersion );
@@ -66,7 +67,7 @@ int main(){
 	// ###########################
 	// # list availiable platforms
 	cout << "# Looking for platforms." << endl;
-	cl::vector< cl::Platform > platformList;
+	std::vector< cl::Platform > platformList;
 	cl::Platform::get(&platformList);
 	cout << platformList.size() << " platform(s) found:" << endl;
 	if( platformList.size() == 0 ){
@@ -80,7 +81,7 @@ int main(){
 	// ##############
 	// # list devices
 	cout << "# Looking for devices on each platforms\n";
-	cl::vector<cl::Device> devices;	
+	std::vector<cl::Device> devices;	
 	for( auto plf : platformList ){
 		// get devices
 		cl_int error;

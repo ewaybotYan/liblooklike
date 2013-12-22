@@ -35,7 +35,7 @@ In order to build, you need to create a build directory:
 generate makefiles with cmake:
 
   cmake (path to the project root dir)
-  # if build is insinde the project:
+  # if build is inside the project:
   cmake ../
 
 then make any target, for example:
