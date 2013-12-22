@@ -75,20 +75,19 @@ Context::Context( std::string programsPath ){
 #endif
 
   // get devices for all platform
-  std::vector<cl::Device> devices;	
   for( auto plf : platformList ){
-    error = plf.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+    error = plf.getDevices(CL_DEVICE_TYPE_ALL, &m_devices);
     if( error != CL_SUCCESS )
       throw CLError( error );
   }
-  if( devices.size() == 0 )
+  if( m_devices.size() == 0 )
     throw( Error("no device found") );
 #ifndef NDEBUG
-  printDevices( devices );
+  printDevices( m_devices );
 #endif
 
   // start a context (OpenCL chooses a platform automatically)
-  m_context = context( devices, NULL, NULL, NULL, &error );
+  m_context = cl::Context( m_devices, NULL, NULL, NULL, &error );
   if( error != CL_SUCCESS )
     throw( CLError( error, "Cannot start a context" ) );
 
@@ -105,49 +104,57 @@ cl::Program Context::loadProgram( const std::string programName ){
   cl_int error;
 
   // load file
+  std::string fileName(m_programsPath + "/" + programName + ".cl");
+  std::string prog = "";
   try{
-    std::string fileName(m_programsPath + "/" + programName + ".cl");
     std::ifstream file( fileName );
-    std::string prog(
+     prog = std::string(
         std::istreambuf_iterator<char>(file),
         (std::istreambuf_iterator<char>())
         );
-  }catch( std::ios::exceptions e ){
+  }catch( std::ifstream::failure& e ){
     throw( Error( "could not open " + fileName
           + " : " + e.what() ) );
   }
 
   // load and build kernels
   cl::Program::Sources source = 
-    cl::Program::Sources(1, std::make_pair(prog.c_str(), prog.length()+1));
-  cl::Program program(context, source);
-  error = program.build(devices,"");
+    cl::Program::Sources(1, std::make_pair(fileName.c_str(), prog.length()+1));
+  cl::Program program(m_context, source);
+  error = program.build(m_devices,"");
   if( error != CL_SUCCESS )
     throw( CLError( error, "Failed to build kernel" ) );
   return program;
 
 }
 
+#ifndef NDEBUG
 cl::Context& Context::getContext(){
   return m_context;
 }
 
-cl::Kernel& Context::getKernel( const std::string programName, 
+std::vector<cl::Device> Context::getDevices(){
+  return m_devices;
+}
+#endif
+
+
+cl::Kernel Context::getKernel( const std::string programName, 
     const std::string kernelName ){
 
   cl_int error;
 
   // get program
   cl::Program program;
-  std::map<std::string, cl::Program>::iterator iter = 
+  std::map<std::string, cl::Program>::iterator iter =
     m_programs.find(programName);
-  if( iter == std::map::end ){// program is not loaded
+  if( iter == m_programs.end() ){// program is not loaded
     program = loadProgram( programName );
     iter = m_programs.insert( std::make_pair( programName, program ) ).first;
   }
 
   // get kernel
-  cl::Kernel kernel( iter->second, kernelName, &error );
+  cl::Kernel kernel = cl::Kernel( iter->second, kernelName.c_str(), &error );
   if( error != CL_SUCCESS )
     throw( CLError( error, "could not find or load kernel") );
 

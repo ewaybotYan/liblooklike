@@ -170,6 +170,10 @@ Error::Error() throw(){
 }
 
 Error::Error( const char* errorMsg ) throw(){
+  this->errorMsg = std::string(errorMsg);
+}
+
+Error::Error( string errorMsg ) throw(){
   this->errorMsg = errorMsg;
 }
 

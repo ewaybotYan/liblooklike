@@ -20,6 +20,7 @@ class Error: public std::exception{
   public:
     Error( ) throw();
     Error( const char* errorMsg ) throw();
+    Error( std::string errorMsg ) throw();
     const char* what() const throw();
 #ifndef NDEBUG
     /// prints a formatted error message on the standard error output stream

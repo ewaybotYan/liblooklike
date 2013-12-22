@@ -4,7 +4,7 @@
  * @brief  unit tests for Context class
  */
 
-#include <string>
+#include<string>
 #include<iostream>
 
 #include "../include/exception.h"
@@ -14,6 +14,8 @@ using namespace std;
 
 // the test string which is also a constant in the kernel code
 const std::string hw("Hello World\n");
+const std::string programName("test_kernel.cl");
+const std::string kernelName("hello");
 
 void usage(){
   cerr << "Error in " << __FILE__ << " :\n"
@@ -28,12 +30,27 @@ int main( const int argc, const char* argv[] ){
   }
   std::string path(argv[1]);
 
+  cl_int error;
+
   try{
     Context ctx(path);
-    cl::Kernel ker = ctx.getKernel( "hello" );
+    cl::Kernel ker = ctx.getKernel( programName, kernelName );
     
     // we don't use the library after this step, we just check context in this
     // test program
+
+    // allocate memory
+    char* outH = new char[hw.length()+1];
+    cl::Buffer outCL(
+        ctx.getContext(),
+        CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
+        hw.length()+1,
+        outH,
+        &error);
+    if( error != CL_SUCCESS ){
+      cerr << "failed to result buffer\n";
+      return -1;
+    }
 
     // set kernel arguments
     error = ker.setArg(0, outCL);
@@ -43,7 +60,7 @@ int main( const int argc, const char* argv[] ){
     }
 
     // create command queue
-    cl::CommandQueue queue(ctx.getContext(), devices[0], 0, &error);
+    cl::CommandQueue queue(ctx.getContext(), ctx.getDevices()[0], 0, &error);
     if( error != CL_SUCCESS ){
       cerr << "Failed to create command queue\n";
       return -1;
@@ -67,17 +84,6 @@ int main( const int argc, const char* argv[] ){
     event.wait();
 
     // retrieve data
-    char* outH = new char[hw.length()+1];
-    cl::Buffer outCL(
-        context,
-        CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
-        hw.length()+1,
-        outH,
-        &error);
-    if( error != CL_SUCCESS ){
-      cerr << "failed to result buffer\n";
-      return -1;
-    }
     error = queue.enqueueReadBuffer(
         outCL,
         CL_TRUE,
@@ -92,11 +98,11 @@ int main( const int argc, const char* argv[] ){
     // check result
     std::string result(outH);
     if(result == hw){
-      return 0
+      return 0;
     }else{
-      cerr << "Kernel returned \"" + result + "\"" + endl;
-      cerr << "Expected :      \" + hw +"\"" +endl;
-      reuturn -1;
+      cerr << "Kernel returned \"" + result + "\"" << endl;
+      cerr << "Expected :      \"" + hw +"\"" << endl;
+      return -1;
     }
 
   }catch( Error& e ){

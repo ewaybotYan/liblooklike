@@ -31,20 +31,22 @@ class Context{
     /// @return returns the kernel name kernelName from the program file
     ///         <programName>.cl in the path set at context creation
     /// @throw  CLError
-    cl::Kernel& getKernel( const std::string programName,
+    cl::Kernel getKernel( const std::string programName,
         const std::string kernelName );
 
 #ifndef NDEBUG
     cl::Context& getContext(); 
+    std::vector<cl::Device> getDevices();
 #endif
 
   private:
     cl::Program loadProgram( const std::string programName );
 
     std::string m_programsPath;
+    std::vector<cl::Device> m_devices;	
     cl::Context  m_context;
     std::map< std::string, cl::Program > m_programs;
-    std::map< std::string, cl::Kernel >  m_kernels;
+//    std::map< std::string, cl::Kernel >  m_kernels;
 };
 
 
