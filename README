@@ -9,25 +9,48 @@ REQUIREMENTS
 The following packages are required in order to build and use the project files:
 
 * cmake
+* pkg-config (if you choose POCL as OpenCL implementation)
 
 * an opencl sdk
 * an opencl library
 * an icd loader (might be included in the opencl library)
 
 There are several providers for this triplet, nvidia, amd and optionnaly intel.
-Nvidia opencl library only support Nvidia hardware. It is likely to be package
-for your distribution because the licence permits it.
-AMD's has support for both AMD graphic cards and any sse3 compatible processor.
-You should choose this if you don't have an Nvidia graphic card.
-Note that AMD license prevents most linux distribution to package it in the
-repositories.
-POCL looks promising, at least for developpement and testing.
-Intel sdk for Opencl not available on linux.
+* Nvidia opencl library only support Nvidia hardware. It is likely to be package
+  for your distribution because the licence permits it.
+* AMD's has support for both AMD graphic cards and any sse3 compatible processor.
+  You should choose this if you don't have an Nvidia graphic card.
+  Note that AMD license prevents most linux distribution to package it in the
+  repositories.
+* POCL is simpler, *ideal for developpement and testing*.
+* Intel sdk for OpenCL not available on linux.
+
+TEST ENVIRONMENT
+================
+
+In the tests directory, there is a small hello world program, you can use it in
+order to check if your openCL environement is correct
+
+	cd tests
+
+if you use POCL:
+
+	g++ test_cl.cpp `pkg-config pocl --libs --cflags` -o helloWorld
+
+if you use another librarie (adjust include paths if necessary):
+	
+	g++ test_cl.cpp -lOpenCL -o helloWorld -std=c++11
+
+then execute with:
+
+	./helloWorld
+
+
 
 BUILDING
 ========
 
-In order to build, you need to create a build directory:
+In order to build the project, you need to create a build directory:
 
  mkdir build
  cd build
@@ -35,18 +58,17 @@ In order to build, you need to create a build directory:
 generate makefiles with cmake:
 
   cmake (path to the project root dir)
-  # if build is inside the project:
-  cmake ../
 
-then make any target, for example:
-  make test_cl
+if you use a build directory at the root of the project and use POCL
+statically (without icd loader support), you may type:
 
-  you can execute it:
-  ./tests/test_cl
+  cmake ../ -DUSE_POCL
 
-TARGETS
-=======
+then build everything:
 
-* test_cl (tests/test_cl)
-  It is a quick and simple OpenCL HelloWorld program.
-  Use it to test your OpenCL environment.
+  make 
+
+and run the tests:
+
+  make test
+

@@ -127,7 +127,7 @@ int main(){
 	// #############
 	// # load kernel
 	// open file
-	std::ifstream file("tests/test_kernel.cl");
+	std::ifstream file("test_kernel.cl");
 	std::string prog(
 			std::istreambuf_iterator<char>(file),
 			(std::istreambuf_iterator<char>())
