@@ -45,8 +45,6 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
   )
 
-message(${SOURCES})
-
 
 #############
 # executables
