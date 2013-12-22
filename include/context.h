@@ -36,8 +36,16 @@ class Context{
 
 #ifndef NDEBUG
     cl::Context& getContext(); 
+
     std::vector<cl::Device> getDevices();
 #endif
+
+    /// start a queue on a device of the context
+    /// @return a new empty queue
+    /// @note   Normally, you have to select a device on which the commands of
+    ///         the queue are run. Device selection is automatic here.
+    /// @throw  CLError
+    cl::CommandQueue  createQueue();
 
   private:
     cl::Program loadProgram( const std::string programName );
@@ -46,7 +54,7 @@ class Context{
     std::vector<cl::Device> m_devices;	
     cl::Context  m_context;
     std::map< std::string, cl::Program > m_programs;
-//    std::map< std::string, cl::Kernel >  m_kernels;
+    std::vector< cl::CommandQueue > m_CmdQueues;
 };
 
 

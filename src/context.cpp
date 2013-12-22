@@ -128,17 +128,6 @@ cl::Program Context::loadProgram( const std::string programName ){
 
 }
 
-#ifndef NDEBUG
-cl::Context& Context::getContext(){
-  return m_context;
-}
-
-std::vector<cl::Device> Context::getDevices(){
-  return m_devices;
-}
-#endif
-
-
 cl::Kernel Context::getKernel( const std::string programName, 
     const std::string kernelName ){
 
@@ -159,4 +148,29 @@ cl::Kernel Context::getKernel( const std::string programName,
     throw( CLError( error, "could not find or load kernel") );
 
   return kernel;
+}
+
+#ifndef NDEBUG
+cl::Context& Context::getContext(){
+  return m_context;
+}
+
+std::vector<cl::Device> Context::getDevices(){
+  return m_devices;
+}
+#endif
+
+cl::CommandQueue Context::createQueue(){
+  // we will loop on devices each time we want to create a queue
+  static int nextDeviceToUse = 0;
+
+  cl_int error;
+  cl::CommandQueue queue(m_context, m_devices[nextDeviceToUse], 0, &error);
+  if( error != CL_SUCCESS )
+    throw CLError(error, "failed to create command queue");
+
+  // update the next device to use
+  nextDeviceToUse = ( nextDeviceToUse + 1 ) % m_devices.size();
+
+  return queue;
 }

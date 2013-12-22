@@ -60,11 +60,7 @@ int main( const int argc, const char* argv[] ){
     }
 
     // create command queue
-    cl::CommandQueue queue(ctx.getContext(), ctx.getDevices()[0], 0, &error);
-    if( error != CL_SUCCESS ){
-      cerr << "Failed to create command queue\n";
-      return -1;
-    }
+    cl::CommandQueue queue = ctx.createQueue();
 
     // enqueue kernel execution
     cl::Event event;
