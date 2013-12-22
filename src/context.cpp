@@ -88,7 +88,7 @@ Context::Context( std::string programsPath ){
 #endif
 
   // start a context (OpenCL chooses a platform automatically)
-  cl::Context context( devices, NULL, NULL, NULL, &error );
+  m_context = context( devices, NULL, NULL, NULL, &error );
   if( error != CL_SUCCESS )
     throw( CLError( error, "Cannot start a context" ) );
 
@@ -128,7 +128,11 @@ cl::Program Context::loadProgram( const std::string programName ){
 
 }
 
-cl::Kernel Context::getKernel( const std::string programName, 
+cl::Context& Context::getContext(){
+  return m_context;
+}
+
+cl::Kernel& Context::getKernel( const std::string programName, 
     const std::string kernelName ){
 
   cl_int error;

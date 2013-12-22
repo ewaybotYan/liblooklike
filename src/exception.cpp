@@ -1,6 +1,10 @@
 
 #include <string>
 
+#ifndef NDEBUG
+#include<iostream>
+#endif
+
 #include"../include/exception.h"
 
 using namespace std;
@@ -161,20 +165,36 @@ string clErrorCodeName( const int errorCode ){
 // #######
 // # Error
 
-const char* Error::what(){
+Error::Error() throw(){
+  this->errorMsg = "unknown error";
+}
+
+Error::Error( const char* errorMsg ) throw(){
+  this->errorMsg = errorMsg;
+}
+
+const char* Error::what() const throw(){
   return errorMsg.c_str();
 }
+
+#ifndef NDEBUG
+void Error::printMsg(){
+  std::cerr << "ERR: " << errorMsg;
+}
+#endif
 
 // #########
 // # CLError
 
-CLError::CLError( const int clErrorNb, const std::string msg ){
+CLError::CLError( const int clErrorNb, const std::string msg ) throw(){
+  std::string errorMsg;
   if( msg.compare("") == false ){
-    this->errorMsg = msg + " : ";
+    this->errorMsg = msg +
+      "(OpenCL error " + std::to_string(clErrorNb) + " " 
+      + clErrorCodeName( clErrorNb ) +")";
   }else{
-    this->errorMsg = "";
+    this->errorMsg = 
+      "OpenCL error " + std::to_string(clErrorNb) + " " 
+      + clErrorCodeName( clErrorNb );
   }
-  this->errorMsg += 
-    "OpenCL error nb " + std::to_string(clErrorNb) + " (" 
-    + clErrorCodeName( clErrorNb ) +") ";
 }
