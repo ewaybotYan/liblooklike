@@ -168,7 +168,7 @@ const char* Error::what(){
 // #########
 // # CLError
 
-CLError::CLError( const int clErrorNb, const std::string msg = "" ){
+CLError::CLError( const int clErrorNb, const std::string msg ){
   if( msg.compare("") == false ){
     this->errorMsg = msg + " : ";
   }else{

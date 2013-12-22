@@ -12,7 +12,7 @@
 /// default class for exception handling
 class Error: public std::exception{
   public:
-    Error( const char* errorMsg ) const throw();
+    Error( const char* errorMsg ) throw();
     const char* what() const throw();
   private:
     std::string errorMsg;
@@ -22,7 +22,7 @@ class Error: public std::exception{
 class CLError : public Error{
   public:
     /// param clErrorNb the error number returned/set by most OpenCL functions
-    CLError( const int clErrorNb ) const throw();
+    CLError( const int clErrorNb, const std::string msg = "" ) throw();
 };
 
 #endif //EXCEPTION_H
