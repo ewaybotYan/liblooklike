@@ -1,29 +1,6 @@
 
-__kernel void matrix_mult(__global float4 *a_mat,
-__global float4 *b_mat, __global float *c_mat) {
 
-float sum;
-
-int num_rows = get_global_size(0);
-int vectors_per_row = num_rows/4;
-
-int start = get_global_id(0) * vectors_per_row;
-a_mat += start;
-c_mat += start*4;
-
-    for(int i=0; i<num_rows; i++) {
-        sum = 0.0f;
-
-        for(int j=0; j<vectors_per_row; j++) {
-            sum += dot(a_mat[j],
-            b_mat[i*vectors_per_row + j]);
-        }
-
-        c_mat[i] = sum;
-    }
-
-}
-
+#define BLOCK_SIZE 16
 
 ///////////////////////////////////////////////////////////////////////////////
 //! Matrix multiplication on the device: C = A * B
@@ -31,11 +8,11 @@ c_mat += start*4;
 ////////////////////////////////////////////////////////////////////////////////
 __kernel void
 matrixMul( __global float* C, __global float* A, __global float* B, 
-	   __local float* As, __local float* Bs, int wA, int wB)
+           int wA, int wB)
 {
 
     //Block size
-    int block_size = get_global_size(0)
+    int block_size = BLOCK_SIZE;
 
     // Block index
     int bx = get_group_id(0);
@@ -46,19 +23,19 @@ matrixMul( __global float* C, __global float* A, __global float* B,
     int ty = get_local_id(1);
 
     // Index of the first sub-matrix of A processed by the block
-    int aStart = wA * block_size * by;
+    int sAtart = wA * block_size * by;
 
-    // Index of the last sub-matrix of A processed by the block
-    int aEnd   = aStart + wA - 1;
+    // Index of the lsAt sub-matrix of A processed by the block
+    int aEnd   = sAtart + wA - 1;
 
     // Step size used to iterate through the sub-matrices of A
-    int aStep  = block_size;
+    int sAtep  = block_size;
 
     // Index of the first sub-matrix of B processed by the block
-    int bStart = block_size * bx;
+    int sBtart = block_size * bx;
 
     // Step size used to iterate through the sub-matrices of B
-    int bStep  = block_size * wB;
+    int sBtep  = block_size * wB;
 
     // Csub is used to store the element of the block sub-matrix
     // that is computed by the thread
@@ -66,15 +43,23 @@ matrixMul( __global float* C, __global float* A, __global float* B,
 
     // Loop over all the sub-matrices of A and B
     // required to compute the block sub-matrix
-    for (int a = aStart, b = bStart;
+    for (int a = sAtart, b = sBtart;
              a <= aEnd;
-             a += aStep, b += bStep) {
+             a += sAtep, b += sBtep) {
+
+        // Declaration of the local memory array sA 
+        // used to store the sub-matrix of A
+        __local float sA[block_size][block_size];
+ 
+        // Declaration of the local memory array sB 
+        // used to store the sub-matrix of B
+        __local float sB[block_size][block_size];
 
         // Load the matrices from device memory
         // to shared memory; each thread loads
         // one element of each matrix
-        As[ty + tx * block_size] = A[a + wA * ty + tx];
-        Bs[ty + tx * block_size] = B[b + wB * ty + tx];
+        sA[ty + tx * block_size] = A[a + wA * ty + tx];
+        sB[ty + tx * block_size] = B[b + wB * ty + tx];
 	
         // Synchronize to make sure the matrices are loaded
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -84,7 +69,7 @@ matrixMul( __global float* C, __global float* A, __global float* B,
         // of the block sub-matrix        
         #pragma unroll
         for (int k = 0; k < block_size; ++k)
-            Csub += As[ty + k * block_size] * Bs[k + tx * block_size];
+            Csub += sA[ty + k * block_size] * sB[k + tx * block_size];
 
         // Synchronize to make sure that the preceding
         // computation is done before loading two new
@@ -94,7 +79,10 @@ matrixMul( __global float* C, __global float* A, __global float* B,
 
     // Write the block sub-matrix to device memory;
     // each thread writes one element
-    C[get_global_id(1) * get_global_size(0) + get_global_id(0)] = Csub;
+    int c = wB * block_size * by + block_size * bx;
+    C[c + wB * ty + tx] = Csub;
+
+    //C[get_global_id(1) * get_global_size(0) + get_global_id(0)] = Csub;
 
 }
 
