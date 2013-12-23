@@ -1,13 +1,14 @@
-
+//La prise en compte des symétries semble être compliquée...
+//J'ai l'impression que les i et j sont inversés.
 
 #define BLOCK_SIZE 16
 
-///////////////////////////////////////////////////////////////////////////////
-//! Matrix multiplication on the device: C = A * B
-//! wA is A's width and wB is B's width
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//! Matrix multiplication on the device: C = A * B !//
+//! wA is A's width and wB is B's width            !//
+//////////////////////////////////////////////////////
 __kernel void
-matrixMul( __global float* C, __global float* A, __global float* B, 
+matrixMult( __global float* C, __global float* A, __global float* B, 
            int wA, int wB)
 {
 
@@ -23,19 +24,19 @@ matrixMul( __global float* C, __global float* A, __global float* B,
     int ty = get_local_id(1);
 
     // Index of the first sub-matrix of A processed by the block
-    int sAtart = wA * block_size * by;
+    int aStart = wA * block_size * by;
 
     // Index of the lsAt sub-matrix of A processed by the block
-    int aEnd   = sAtart + wA - 1;
+    int aEnd   = aStart + wA - 1;
 
     // Step size used to iterate through the sub-matrices of A
-    int sAtep  = block_size;
+    int aStep  = block_size;
 
     // Index of the first sub-matrix of B processed by the block
-    int sBtart = block_size * bx;
+    int bStart = block_size * bx;
 
     // Step size used to iterate through the sub-matrices of B
-    int sBtep  = block_size * wB;
+    int bStep  = block_size * wB;
 
     // Csub is used to store the element of the block sub-matrix
     // that is computed by the thread
@@ -43,9 +44,9 @@ matrixMul( __global float* C, __global float* A, __global float* B,
 
     // Loop over all the sub-matrices of A and B
     // required to compute the block sub-matrix
-    for (int a = sAtart, b = sBtart;
+    for (int a = aStart, b = bStart;
              a <= aEnd;
-             a += sAtep, b += sBtep) {
+             a += aStep, b += bStep) {
 
         // Declaration of the local memory array sA 
         // used to store the sub-matrix of A
@@ -79,10 +80,11 @@ matrixMul( __global float* C, __global float* A, __global float* B,
 
     // Write the block sub-matrix to device memory;
     // each thread writes one element
-    int c = wB * block_size * by + block_size * bx;
-    C[c + wB * ty + tx] = Csub;
 
-    //C[get_global_id(1) * get_global_size(0) + get_global_id(0)] = Csub;
+    //int c = wB * block_size * by + block_size * bx;
+    //C[c + wB * ty + tx] = Csub;
+
+    C[get_global_id(1) * get_global_size(0) + get_global_id(0)] = Csub;
 
 }
 
