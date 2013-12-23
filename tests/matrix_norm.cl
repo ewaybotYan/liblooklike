@@ -10,7 +10,7 @@ matrixNorm(__global float* A, int wA)
 {
 
     //Block size
-    int block_size = sqrt(get_global_id(0));
+    int block_size = BLOCK_SIZE;
 
     // Block index
     int bx = get_group_id(0);
@@ -41,7 +41,7 @@ matrixNorm(__global float* A, int wA)
 
         // Declaration of the local memory array sA 
         // used to store a column of A
-        __local float sA[block_size][block_size];
+        __local float Asub;
         __local float mu=0;
         __local float sigma=0;
 
@@ -49,7 +49,7 @@ matrixNorm(__global float* A, int wA)
         // to shared memory; each thread loads
         // one element of each matrix
         sA[ty + tx * block_size] = A[a + wA * ty + tx];
-	
+
         // Synchronize to make sure the matrice is loaded
         barrier(CLK_LOCAL_MEM_FENCE);
 
@@ -60,7 +60,7 @@ matrixNorm(__global float* A, int wA)
         for (int k = 0; k < block_size; ++k) {
 
             // Calculation of the column average
-            mu += sA[k + tx * block_size];
+            mu += A[k + tx * block_size];
         }
 
         mu = mu / block_size;
@@ -75,7 +75,7 @@ matrixNorm(__global float* A, int wA)
         for (int k = 0; k < block_size; ++k) {
 
             // Calculation of the column average
-            sigma += (sA[k + tx * block_size] - mu)^2;
+            sigma += (A[k + tx * block_size] - mu)^2;
         }
 
         sigma = sigma / block_size;
@@ -89,7 +89,7 @@ matrixNorm(__global float* A, int wA)
         #pragma unroll
         for (int k = 0; k < block_size; ++k) {
 
-            sA[k + tx * block_size] = (sA[k + tx * block_size] - sigma) / mu;
+            Asub = (A[k + tx * block_size] - sigma) / mu;
         }
 
         // Synchronize to make sure that the preceding
@@ -100,8 +100,5 @@ matrixNorm(__global float* A, int wA)
 
     // Write the block sub-matrix to device memory;
     // each thread writes one element
-    int a = aStart;
-    A[a + wA * ty + tx] = sA[ty + tx * block_size];
-
-    //C[get_global_id(1) * get_global_size(0) + get_global_id(0)] = Csub;
+    A[get_global_id(1) * get_global_size(0) + get_global_id(0)] = Asub;
 }

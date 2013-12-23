@@ -61,7 +61,7 @@ matrixMult( __global float* C, __global float* A, __global float* B,
         // one element of each matrix
         sA[ty + tx * block_size] = A[a + wA * ty + tx];
         sB[ty + tx * block_size] = B[b + wB * ty + tx];
-	
+
         // Synchronize to make sure the matrices are loaded
         barrier(CLK_LOCAL_MEM_FENCE);
 
@@ -80,11 +80,6 @@ matrixMult( __global float* C, __global float* A, __global float* B,
 
     // Write the block sub-matrix to device memory;
     // each thread writes one element
-
-    //int c = wB * block_size * by + block_size * bx;
-    //C[c + wB * ty + tx] = Csub;
-
     C[get_global_id(1) * get_global_size(0) + get_global_id(0)] = Csub;
 
 }
-
