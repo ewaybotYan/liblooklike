@@ -3,3 +3,4 @@
 *.o
 draft/
 build/
+*.kdev4
