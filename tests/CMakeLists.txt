@@ -105,6 +105,23 @@ add_executable(
 
 target_link_libraries(test_mathexpression ${OPENCL_LIBRARIES})
 
+# test_mathexpression2
+
+include_directories(
+  ${OPENCL_INCLUDE_DIRS}
+  )
+
+add_executable(
+  test_mathexpression2
+  test_mathexpression2.cpp
+  real.cpp
+  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ${PROJECT_SOURCE_DIR}/src/mathexpression.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+target_link_libraries(test_mathexpression2 ${OPENCL_LIBRARIES})
+
 #######
 # tests
 
@@ -115,3 +132,6 @@ add_test( test_context ${EXECUTABLE_OUTPUT_PATH}/test_context "${CMAKE_CURRENT_S
 
 # test_mathexpression
 add_test( test_mathexpression ${EXECUTABLE_OUTPUT_PATH}/test_mathexpression "${CMAKE_CURRENT_SOURCE_DIR}" )
+
+# test_mathexpression2
+add_test( test_mathexpression2 ${EXECUTABLE_OUTPUT_PATH}/test_mathexpression2 "${CMAKE_CURRENT_SOURCE_DIR}" )

@@ -12,6 +12,7 @@ class Real : public MathExpression{
     Real( const bool keepInCLMem, const std::string programName, const std::string kernelName  );
      ~Real(){};
     static Real sum( Real& a, Real& b, const bool keepInCLMem = false );
+    static Real mul( Real& a, Real& b, const bool keepInCLMem = false );
     float getValue( );
     /// nearly an alias of @ref retrieveData, creates a command queue before
     void retrieveData( Context& context );

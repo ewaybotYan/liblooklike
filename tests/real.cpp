@@ -31,6 +31,13 @@ Real Real::sum( Real& a, Real& b, const bool keepInCLMem ) {
     return result;
 }
 
+Real Real::mul( Real& a, Real& b, const bool keepInCLMem ) {
+    Real result( keepInCLMem, "test_real", "real_real_mul" );
+    result.addChild(&a);
+    result.addChild(&b);
+    return result;
+}
+
 // #####################
 // # getters and setters
 
