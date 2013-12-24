@@ -12,88 +12,115 @@
 
 #include<CL/cl.hpp>
 
-enum ExpressionState{
-  OTHER,
-  ALLOCATED,// a buffer was allocated to recieve the value on a device
-  QUEUED// computation is in the computation queue
- /* COMPUTED// computation is over, result can be taken back*/
+#include "context.h"
+
+enum ExpressionState {
+    INITIAL,
+    ALLOCATED,// a buffer was allocated to recieve the value on a device
+    QUEUED// computation is in the computation queue
+    /* COMPUTED// computation is over, result can be taken back*/
 };
 
-enum AllocationResult{
-  NONE_ALLOCATED,
-  ONE_COMPUTED_EXPRESSION_ALLOCATED,
-  TERMINAL_EXPRESSION_ALLOCATED,
-  COMPUTED_EXPRESSION_ALLOCATED
+enum AllocationResult {
+    NONE_ALLOCATED,
+    ONE_COMPUTED_EXPRESSION_ALLOCATED,
+    TERMINAL_EXPRESSION_ALLOCATED,
+    COMPUTED_EXPRESSION_ALLOCATED
 };
 
-class MathExpression{
-  public:
+cl::Context* getContextFromQueue( cl::CommandQueue queue );
+
+class MathExpression {
+public:
+    ~MathExpression(){};
+    // ##########################
+    // # constructors/destructors
+
     // @param keepInCLMem indicates wether data of the expression has to be kept
     //        in OpenCL device memory even if no parent expression is using it.
     MathExpression( const bool isTerminal, const bool keepInCLMem );
 
-    /// @brief compute the value of the Expression
-    /// @note  this is a synchronous method, will return when computation is
-    ///        over or if it has ended.
-    void evaluate( cl::CommandQueue queue );
+    // #################
+    // # getters/setters
 
-    /// @brief adds a dependency to the expression
-    /// @param child the expression needed to evaluate
-    /// @param position position of the subexpression in the formula used to
-    ///        compute the expression. Ex: a in a + b is at position 0
-    void addChild( MathExpression* child, const int pos );
-
-    ExpressionState getState();
-
-  protected:
     /// says if the expression has to be computed before one can read its value
     bool isComputed();
+
+    ExpressionState getState();
 
     std::vector<cl::Buffer> getData();
 
     cl::Event& getEndOfEvaluation();
 
-    /// @brief launch evaluation    
+    // #########
+    // # methods
+    
+    /// @brief compute the value of the Expression
+    /// @param ctx a valid context
+    /// @param queue an optionnal queue to use, it will be created if not provided
+    void evaluate( Context& ctx );
+    void evaluate( Context& ctx,  cl::CommandQueue& queue );
+
+    /// @brief adds a dependency to the expression
+    /// @param child the expression needed to evaluate
+    /// @warning the user has to push the children in the right order
+    void addChild( MathExpression* child );
+
+    void increaseParentNb();
+    
+protected:
+
+    /// @brief launch evaluation
     /// @note  evaluate may fail if no memory space was allocated for the
     ///        object. It is up to the parent Expression evaluate function to
     ///        allocate memory and execute evaluate again.
     /// @note  evaluate might be a recursive function, if it depends on the
     ///        existence of other operations results
-    virtual void enqueue();
+    virtual void enqueue( Context& context, cl::CommandQueue& queue ) = 0;
 
-    virtual void retrieveData();
+    virtual void retrieveData() = 0;
+
+    /// describe the state of the expression
+    ExpressionState m_state = INITIAL;
+
+    std::vector<cl::Buffer> m_data;
+
+    /// dependencies requiered to compute this
+    std::vector<MathExpression*> m_children;
+
+    /// end of computation event
+    cl::Event m_endOfEvaluation;
+
+private:
+
+    // #################
+    // # private methods
 
     /// @brief  try to allocate memory on the opencl device for this element
     ///         and its childs, priority is given to the children
     /// @return true if allocation succeeded, false otherwise
-    AllocationResult allocateMemory();
+    AllocationResult allocateMemory( Context& context );
 
     /// @brief  allocate memory in which we will put the result of this
     ///         computation
-    virtual bool allocateForResult();
+    virtual bool allocateForResult( Context& context ) = 0;
 
     /// @brief  try to deallocate memory if it has no parent
     void deallocateMemory();
 
-    virtual void deallocateForResult();
+    virtual void deallocateForResult() = 0;
 
-    /// dependencies requiered to compute this
-    std::vector<MathExpression*> m_children;
-  private:
+    // #########
+    // # members
+
     /// is it a terminal expression or a computed one?
     // this is used in allocation to check wether a expression that needs to be
     //  computed has buffers in order to store its value
     bool m_isTerminal;
-    /// describe the state of the expression
-    ExpressionState m_state = OTHER;
-    /// end of computation event
-    cl::Event m_endOfEvaluation;
-    /*
-    /// data location in openCL memory
-    std::vector<cl::Buffer> m_data;
-    */
+
     /// the event associated to the computation in the openCL queue
-    cl::Event  m_computationState;
+    cl::Event m_computationState;
+
     /// number of parent expressions that will require our data
     int m_nbParents = 0;
 

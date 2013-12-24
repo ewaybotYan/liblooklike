@@ -15,6 +15,11 @@ bool checkChildrenEnqueued( const std::vector<MathExpression*> children ){
   return res;
 }
 
+/*
+cl::Context getContextFromQueue( cl::CommandQueue queue ){
+	return queue.getInfo<CL_QUEUE_CONTEXT>();
+}*/
+
 
 // ################
 // # constructor(s)
@@ -37,6 +42,10 @@ ExpressionState MathExpression::getState(){
   return m_state;
 }
 
+std::vector<cl::Buffer> MathExpression::getData(){
+    return m_data;
+}
+
 cl::Event& MathExpression::getEndOfEvaluation(){
   return m_endOfEvaluation;
 }
@@ -44,48 +53,66 @@ cl::Event& MathExpression::getEndOfEvaluation(){
 // #########
 // # methods
 
-void MathExpression::evaluate( cl::CommandQueue queue ){
+void MathExpression::addChild(MathExpression* child){
+  m_children.push_back(child);
+  child->increaseParentNb();
+}
+
+void MathExpression::increaseParentNb(){
+  m_nbParents++;
+}
+
+void MathExpression::evaluate( Context& ctx ){
+  cl::CommandQueue queue = ctx.createQueue();
+  evaluate( ctx, queue );
+}
+
+void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
+  #ifndef NDEBUG
+  std::cout << "evaluating" << std::endl;
+#endif
   if( m_state >= QUEUED)
-    return; 
-  // m_nbParents++ ????
+    return;
   bool areChildrenEnqueued = checkChildrenEnqueued( m_children );
   while( !areChildrenEnqueued ){
     for( MathExpression* child : m_children )
       if( child->getState() == QUEUED )
         child->getEndOfEvaluation().wait();
     deallocateMemory();
-    AllocationResult allocationRes = allocateMemory();
+    AllocationResult allocationRes = allocateMemory( ctx );
     if( allocationRes < ONE_COMPUTED_EXPRESSION_ALLOCATED )
       throw Error("not enouph memory to compute expression");
     for( MathExpression* child : m_children )
-      child->evaluate( queue );
+      child->evaluate( ctx,  queue );
   }
-  enqueue();
+  enqueue( ctx, queue );
   m_state = QUEUED;
 }
 
-AllocationResult MathExpression::allocateMemory(){
+AllocationResult MathExpression::allocateMemory( Context& context ){
+  #ifndef NDEBUG
+  std::cout << "allocating memory" << std::endl;
+#endif
   if( m_state >= QUEUED ) // if memory is not needed, do as if we had it
     return NONE_ALLOCATED; 
   if( m_isTerminal ){
-    if( allocateForResult() ){
+    if( allocateForResult(context) ){
       return TERMINAL_EXPRESSION_ALLOCATED; 
     }else{
       return NONE_ALLOCATED;
     }
   }else{
-    AllocationResult res;
     AllocationResult best;// best memory allocation state
     AllocationResult worst;// worst memory allocation state
     for( MathExpression* child : m_children ){
-      AllocationResult tmp = child->allocateMemory();
+      AllocationResult tmp = child->allocateMemory( context );
       best = best < tmp ? tmp : best;
       worst = worst > tmp ? tmp : worst;
     }
     if( worst <= ONE_COMPUTED_EXPRESSION_ALLOCATED ){
       return best;
     }else{// all subexpressions allocated
-      bool resAllocated = allocateForResult();
+      bool resAllocated = allocateForResult( context );
       if( resAllocated ){
         m_state = ALLOCATED;
         return COMPUTED_EXPRESSION_ALLOCATED;
@@ -102,6 +129,9 @@ AllocationResult MathExpression::allocateMemory(){
 }
 
 void MathExpression::deallocateMemory(){
+  #ifndef NDEBUG
+  std::cout << "deallocating memory" << std::endl;
+#endif
   for( MathExpression* child : m_children )
     child->deallocateMemory();
   if( m_nbParents <= 0 )

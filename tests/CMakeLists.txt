@@ -88,6 +88,22 @@ add_executable(
 
 target_link_libraries(test_context ${OPENCL_LIBRARIES})
 
+# test_mathexpression
+
+include_directories(
+  ${OPENCL_INCLUDE_DIRS}
+  )
+
+add_executable(
+  test_mathexpression
+  test_mathexpression.cpp
+  real.cpp
+  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ${PROJECT_SOURCE_DIR}/src/mathexpression.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+target_link_libraries(test_mathexpression ${OPENCL_LIBRARIES})
 
 #######
 # tests

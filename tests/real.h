@@ -4,19 +4,23 @@
 #include<string>
 
 #include "../include/mathexpression.h"
+#include "../include/context.h"
 
-class Real : protected MathExpression{
+class Real : public MathExpression{
   public:
     Real( const float value, const bool keepInCLMem = false );
-    Real sum( Real& a, Real& b, const bool keepInCLMem = false );
-    float getValue() const;
-     
+    Real( const bool keepInCLMem, const std::string programName, const std::string kernelName  );
+     ~Real(){};
+    static Real sum( Real& a, Real& b, const bool keepInCLMem = false );
+    float getValue();
+    void retrieveData() override;
+
   protected:
     void setProgramName( const std::string programName );
     void setKernelName( const std::string kernelName );
-    void enqueue();
-    bool allocateForResult();
-    void deallocateForResult();
+    void enqueue( Context& context, cl::CommandQueue& queue ) override;
+    bool allocateForResult( Context& context ) override;
+    void deallocateForResult() override;
 
   private:
     float* m_value;
