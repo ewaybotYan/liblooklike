@@ -78,7 +78,10 @@ protected:
     ///        existence of other operations results
     virtual void enqueue( Context& context, cl::CommandQueue& queue ) = 0;
 
-    virtual void retrieveData() = 0;
+    virtual void retrieveData( Context& context, cl::CommandQueue& queue ) = 0;
+    
+
+    
 
     /// describe the state of the expression
     ExpressionState m_state = INITIAL;

@@ -6,7 +6,11 @@
 
 #include "../include/exception.h"
 #include "../include/context.h"
+#include "../include/mathexpression.h"
 #include "real.h"
+
+#include<iostream>
+#include<cmath>
 
 using namespace std;
 
@@ -30,10 +34,13 @@ int main( int argc, char* argv[] ){
     Real b = Real(2.0);
     Real c = Real::sum(a, b);
     c.evaluate( ctx );
+    c.retrieveData( ctx );
     float d = c.getValue();
-    if( d - 3.0 < 0.0000001 ){
+    if( std::abs( d - 3.0 ) < 0.0000001 ){
+      std::cout << "computed result matches with error : " << d - 3.0 << "\n";
       return 0;
     }else{
+      std::cerr << "computed result matches with error : " << d - 3.0 << "\n";
       return -1;
     }
   }catch( Error& e ){

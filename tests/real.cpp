@@ -4,6 +4,9 @@
 #include "real.h"
 #include "../include/context.h"
 
+// trick to supress unused variable warning
+#define _unused(x) ((void)x)
+
 const int maxNbAllocations = 4;
 int nbAllocations = 0;
 
@@ -31,19 +34,21 @@ Real Real::sum( Real& a, Real& b, const bool keepInCLMem ) {
 // #####################
 // # getters and setters
 
-float Real::getValue() {
-    if( isComputed() ) {
-        if( getState() > QUEUED ) {
-            getEndOfEvaluation().wait();
-            retrieveData();
-            return *m_value;
-        } else {
-            throw Error("Cannot get value as it has not been computed");
-        }
-    } else {
-        return 0;
-    }
+float Real::getValue( ) {
+  if( m_value == 0 )
+    throw( Error("Cannot get value as it has not been computed") );
+  return *m_value;
 }
+/*
+float Real::getValue( Context& context, cl::CommandQueue& queue ){
+  if( isComputed() && getState() >= QUEUED ) {
+    getEndOfEvaluation().wait();
+    retrieveData( context, queue );
+  }else{
+    throw Error("Cannot get value as it has not been computed");
+  }
+  return *m_value;
+}*/
 
 void Real::setProgramName(const std::string programName) {
     m_programName = programName;
@@ -143,9 +148,25 @@ void Real::enqueue( Context& context, cl::CommandQueue& queue ) {
     m_state = QUEUED;
 }
 
-void Real::retrieveData(){
-  #ifndef NDEBUG
-  std::cout << "retrieving data" << std::endl;
+void Real::retrieveData( Context& context, cl::CommandQueue& queue ){
+#ifndef NDEBUG
+    std::cout << "retrieving data" << std::endl;
 #endif
- m_value = 0;
+    _unused(context);
+    
+    cl_int error;
+    m_value = new float;
+    error = queue.enqueueReadBuffer(
+                getData()[0],
+                CL_TRUE,
+                0,
+                sizeof(float),
+                m_value);
+    if( error != CL_SUCCESS ) 
+      throw( CLError( error, "failed to enqueue data reading" ) );
+}
+
+void Real::retrieveData( Context& context ){
+   cl::CommandQueue queue = context.createQueue();
+   retrieveData( context, queue );
 }

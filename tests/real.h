@@ -12,8 +12,10 @@ class Real : public MathExpression{
     Real( const bool keepInCLMem, const std::string programName, const std::string kernelName  );
      ~Real(){};
     static Real sum( Real& a, Real& b, const bool keepInCLMem = false );
-    float getValue();
-    void retrieveData() override;
+    float getValue( );
+    /// nearly an alias of @ref retrieveData, creates a command queue before
+    void retrieveData( Context& context );
+    void retrieveData(Context& context, cl::CommandQueue& queue ) override;
 
   protected:
     void setProgramName( const std::string programName );
