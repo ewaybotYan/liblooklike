@@ -73,8 +73,7 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
 #endif
   if( m_state >= QUEUED)
     return;
-  bool areChildrenEnqueued = checkChildrenEnqueued( m_children );
-  while( !areChildrenEnqueued ){
+  while( !checkChildrenEnqueued( m_children ) ){
     for( MathExpression* child : m_children )
       if( child->getState() == QUEUED )
         child->getEndOfEvaluation().wait();
@@ -102,8 +101,8 @@ AllocationResult MathExpression::allocateMemory( Context& context ){
       return NONE_ALLOCATED;
     }
   }else{
-    AllocationResult best;// best memory allocation state
-    AllocationResult worst;// worst memory allocation state
+    AllocationResult best = NONE_ALLOCATED;// best memory allocation state
+    AllocationResult worst = TERMINAL_EXPRESSION_ALLOCATED;// worst memory allocation state
     for( MathExpression* child : m_children ){
       AllocationResult tmp = child->allocateMemory( context );
       best = best < tmp ? tmp : best;
