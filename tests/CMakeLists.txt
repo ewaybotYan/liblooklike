@@ -95,4 +95,7 @@ target_link_libraries(test_context ${OPENCL_LIBRARIES})
 enable_testing()
 
 # test_context
-add_test( test_context ${EXECUTABLE_OUTPUT_PATH}/test_context "${CURRENT_SOURCE_DIR}/test_kernel.cl" )
+add_test( test_context ${EXECUTABLE_OUTPUT_PATH}/test_context "${CMAKE_CURRENT_SOURCE_DIR}" )
+
+# test_mathexpression
+add_test( test_mathexpression ${EXECUTABLE_OUTPUT_PATH}/test_mathexpression "${CMAKE_CURRENT_SOURCE_DIR}" )

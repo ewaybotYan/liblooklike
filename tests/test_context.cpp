@@ -14,7 +14,7 @@ using namespace std;
 
 // the test string which is also a constant in the kernel code
 const std::string hw("Hello World\n");
-const std::string programName("test_kernel.cl");
+const std::string programName("test_kernel");
 const std::string kernelName("hello");
 
 void usage(){
@@ -103,6 +103,7 @@ int main( const int argc, const char* argv[] ){
 
   }catch( Error& e ){
     e.printMsg();
+    return -1;
   }
 
   return 0;
