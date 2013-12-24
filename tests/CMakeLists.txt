@@ -88,6 +88,22 @@ add_executable(
 
 target_link_libraries(test_context ${OPENCL_LIBRARIES})
 
+# test_mathexpression
+
+include_directories(
+  ${OPENCL_INCLUDE_DIRS}
+  )
+
+add_executable(
+  test_mathexpression
+  test_mathexpression.cpp
+  real.cpp
+  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ${PROJECT_SOURCE_DIR}/src/mathexpression.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+target_link_libraries(test_mathexpression ${OPENCL_LIBRARIES})
 
 #######
 # tests
@@ -95,4 +111,7 @@ target_link_libraries(test_context ${OPENCL_LIBRARIES})
 enable_testing()
 
 # test_context
-add_test( test_context ${EXECUTABLE_OUTPUT_PATH}/test_context "${CURRENT_SOURCE_DIR}/test_kernel.cl" )
+add_test( test_context ${EXECUTABLE_OUTPUT_PATH}/test_context "${CMAKE_CURRENT_SOURCE_DIR}" )
+
+# test_mathexpression
+add_test( test_mathexpression ${EXECUTABLE_OUTPUT_PATH}/test_mathexpression "${CMAKE_CURRENT_SOURCE_DIR}" )

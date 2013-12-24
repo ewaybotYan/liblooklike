@@ -78,7 +78,7 @@ Context::Context( std::string programsPath ){
   for( auto plf : platformList ){
     error = plf.getDevices(CL_DEVICE_TYPE_ALL, &m_devices);
     if( error != CL_SUCCESS )
-      throw CLError( error );
+      throw CLError( error, "No device found on on of the platforms" );
   }
   if( m_devices.size() == 0 )
     throw( Error("no device found") );
@@ -105,27 +105,24 @@ cl::Program Context::loadProgram( const std::string programName ){
 
   // load file
   std::string fileName(m_programsPath + "/" + programName + ".cl");
-  std::string prog = "";
-  try{
-    std::ifstream file( fileName );
-     prog = std::string(
-        std::istreambuf_iterator<char>(file),
-        (std::istreambuf_iterator<char>())
-        );
-  }catch( std::ifstream::failure& e ){
-    throw( Error( "could not open " + fileName
-          + " : " + e.what() ) );
-  }
-
+    std::string prog;
+    std::ifstream file;
+    file.open( fileName, std::ios::in );
+    if( !file )
+        throw Error( "could not open " + fileName);
+    prog = std::string(
+               std::istreambuf_iterator<char>(file),
+               (std::istreambuf_iterator<char>())
+           );
   // load and build kernels
   cl::Program::Sources source = 
-    cl::Program::Sources(1, std::make_pair(fileName.c_str(), prog.length()+1));
+    cl::Program::Sources(1, std::make_pair(prog.c_str(), prog.length()+1));
   cl::Program program(m_context, source);
   error = program.build(m_devices,"");
   if( error != CL_SUCCESS )
     throw( CLError( error, "Failed to build kernel" ) );
+  
   return program;
-
 }
 
 cl::Kernel Context::getKernel( const std::string programName, 
