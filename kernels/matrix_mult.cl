@@ -1,14 +1,13 @@
-//La prise en compte des symétries semble être compliquée...
-//J'ai l'impression que les i et j sont inversés.
-
+#ifndef BLOCK_SIZE
 #define BLOCK_SIZE 16
+#endif
 
 //////////////////////////////////////////////////////
 //! Matrix multiplication on the device: C = A * B !//
 //! wA is A's width and wB is B's width            !//
 //////////////////////////////////////////////////////
 __kernel void
-matrixMult( __global float* C, __global float* A, __global float* B, 
+matrix_matrix_multiplication( __global float* C, __global float* A, __global float* B, 
            int wA, int wB)
 {
 

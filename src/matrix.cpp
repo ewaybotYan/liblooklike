@@ -1,3 +1,9 @@
+/**
+ *  @file   matrix.cpp
+ *  @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
+ *  @brief  implements methods from @ref MathExpression for matrices
+ */
+
 #include "../include/exception.h"
 #include "../include/mathexpression.h"
 
@@ -37,13 +43,17 @@ Matrix::Matrix ( const std::string programName,
 // # mathematical operations
 
 Matrix  Matrix::mul ( Matrix& A, Matrix& B, const bool keepInCLMem) {
-    Matrix result ( "matrix", "matrix_matrix_mul", A.getHeight(), A.getWidth(), keepInCLMem );
+    if( A.getWidth() != B.getHeight() )
+      throw( Error("cannot multiply matrices: dimensions mismatch") );
+    Matrix result ( "matrix", "matrix_matrix_mul", A.getHeight(), B.getWidth(), keepInCLMem );
     result.addChild ( &A );
     result.addChild ( &B );
     return result;
 }
 
 Matrix  Matrix::add ( Matrix& A, Matrix& B, const bool keepInCLMem) {
+    if( (A.getHeight() != B.getHeight())||(A.getWidth()!=B.getWidth() ) )
+      throw( Error("cannot add matrices: dimensions mismatch") );      
     Matrix result ( "matrix", "matrix_matrix_add", A.getHeight(), A.getWidth(), keepInCLMem );
     result.addChild ( &A );
     result.addChild ( &B );
@@ -68,7 +78,7 @@ float Matrix::getValue ( const int i, const int j ) {
     return m_value[ i*m_n+j ];
 }
 
-float* Matrix::getValues(){
+float* Matrix::getValues() const{
     return m_value;
 }
 
@@ -133,9 +143,8 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
         // create kernel
         cl::Kernel kernel = context.getKernel ( m_programName, m_kernelName );
 
-        //by this point, the code is specific to the operation
+        // by this point, the code is specific to the operation
         if ( m_kernelName == "matrix_normalize" ) {
-
             //set arguments
             kernel.setArg ( 0, m_data[0] );
             kernel.setArg ( 1, m_children[0]->getData() [0] );
@@ -158,7 +167,31 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
                     );
             if ( error != CL_SUCCESS )
                 throw ( CLError ( error, "failed to enqueue kernel execution" ) );
-        }
+        }else if ( m_kernelName == "matrix_matrix_mul" ){
+	    //set arguments
+            kernel.setArg ( 0, m_data[0] );
+            kernel.setArg ( 1, m_children[0]->getData() [0] );
+	    kernel.setArg ( 2, m_children[0]->getData() [1] );
+            kernel.setArg<int> ( 3, m_m );
+            kernel.setArg<int> ( 4, m_n );
+
+            // prepare dependencies
+            std::vector<cl::Event> dependencies;
+            dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
+
+            //enqueue kernel execution
+            cl_int error;
+            error = queue.enqueueNDRangeKernel (
+                        kernel,
+                        cl::NullRange,
+                        cl::NDRange ( 1 ),
+                        cl::NDRange ( m_m, m_n ),
+                        &dependencies,
+                        &m_endOfEvaluation
+                    );
+            if ( error != CL_SUCCESS )
+                throw ( CLError ( error, "failed to enqueue kernel execution" ) );
+	}
 
     } else { // this is a terminal expression, just load data in the buffer
 #ifndef NDEBUG
