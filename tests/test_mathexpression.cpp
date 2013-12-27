@@ -30,11 +30,12 @@ int main( int argc, char* argv[] ){
   try{
     
     Context ctx(path);
+    cl::CommandQueue queue = ctx.createQueue();
     Real a = Real(1.0);
     Real b = Real(2.0);
     Real c = Real::sum(a, b);
-    c.evaluate( ctx );
-    c.retrieveData( ctx );
+    c.evaluate( ctx, queue );
+    c.retrieveData( ctx, queue );
     float d = c.getValue();
     if( std::abs( d - 3.0 ) < 0.0000001 ){
       std::cout << "computed result matches with error : " << d - 3.0 << "\n";

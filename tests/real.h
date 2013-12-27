@@ -13,9 +13,7 @@ class Real : public MathExpression{
      ~Real(){};
     static Real sum( Real& a, Real& b, const bool keepInCLMem = false );
     static Real mul( Real& a, Real& b, const bool keepInCLMem = false );
-    float getValue( );
-    /// nearly an alias of @ref retrieveData, creates a command queue before
-    void retrieveData( Context& context );
+    float getValue();
     void retrieveData(Context& context, cl::CommandQueue& queue ) override;
 
   protected:
@@ -23,7 +21,6 @@ class Real : public MathExpression{
     void setKernelName( const std::string kernelName );
     void enqueue( Context& context, cl::CommandQueue& queue ) override;
     bool allocateForResult( Context& context ) override;
-    void deallocateForResult() override;
 
   private:
     float* m_value;

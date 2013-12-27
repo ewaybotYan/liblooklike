@@ -95,16 +95,6 @@ bool Real::allocateForResult( Context& context ) {
     }
 }
 
-void Real::deallocateForResult() {
-  #ifndef NDEBUG
-  std::cout << "deallocating for result" << std::endl;
-#endif
-    if( getState() == ALLOCATED ) {
-        m_data.pop_back();
-        m_state = INITIAL;
-    }
-}
-
 
 // #########
 // # methods
@@ -171,9 +161,4 @@ void Real::retrieveData( Context& context, cl::CommandQueue& queue ){
                 m_value);
     if( error != CL_SUCCESS ) 
       throw( CLError( error, "failed to enqueue data reading" ) );
-}
-
-void Real::retrieveData( Context& context ){
-   cl::CommandQueue queue = context.createQueue();
-   retrieveData( context, queue );
 }
