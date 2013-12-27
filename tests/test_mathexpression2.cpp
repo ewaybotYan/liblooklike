@@ -25,7 +25,7 @@ int main( int argc, char* argv[] ){
     usage();
     return -1;
   }
-  std::string path(argv[1]);
+  std::string path(argv[argc-1]);
 
   try{
     
