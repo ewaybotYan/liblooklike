@@ -51,9 +51,16 @@ public:
     std::vector<cl::Buffer> getData();
 
     cl::Event& getEndOfEvaluation();
+    
+    void setQueue( cl::CommandQueue queue );
+    cl::CommandQueue& getQueue();
+    
 
     // #########
     // # methods
+    
+    /// @brief creates a cl CommandQueue that will be used internally for computation
+    void createQueue();
     
     /// @brief compute the value of the Expression
     /// @param ctx a valid context
@@ -68,6 +75,8 @@ public:
 
     void increaseParentNb();
     
+
+    
 protected:
 
     /// @brief launch evaluation
@@ -79,9 +88,6 @@ protected:
     virtual void enqueue( Context& context, cl::CommandQueue& queue ) = 0;
 
     virtual void retrieveData( Context& context, cl::CommandQueue& queue ) = 0;
-    
-
-    
 
     /// describe the state of the expression
     ExpressionState m_state = INITIAL;
@@ -111,7 +117,7 @@ private:
     /// @brief  try to deallocate memory if it has no parent
     void deallocateMemory();
 
-    virtual void deallocateForResult() = 0;
+    void deallocateForResult();
 
     // #########
     // # members

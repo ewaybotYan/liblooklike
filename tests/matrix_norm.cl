@@ -6,7 +6,7 @@
 //! wA is A's width                                !//
 //////////////////////////////////////////////////////
 __kernel void
-matrixNorm(__global float* A, int wA, int n, int m)
+matrixNorm(__global float* A, int wA, int n int m)
 {
     //Block size
     int block_size = BLOCK_SIZE;

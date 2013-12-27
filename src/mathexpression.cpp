@@ -136,3 +136,11 @@ void MathExpression::deallocateMemory(){
   if( m_nbParents <= 0 )
     deallocateForResult();
 }
+
+void MathExpression::deallocateForResult() {
+  #ifndef NDEBUG
+  std::cout << "deallocating for result" << std::endl;
+#endif
+  m_data.clear();
+  m_state = INITIAL;
+}
