@@ -118,7 +118,9 @@ cl::Program Context::loadProgram( const std::string programName ){
   cl::Program::Sources source = 
     cl::Program::Sources(1, std::make_pair(prog.c_str(), prog.length()+1));
   cl::Program program(m_context, source);
+  try{
   error = program.build(m_devices,"");
+  }catch( std::exception e ){}
   if( error != CL_SUCCESS ){
     std::string buildLog;
     program.getBuildInfo( m_devices[0], CL_PROGRAM_BUILD_LOG, &buildLog);

@@ -65,7 +65,7 @@ public:
     /// @brief compute the value of the Expression
     /// @param ctx a valid context
     /// @param queue an optionnal queue to use, it will be created if not provided
-    void evaluate( Context& ctx );
+    //void evaluate( Context& ctx );
     void evaluate( Context& ctx,  cl::CommandQueue& queue );
 
     /// @brief adds a dependency to the expression
@@ -92,6 +92,7 @@ protected:
     /// describe the state of the expression
     ExpressionState m_state = INITIAL;
 
+    /// @warning all buffers allocated by allocateForResult should come here
     std::vector<cl::Buffer> m_data;
 
     /// dependencies requiered to compute this
@@ -112,9 +113,11 @@ private:
 
     /// @brief  allocate memory in which we will put the result of this
     ///         computation
+    /// @warning do not forget to update m_state if allocation is successfull
     virtual bool allocateForResult( Context& context ) = 0;
 
     /// @brief  try to deallocate memory if it has no parent
+    /// @warning do not forget to update m_state
     void deallocateMemory();
 
     void deallocateForResult();

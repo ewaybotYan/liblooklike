@@ -4,6 +4,10 @@
  *  @brief  implements methods from @ref MathExpression for matrices
  */
 
+#ifndef NDEBUG
+#include<iostream>
+#endif
+
 #include "../include/exception.h"
 #include "../include/mathexpression.h"
 
@@ -89,6 +93,18 @@ int Matrix::getWidth() const{
 int Matrix::getHeight() const{
   return m_m;
 }
+
+#ifndef NDEBUG
+void Matrix::print(){
+  std::cout.precision(5);  
+  std::cout << std::scientific;
+  for( int i=0;i<m_n;i++ ){
+    for( int j=0;j<m_m;j++ )
+      std::cout << m_value[i*m_n+j] << " ";
+    std::cout << "\n";
+  }
+}
+#endif
 // ##################
 // # memory managment
 

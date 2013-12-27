@@ -62,10 +62,11 @@ void MathExpression::increaseParentNb(){
   m_nbParents++;
 }
 
+/*
 void MathExpression::evaluate( Context& ctx ){
   cl::CommandQueue queue = ctx.createQueue();
   evaluate( ctx, queue );
-}
+}*/
 
 void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
   #ifndef NDEBUG
@@ -92,7 +93,7 @@ AllocationResult MathExpression::allocateMemory( Context& context ){
   #ifndef NDEBUG
   std::cout << "allocating memory" << std::endl;
 #endif
-  if( m_state >= QUEUED ) // if memory is not needed, do as if we had it
+  if( m_state >= QUEUED ) // if memory is not needed, nothing is done
     return NONE_ALLOCATED; 
   if( m_isTerminal ){
     if( allocateForResult(context) ){
