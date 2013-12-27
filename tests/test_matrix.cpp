@@ -206,9 +206,10 @@ int main ( int argc, char* argv[] ) {
 	  error = max( error, abs( res[k] - normalized[k] ) );
 	}
         if ( error < 0.0000001 ) {
-            std::cout << "computed result matches with error!\n";
-        } else {
             std::cerr << "computed without noticeable error.\n";
+        } else {
+            std::cout << "computed result matches with error!\n";
+	    nor.print();
             return -1;
         }
         /*
@@ -225,9 +226,9 @@ int main ( int argc, char* argv[] ) {
 	  error = max( error, abs( res2[k] - c[k] ) );
 	}
         if ( error < 0.0000001 ) {
-            std::cout << "computed result matches with error!\n";
-        } else {
             std::cerr << "computed without noticeable error.\n";
+        } else {
+            std::cout << "computed result matches with error!\n";
 	    C.print();
             return -1;
         }

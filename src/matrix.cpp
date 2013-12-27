@@ -176,8 +176,8 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
             error = queue.enqueueNDRangeKernel (
                         kernel,
                         cl::NullRange,
+                        cl::NDRange ( m_n ),
                         cl::NDRange ( 1 ),
-                        cl::NDRange ( m_m, m_n ),
                         &dependencies,
                         &m_endOfEvaluation
                     );

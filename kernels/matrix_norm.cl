@@ -16,7 +16,7 @@ __kernel void
 matrix_normalize(__global float* R, __global float* A, int n, int m)
 {
     // Thread index
-    int ty = get_local_id(1);
+    int ty = get_global_id(0);
 
     // thread variables
     float mu = 0.0f; // average of the column values
@@ -32,7 +32,7 @@ matrix_normalize(__global float* R, __global float* A, int n, int m)
 
      // Compute the column variance
      for (int k = 0; k < n; ++k) {
-         n_var += ( A[k * n + ty] - mu )^2;
+         n_var += pown( A[k * n + ty] - mu, 2 );
      }
 
      // Normalize the matrix
