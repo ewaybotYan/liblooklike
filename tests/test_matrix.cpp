@@ -195,6 +195,7 @@ int main ( int argc, char* argv[] ) {
 	float error;
 	
 	// test normalization
+	cout << "testing normalization\n";
 	Matrix dat ( data, m, n );
 	Matrix nor = Matrix::normalize(dat);
 	nor.evaluate( ctx, queue );
@@ -212,6 +213,7 @@ int main ( int argc, char* argv[] ) {
         }
         
         // test multiplication
+        cout << "testing multiplication\n";
         Matrix A( a, ah, aw );
 	Matrix B( b, bh, bw );
 	Matrix C( c, ch, cw );
@@ -231,6 +233,7 @@ int main ( int argc, char* argv[] ) {
 	
     } catch ( Error& err ) {
         err.printMsg();
+	return -1;
     }
     return 0;
 }

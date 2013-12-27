@@ -119,8 +119,11 @@ cl::Program Context::loadProgram( const std::string programName ){
     cl::Program::Sources(1, std::make_pair(prog.c_str(), prog.length()+1));
   cl::Program program(m_context, source);
   error = program.build(m_devices,"");
-  if( error != CL_SUCCESS )
-    throw( CLError( error, "Failed to build kernel" ) );
+  if( error != CL_SUCCESS ){
+    std::string buildLog;
+    program.getBuildInfo( m_devices[0], CL_PROGRAM_BUILD_LOG, &buildLog);
+    throw( CLError( error, "Failed to build kernel.\nBuild log :\n" + buildLog ) );
+  }
   
   return program;
 }

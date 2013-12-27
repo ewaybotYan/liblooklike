@@ -49,6 +49,6 @@ int main( int argc, char* argv[] ){
     }
   }catch( Error& err ){
     err.printMsg();
+    return -1;
   }
 }
-
