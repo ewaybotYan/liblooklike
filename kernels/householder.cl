@@ -1,16 +1,4 @@
-householder_matrix <- function( A ){
-	n <- sqrt(length(A))
 
-	H <- diag(n)
-
-	for (i in 1:(n-1)){
-		P <- P_k(A,i)
-		H <- P %*% H
-		A <- P %*% A %*% P
-	}
-
-	return( list(A=A,H=H) )
-}
 
 __kernel void
 norm(__global float norm, __global float* v)
@@ -38,8 +26,8 @@ householder_symmetry_vector(__global float* v, __global float* u, int n, int k)
     int tx = get_local_id(0);
 
     // thread variables
-    __local float* vect1; // comment indiquer la fin du vect?
-    __local float* vect2; //pb de mémoire locale
+    __global float* vect1; // comment indiquer la fin du vect?
+    __global float* vect2; //pb de mémoire locale
     vect[tx] = (tx > k ? 1:0);
     v[tx] = u[tx] * vect[ty];
 
@@ -49,16 +37,14 @@ householder_symmetry_vector(__global float* v, __global float* u, int n, int k)
 }
 
 __kernel void
-nomàdonner(__global float* V, __global float* v, int n) //v*t(v)
+outer_product(__global float* V, __global float* v, int n) //v*t(v)
 {
 
     // thread index
     int tx = get_local_id(0);
     int ty = get_local_id(1);
 
-    __local float* temp; //pb de mémoire locale
-    temp[ty + (n-1) * tx] = v[tx]*v[ty];
-    V = temp;
+    V[ty + (n-1) * tx] = v[tx]*v[ty];
 }
 
 __kernel void
@@ -69,35 +55,52 @@ diag(__global float* D, int n)
     int tx = get_local_id(0);
     int ty = get_local_id(1);
 
-    __local float* tmp;
-    tmp[ty + n * tx] = 0;
+    D[ty + n * tx] = 0;
 
     int i = 0;
     for (int k = 0; k + i < n; k+=n, i++){
-        tmp[k + i] = 1;
+        D[k + i] = 1;
     }
-    
-    D= tmp;
 }
 
-P_k <- function( A, k ){
-  n <- dim(A)[1]
-  v = householder_symmetry_vector( A[,k], k )
-  return( diag(n) - 2 * ( v %*% t(v) ) / ( norm(v)^2 ) )
+__kernel void
+submatrix(__global float* Ak, global float* A, int k, int m, int n)
+{
+
+    for (int i=0; k < n * (m-i); i++)
+        Ak[i]=A[k + i * n];
+
 }
 
 __kernel void
 P_k(__global float* P, __global float* A, int k, int n)
 {
 
-   // Thread index
-    int ty = get_local_id(1);
-
     // thread variables
-    __local float* v;
-    Ak;
+    __global float* v; //pb avec mémoire locale?
+    __global float* Ak;
+    __global float* Dn;
+    __global float* V;
+
+    submatrix(Ak, A, int k, int m, int n);
     householder_symmetry_vector(v, Ak, int n, int k);
+    diag (Dn, int n);
+    outer_product(__global float* V, __global float* v, int n);
+    P = Dn - (2/ norm(v)^2) * V;
+}
 
-    Dn;
+__kernel void
+diag(__global float* A, __global float* H, int n)
+{
 
+    __global float* P;
+    __global float* tmp;
+    diag(H,n);
+
+    for (int k = 0; k < n; i++){
+        P_k(P,A,k,n);
+        matrix_mult(H,P,H);
+        matrix_mult(tmp,A,P);
+        matrix_mult(A,P,tmp);
+    }
 }
