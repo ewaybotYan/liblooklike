@@ -122,6 +122,23 @@ add_executable(
 
 target_link_libraries(test_mathexpression2 ${OPENCL_LIBRARIES})
 
+# test_matrix
+
+include_directories(
+  ${OPENCL_INCLUDE_DIRS}
+  )
+
+add_executable(
+  test_matrix
+  test_matrix.cpp
+  ${PROJECT_SOURCE_DIR}/src/matrix.cpp
+  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ${PROJECT_SOURCE_DIR}/src/mathexpression.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+target_link_libraries(test_matrix ${OPENCL_LIBRARIES})
+
 #######
 # tests
 
@@ -135,3 +152,6 @@ add_test( test_mathexpression ${EXECUTABLE_OUTPUT_PATH}/test_mathexpression "${C
 
 # test_mathexpression2
 add_test( test_mathexpression2 ${EXECUTABLE_OUTPUT_PATH}/test_mathexpression2 "${CMAKE_CURRENT_SOURCE_DIR}" )
+
+# test_matrix
+add_test( test_matrix ${EXECUTABLE_OUTPUT_PATH}/test_matrix "${PROJECT_SOURCE_DIR}/kernels" )

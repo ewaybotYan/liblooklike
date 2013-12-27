@@ -1,12 +1,24 @@
+/**
+ *  @file   matrix_norm.cl
+ *  @author Gabriel de Longeaux <gabriel.de_longeaux@telecom-sudparis.eu>
+ *  @brief  provides column normalization of a matrix
+ */
 
+
+#ifndef BLOCK_SIZE
 #define BLOCK_SIZE 16
+#endif
 
-//////////////////////////////////////////////////////
-//! Matrix normalization on the device             !//
-//! wA is A's width                                !//
-//////////////////////////////////////////////////////
+// #############################
+// # matrix column normalization
+
+// each kernel instance normalizes one column
+
+// a matrix is stored in memory as one big 1D vector which is 
+// the concatenation of the lines of the matrix
+
 __kernel void
-matrixNorm(__global float* A, int wA, int n int m)
+matrix_normalize(__global float* R, __global float* A, int n, int m)
 {
     //Block size
     int block_size = BLOCK_SIZE;
@@ -14,38 +26,25 @@ matrixNorm(__global float* A, int wA, int n int m)
     // Thread index
     int ty = get_local_id(1);
 
-    // Declaration of the local memory array sA 
-    // used to store a column of A
-    __local float mu=0.0f;
-    __local float sigma=0.0f;
-
+    // thread variables
+    __local float mu = 0.0f; // average of the column values
+    __local float n_var = 0.0f; // total square distance to the average
+    
     // Compute the column average;
-    // each thread computes one average
-    // of the block sub-matrix
-    for (int k = 0; k < n; ++k) {
-
+    for (int k = 0; k < m; ++k) {
         // Calculation of the column average
-        mu += A[k * m + ty];
+        mu += A[k * n + ty];
      }
 
-     mu = mu / n;
+     mu = mu / m;
 
-     // Compute the column variance;
-     // each thread computes one variance
-     // of the block sub-matrix
+     // Compute the column variance
      for (int k = 0; k < n; ++k) {
-
-         // Calculation of the column variance
-         sigma += (A[k * m + ty] - mu)^2;
+         n_var += ( A[k * n + ty] - mu )^2;
      }
 
-     sigma = sigma / n;
-
-     // Normalize the matrix;
-     // each thread computes one element
-     // of the block sub-matrix
+     // Normalize the matrix
      for (int k = 0; k < n; ++k) {
-
-        A[k * m + ty] = (A[k * m + ty] - mu) / (sigma * sqrt(n));
+        R[k * n + ty] = (A[k * n + ty] - mu) / sqrt(n_var);
      }
 }
