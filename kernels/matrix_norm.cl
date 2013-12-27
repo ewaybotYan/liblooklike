@@ -19,8 +19,8 @@ matrix_normalize(__global float* R, __global float* A, int n, int m)
     int ty = get_local_id(1);
 
     // thread variables
-    __local float mu = 0.0f; // average of the column values
-    __local float n_var = 0.0f; // total square distance to the average
+    float mu = 0.0f; // average of the column values
+    float n_var = 0.0f; // total square distance to the average
     
     // Compute the column average;
     for (int k = 0; k < m; ++k) {

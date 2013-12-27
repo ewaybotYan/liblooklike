@@ -211,7 +211,7 @@ int main ( int argc, char* argv[] ) {
             std::cerr << "computed without noticeable error.\n";
             return -1;
         }
-        
+        /*
         // test multiplication
         cout << "testing multiplication\n";
         Matrix A( a, ah, aw );
@@ -228,9 +228,10 @@ int main ( int argc, char* argv[] ) {
             std::cout << "computed result matches with error!\n";
         } else {
             std::cerr << "computed without noticeable error.\n";
+	    C.print();
             return -1;
         }
-	
+	*/
     } catch ( Error& err ) {
         err.printMsg();
 	return -1;

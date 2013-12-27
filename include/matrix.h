@@ -56,6 +56,9 @@ class Matrix: public MathExpression {
 	int getWidth() const;
 	
 	int getHeight() const;
+#ifndef NDEBUG
+	void print();
+#endif
 
     protected:
 
