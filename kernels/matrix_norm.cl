@@ -4,11 +4,6 @@
  *  @brief  provides column normalization of a matrix
  */
 
-
-#ifndef BLOCK_SIZE
-#define BLOCK_SIZE 16
-#endif
-
 // #############################
 // # matrix column normalization
 
@@ -20,9 +15,6 @@
 __kernel void
 matrix_normalize(__global float* R, __global float* A, int n, int m)
 {
-    //Block size
-    int block_size = BLOCK_SIZE;
-
     // Thread index
     int ty = get_local_id(1);
 
