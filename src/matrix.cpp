@@ -20,12 +20,14 @@
 // ##############
 // # constructors
 
-Matrix::Matrix ( float* values, 
+Matrix::Matrix ( cl_float* values, 
 		 const unsigned int m, 
 		 const unsigned int n, 
 		 const bool keepInCLMem) : 
 		 MathExpression ( true, keepInCLMem ) {
-    m_value = values;
+    m_value = new cl_float[m*n];
+    for( unsigned int i = 0; i < m*n; i++ )
+	m_value[i] = values[i];
     m_m = m;
     m_n = n;
 }
@@ -82,7 +84,7 @@ float Matrix::getValue ( const int i, const int j ) {
     return m_value[ i*m_n+j ];
 }
 
-float* Matrix::getValues() const{
+cl_float* Matrix::getValues() const{
     return m_value;
 }
 
@@ -98,13 +100,15 @@ int Matrix::getHeight() const{
 void Matrix::print(){
   std::cout.precision(5);  
   std::cout << std::scientific;
-  for( int i=0;i<m_n;i++ ){
-    for( int j=0;j<m_m;j++ )
+  for( int i=0;i<m_m;i++ ){
+    for( int j=0;j<m_n;j++ )
       std::cout << m_value[i*m_n+j] << " ";
     std::cout << "\n";
   }
 }
 #endif
+
+
 // ##################
 // # memory managment
 
@@ -115,12 +119,15 @@ void  Matrix::retrieveData ( Context& context, cl::CommandQueue& queue ){
     _unused ( context );
 
     cl_int error;
-    m_value = new float[m_m*m_n];
+    if( m_value != 0 )
+        delete( m_value );
+    m_value = new cl_float[m_m*m_n];
+    m_endOfEvaluation.wait();
     error = queue.enqueueReadBuffer (
         getData() [0],
         CL_TRUE,
         0,
-        sizeof ( float ) * m_m * m_n,
+        sizeof ( cl_float ) * m_m * m_n,
         m_value );
     if ( error != CL_SUCCESS )
         throw ( CLError ( error, "failed to enqueue data reading" ) );
@@ -139,7 +146,7 @@ bool Matrix::allocateForResult ( Context& context ) {
     m_data.push_back ( cl::Buffer (
                            context.getContext(),
                            memFlags,
-                           sizeof ( float ) * m_m * m_n,
+                           sizeof ( cl_float ) * m_m * m_n,
                            NULL,
                            &error
                        ) );
@@ -215,10 +222,10 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
 #endif
         cl_int error;
         error = queue.enqueueWriteBuffer (
-                    getData() [0],
-                    CL_FALSE,
+                    getData()[0],
+                    CL_TRUE,
                     0,
-                    sizeof ( float ) * m_m * m_n,
+                    sizeof ( cl_float ) * m_m * m_n,
                     m_value,
                     0,
                     &getEndOfEvaluation()

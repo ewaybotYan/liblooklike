@@ -13,7 +13,7 @@
 // the concatenation of the lines of the matrix
 
 __kernel void
-matrix_normalize(__global float* R, __global float* A, int n, int m)
+matrix_normalize(__global float* R, __global float* A, int m, int n)
 {
     // Thread index
     int ty = get_global_id(0);
@@ -31,12 +31,12 @@ matrix_normalize(__global float* R, __global float* A, int n, int m)
      mu = mu / m;
 
      // Compute the column variance
-     for (int k = 0; k < n; ++k) {
+     for (int k = 0; k < m; ++k) {
          n_var += pown( A[k * n + ty] - mu, 2 );
      }
 
      // Normalize the matrix
-     for (int k = 0; k < n; ++k) {
+     for (int k = 0; k < m; ++k) {
         R[k * n + ty] = (A[k * n + ty] - mu) / sqrt(n_var);
      }
 }

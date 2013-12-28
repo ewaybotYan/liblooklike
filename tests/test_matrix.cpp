@@ -14,9 +14,9 @@
 
 using namespace std;
 
-const int n = 50;
-const int m = 5;
-float data[n*m] = {
+const int m = 50;
+const int n = 5;
+cl_float data[n*m] = {
     0.811998870, 0.281545461, 0.08758553, 0.35107806, 0.9086247343,
     0.206221032, -0.162219924, 0.29274794, -0.16393098, 0.1628313907,
     -0.635741870, -0.846542720, -0.42432402, -0.17773666, 0.3146556406,
@@ -69,7 +69,7 @@ float data[n*m] = {
     0.456738943, -0.059428453, -0.02814885, 0.56923364, -0.8056881218
 };
 
-float normalized[n*m] = {
+cl_float normalized[n*m] = {
     0.174739941,   0.107624222,   0.039518004,   0.097140867,   0.218283838,
     0.020815449,   -0.016991370,  0.087694463,   -0.025187151,  0.026540378,
     -0.193122241,  -0.209158882,  -0.080689150,  -0.028466358,  0.065574391,
@@ -125,7 +125,7 @@ float normalized[n*m] = {
 const int aw = 20;
 const int ah = 5;
 
-float a[aw*ah] = {
+cl_float a[aw*ah] = {
   0.859555,-0.03640075,0.6000662,-0.5373392,-0.3938806,
   0.6738222,0.7656746,-0.04991303,0.02807761,-0.4494087,
   0.2088377,-0.443116,0.7175984,0.3928747,0.6738882,
@@ -151,7 +151,7 @@ float a[aw*ah] = {
 const int bw = 3;
 const int bh = 20;
 
-float b[bw*bh] = {
+cl_float b[bw*bh] = {
   -0.8109678,0.4771343,-0.1241322,-0.4850215,0.3545739,
   -0.1954033,-0.723628,0.3272067,0.2350641,0.995608,
   0.6095526,0.547823,0.321548,-0.1527461,-0.1135489,
@@ -169,7 +169,7 @@ float b[bw*bh] = {
 const int cw = 3;
 const int ch = 5;
 
-float c[ah*bw] = {
+cl_float c[ah*bw] = {
   -0.04008873,1.986873,-0.2833796,1.182132,-1.969775,
   -1.532436,0.2200845,0.7200324,3.421073,-0.7900933,
   -0.6098414,3.040098,0.8856889,-0.8036001,-1.455227
@@ -186,19 +186,28 @@ int main ( int argc, char* argv[] ) {
         usage();
         return -1;
     }
-    std::string path ( argv[1] );
+    std::string path ( argv[argc-1] );
 
     try {
 
         Context ctx ( path );
         cl::CommandQueue queue = ctx.createQueue();
 	float error;
-	
+
+        /*
+        // test matrix loading
+        Matrix v ( data, m, n );
+        v.evaluate( ctx, queue );
+        v.retrieveData( ctx, queue );
+        v.print();
+	*/
+
 	// test normalization
 	cout << "testing normalization\n";
 	Matrix dat ( data, m, n );
-	Matrix nor = Matrix::normalize(dat);
+	Matrix nor = Matrix::normalize( dat );
 	nor.evaluate( ctx, queue );
+        dat.retrieveData( ctx, queue );
 	nor.retrieveData( ctx, queue );
 	float* res = nor.getValues();
 
@@ -210,9 +219,11 @@ int main ( int argc, char* argv[] ) {
         } else {
             std::cout << "computed result matches with error!\n";
 	    nor.print();
+            std::cout << "\n";
+	    dat.print();
             return -1;
         }
-        /*
+        
         // test multiplication
         cout << "testing multiplication\n";
         Matrix A( a, ah, aw );
@@ -232,7 +243,7 @@ int main ( int argc, char* argv[] ) {
 	    C.print();
             return -1;
         }
-	*/
+
     } catch ( Error& err ) {
         err.printMsg();
 	return -1;
