@@ -54,8 +54,6 @@ dac <- function( T, inertia, epsilon){
             exit()
         }
 
-
-
 	#print(c("d",d,"v",v,"Q1",Q1,"Q2",Q2))
 	print('deflation part 1')
 	# deflation
@@ -106,6 +104,7 @@ dac <- function( T, inertia, epsilon){
 	# we sort d values
         print("sort")
         print(d)
+        print(v)
 	ordered <- sort( d[1:j], index.return = TRUE, decreasing=FALSE )
 	order <- ordered$ix
 	if(j<n){
@@ -118,11 +117,12 @@ dac <- function( T, inertia, epsilon){
 	# permutation matrix to restore order
 	O  <- cbind(sapply(1:j, function(k){ return(1:n == order[k]) }),rbind(matrix(0,j,n-j),diag(n-j)))
 #        O <- t(O)
-	check <- O %*% P %*% S %*% Q %*% ( diag(d) + p * v %*% t(v) ) %*% t( O %*% P %*% S %*% Q )
+	check <- Q %*% S %*% P %*% O %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S %*% P %*% O)
 	if(max(abs(check-T))> epsilon ){
             print(O)*1
             print(T)
             print(O %*% d)
+            print(O %*% v)
             print(check)
             exit()
         }
