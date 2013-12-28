@@ -8,7 +8,11 @@ dac <- function( T, inertia, epsilon){
 		 return(eigen(T))
 	}
 	if( n == 2 ){
-		 return(eigen(T))
+                 R = eigen(T)
+                 V = R$vectors
+                 s = t(V[,1]) %*% V[,2]
+                 V = cbind( V[,1] - s * V[,2], V[,2] )
+                 return( list(vectors = V, values=R$values ) )
 	}
 
 
@@ -28,26 +32,30 @@ dac <- function( T, inertia, epsilon){
 	# note we rely on internal R function, so no actual recursion here
 	#res1   <- eigen(T1,symmetric=TRUE)
 	#res2   <- eigen(T2,symmetric=TRUE)
+        print("left dac")
 	res1    <- dac(T1, inertia, epsilon )
+        print("right dac")
 	res2    <- dac(T2, inertia, epsilon )
 	Q1      <- res1$vectors
 	Q2      <- res2$vectors
 	# r1     <- dac(T1, 1.1, epsilon)
-	ctor <- diag(1,k,n) # used to construct Q
-	Q    <- t(ctor) %*% Q1 %*% ctor
-	Id   <- array( c( 1:(k*(n-k)) * 0, 1:(n-k)^2 %% (n-k+1) == 1 ) , dim=c(n-k,n) )
-	Q    <- Q + t(Id) %*% Q2 %*% Id
+        Q <- rbind( 
+                    cbind( Q1, matrix(0,k,n-k) ),
+                    cbind( matrix( 0, n-k, k ), Q2 )
+                  )
 	v    <- t(Q) %*% u
 	# at this stage T = Q %*% ( [D1  ]  + p * v %*% t(v) ) %*% t(Q)
 	#                           [  D2]
 	d     <- c( res1$values, res2$values )
+        print("oulala")
+        check <- (Q %*% (diag(d) + p * v %*% t(v) ) %*% t(Q))
 
 	# we want positive values on s
 	S    <- diag( sapply(v,sign) )
 	d    <- d  # is not changed in this new base
 	v    <- S %*% v
 	#debug (check that we actually find T with the expression above)
-	check <- S %*% Q %*% ( diag(d) + p * v %*% t(v) ) %*% t( S %*% Q ) 
+	check <- Q %*% S %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S ) 
 	if(max(abs(check-T))> epsilon ){
             print(T)
             print(check)
@@ -93,7 +101,7 @@ dac <- function( T, inertia, epsilon){
 
 	#debug (test permutation matrix)
 	#return(list(D=D,v=v,P=P))
-	check <- P %*% S %*% Q %*% ( diag(d) + p * v %*% t(v) ) %*% t( P %*% S %*% Q )
+	check <- Q %*% S %*% P %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S %*% P )
 	if(max(abs(check-T))> epsilon ){
             print(T)
             print(check)
@@ -103,8 +111,8 @@ dac <- function( T, inertia, epsilon){
 
 	# we sort d values
         print("sort")
-        print(d)
-        print(v)
+        #print(d)
+        #print(v)
 	ordered <- sort( d[1:j], index.return = TRUE, decreasing=FALSE )
 	order <- ordered$ix
 	if(j<n){
@@ -129,6 +137,7 @@ dac <- function( T, inertia, epsilon){
 
 	# erase multiple eigen values
 	print('deflation part2')
+        P2 <- diag(n)
 	m <- 1
 	while( m < j ){
 		k <- m+1
@@ -138,7 +147,7 @@ dac <- function( T, inertia, epsilon){
 			# rotate with givens
 			v[k] <- 0 
 			# D is not changed by Givens rotations
-			P <- P %*% givens_rotation( v, m, k )
+			P2 <- P2 %*% givens_rotation( v, m, k )
 			#print(P)
 			# move diagonal part in the down right part of T
 			if( k != j ){
@@ -146,7 +155,7 @@ dac <- function( T, inertia, epsilon){
 				v[j] <- 0
 				d[k] <- d[j]
 				d[j] <- d[m]
-				P <- P %*% permutation_matrix(n,m,j)
+				P2 <- P2 %*% permutation_matrix(n,m,j)
 			}
 			j <- j-1
 			k <- k+1
@@ -164,10 +173,16 @@ dac <- function( T, inertia, epsilon){
 	d <- d[order]
 	v <- v[order]
 
-
 	# permutation matrix to restore order
-	O  <- O %*% cbind(sapply(1:j, function(k){ return(1:n == order[k]) }
+	O2  <- cbind(sapply(1:j, function(k){ return(1:n == order[k]) }
 			   ),rbind(matrix(0,j,n-j),diag(n-j)))
+
+	check <- Q %*% S %*% P %*% O %*% P2 %*% O2 %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S %*% P %*% O %*% P2 %*% O2)
+	if(max(abs(check-T))> epsilon ){
+            print(T)
+            print(check)
+            exit()
+        }
 
 #	# check matrix state
 #	for( k in 1:n )
@@ -177,7 +192,7 @@ dac <- function( T, inertia, epsilon){
 
 	#debug 
 
-	print( "finding eigen values" )
+	print( c("finding eigen values",j) )
 
 	V <- diag(n)
 	lambdas <- d
@@ -209,8 +224,8 @@ dac <- function( T, inertia, epsilon){
 		# bring back deflated values
 		if(j<n){
 			lambdas <- cbind( c(lambdas, d[seq(j+1,n)]) )
-			V <- cbind( V, diag(0,j,n-j) )
-			V <- rbind( V, diag(0,n-j,n) )
+			V <- cbind( V, matrix(0,j,n-j) )
+			V <- rbind( V, matrix(0,n-j,n) )
 			V <- V + diag( (1:n>j) )
 		}
 	}
@@ -230,10 +245,24 @@ dac <- function( T, inertia, epsilon){
 				exit()
 			}
 
+        # precheck 
+        check <- V %*% diag(c(lambdas)) %*% t(V)
+        if( max( abs ( check - diag(d) - p * v %*% t(v) ) ) > epsilon ){
+            print("#precheck")
+            print( diag(d) + p * v %*% t(v) )
+            print( check )
+        }
+            
+                
+
 	#print(A)
-        print( eigen(T)$values )
-        BASE <- Q %*% S %*% P %*% O %*% V
-        print( t(BASE) %*% T %*% BASE )
+        BASE <- Q %*% S %*% P %*% O %*% P2 %*% O2 %*% V
+        check <- BASE %*% diag( c(lambdas) ) %*% t( BASE )
+        if( max( abs ( check - T ) ) > epsilon ){
+            print( T )
+            print( check )           
+            exit()
+        }
 
 	#U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
 
