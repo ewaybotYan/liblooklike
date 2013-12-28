@@ -12,6 +12,7 @@ dac <- function( T, inertia, epsilon){
 	}
 
 
+	print('cuppen')
 	# cuppen method to represent the matrix
 	k    <- round( n / 2 )
 	beta <- sign( T[k,k] ) # todo : limit cancellation for real
@@ -23,18 +24,12 @@ dac <- function( T, inertia, epsilon){
 	# at this stage T = [T1  ] + p * u %*% t(u)
 	#                   [  T2]
 
-	print('cuppen')
-
-	#debug (rebuild T with the expression above)
-	#check <- check + p * u %*% t(u)
-	#return( check )
-
 	# apply divide and conquer
 	# note we rely on internal R function, so no actual recursion here
-	res1   <- eigen(T1,symmetric=TRUE)
-	res2   <- eigen(T2,symmetric=TRUE)
-	#res1    <- dac(T1, inertia, epsilon )
-	#res2    <- dac(T2, inertia, epsilon )
+	#res1   <- eigen(T1,symmetric=TRUE)
+	#res2   <- eigen(T2,symmetric=TRUE)
+	res1    <- dac(T1, inertia, epsilon )
+	res2    <- dac(T2, inertia, epsilon )
 	Q1      <- res1$vectors
 	Q2      <- res2$vectors
 	# r1     <- dac(T1, 1.1, epsilon)
@@ -52,8 +47,12 @@ dac <- function( T, inertia, epsilon){
 	d    <- d  # is not changed in this new base
 	v    <- S %*% v
 	#debug (check that we actually find T with the expression above)
-	#check <- Q %*% ( diag(d) + p * v %*% t(v) ) %*% t(Q) 
-	#return(check)
+	check <- S %*% Q %*% ( diag(d) + p * v %*% t(v) ) %*% t( S %*% Q ) 
+	if(max(abs(check-T))> epsilon ){
+            print(T)
+            print(check)
+            exit()
+        }
 
 
 
@@ -67,8 +66,8 @@ dac <- function( T, inertia, epsilon){
 	i <- 1 # active column
 	j <- n # target column for switching
 	while( i < j ){
-		if( abs(p*v[i]) < h ){
-			while( abs(p*(v[j])^2) < h && j > i ){
+		if( abs(p*v[i])*sqrt(t(v)%*%v) < h ){
+			while( abs(p*(v[j])*sqrt(t(v)%*%v) ) < h && j > i ){
 				j <- j-1
 			}
 			print("deflation part1 triggered")
@@ -89,17 +88,24 @@ dac <- function( T, inertia, epsilon){
 	}
 
 	# check matrix state
-	for( l in 1:n )
-		for( k in 1:n)
-			if( is.nan(P[l,k]))
-				print(c("!",l,k ))
+	#for( l in 1:n )
+	#	for( k in 1:n)
+	#		if( is.nan(P[l,k]))
+	#			print(c("!",l,k ))
 
 	#debug (test permutation matrix)
 	#return(list(D=D,v=v,P=P))
+	check <- P %*% S %*% Q %*% ( diag(d) + p * v %*% t(v) ) %*% t( P %*% S %*% Q )
+	if(max(abs(check-T))> epsilon ){
+            print(T)
+            print(check)
+            exit()
+        }
 
 
 	# we sort d values
-	print("sort")
+        print("sort")
+        print(d)
 	ordered <- sort( d[1:j], index.return = TRUE, decreasing=FALSE )
 	order <- ordered$ix
 	if(j<n){
@@ -110,8 +116,16 @@ dac <- function( T, inertia, epsilon){
 	#print(order)
 
 	# permutation matrix to restore order
-	O  <- cbind(sapply(1:j, function(k){ return(1:n == order[k]) }
-			   ),rbind(matrix(0,j,n-j),diag(n-j)))
+	O  <- cbind(sapply(1:j, function(k){ return(1:n == order[k]) }),rbind(matrix(0,j,n-j),diag(n-j)))
+#        O <- t(O)
+	check <- O %*% P %*% S %*% Q %*% ( diag(d) + p * v %*% t(v) ) %*% t( O %*% P %*% S %*% Q )
+	if(max(abs(check-T))> epsilon ){
+            print(O)*1
+            print(T)
+            print(O %*% d)
+            print(check)
+            exit()
+        }
 
 	# erase multiple eigen values
 	print('deflation part2')
@@ -155,14 +169,14 @@ dac <- function( T, inertia, epsilon){
 	O  <- O %*% cbind(sapply(1:j, function(k){ return(1:n == order[k]) }
 			   ),rbind(matrix(0,j,n-j),diag(n-j)))
 
-	# check matrix state
-	for( k in 1:n )
-		for( l in 1:n)
-			if( is.nan(P[k,l]))
-				print(c("!d2",k,l ))
+#	# check matrix state
+#	for( k in 1:n )
+#		for( l in 1:n)
+#			if( is.nan(P[k,l]))
+#				print(c("!d2",k,l ))
 
 	#debug 
-	#return( Q %*% P %*% ( diag(d) + p * v %*% t(v) ) %*% t(P) %*% t(Q) )
+
 	print( "finding eigen values" )
 
 	V <- diag(n)
