@@ -231,11 +231,13 @@ dac <- function( T, inertia, epsilon){
 			}
 
 	#print(A)
-	U1 <- ( diag(d) + p * v %*% t(v) )
+        print( eigen(T)$values )
+        BASE <- Q %*% S %*% P %*% O %*% V
+        print( t(BASE) %*% T %*% BASE )
 
 	#U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
 
-
+        print("done")
 	#return(list(Q=Q,P=P,S=S,O=O,U1=U1,U2=U2,V=V,lambdas=lambdas,v=v,v2=v2,p=p,d=dsort))
 	#V <- res$O %*% res$V %*% t(S)
 	return( list(vectors = Q %*% S %*% P %*% O %*% V, values=lambdas ) )
