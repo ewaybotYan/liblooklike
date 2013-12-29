@@ -54,7 +54,7 @@ dac <- function( T, inertia, epsilon){
 	#debug (check that we actually find T with the expression above)
 	check <- Q %*% S %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S ) 
 	if(max(abs(check-T))> epsilon ){
-            print(T - check)
+       #     print(T - check)
             exit()
         }
 
@@ -63,7 +63,7 @@ dac <- function( T, inertia, epsilon){
 	# deflation
 	P <- diag(n) # deflation  operations
 	# zero out values too small for single precision
-	h <- epsilon * max(abs(sapply(1:n,function(k){return
+	h <- epsilon * mean(abs(sapply(1:n,function(k){return
 				  (norm((diag(d)+p*v%*%t(v))[,k]))})))
 	i <- 1 # active column
 	j <- n # target column for switching
@@ -72,7 +72,7 @@ dac <- function( T, inertia, epsilon){
 			while( abs(p*(v[j])*sqrt(t(v)%*%v) ) < h && j > i ){
 				j <- j-1
 			}
-			print("deflation part1 triggered")
+			print(c("deflation part1 triggered",p , v[i]))
 			if( i != j ){
 				# switch values manually
 				v[i] <- v[j]
@@ -99,7 +99,10 @@ dac <- function( T, inertia, epsilon){
 	#return(list(D=D,v=v,P=P))
 	check <- Q %*% S %*% P %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S %*% P )
 	if(max(abs(check-T))> epsilon ){
-            print(T-check)
+        #    print(T-check)
+            print(c(i,j))
+            print("v")
+            print(v)
             exit()
         }
 
@@ -170,7 +173,7 @@ dac <- function( T, inertia, epsilon){
 
 	check <- Q %*% S %*% P %*% O %*% P2 %*% O2 %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S %*% P %*% O %*% P2 %*% O2)
 	if(max(abs(check-T))> epsilon ){
-            print(check-T)
+         #   print(check-T)
             exit()
         }
 
@@ -240,8 +243,8 @@ dac <- function( T, inertia, epsilon){
         check <- V %*% diag(c(lambdas)) %*% t(V)
         if( max( abs ( check - diag(d) - p * v %*% t(v) ) ) > epsilon ){
             print("#precheck")
-            print( diag(d) + p * v %*% t(v) )
-            print( check )
+        #    print( diag(d) + p * v %*% t(v) )
+        #    print( check )
             print("values")
             print( (lambdas) )
             print( sort(lambdas) )
@@ -255,7 +258,7 @@ dac <- function( T, inertia, epsilon){
         BASE <- Q %*% S %*% P %*% O %*% P2 %*% O2 %*% V
         check <- BASE %*% diag( c(lambdas) ) %*% t( BASE )
         if( max( abs ( check - T ) ) > epsilon ){
-            print( check - T )
+        #    print( check - T )
             exit()
         }
 

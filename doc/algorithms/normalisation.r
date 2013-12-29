@@ -17,7 +17,6 @@ normalisation<-function(A){
 		}
 	}
 	sigma<-sigma/n
-	print(sigma)
 
 	for (j in 1:n){
 		for (i in 1:m){
