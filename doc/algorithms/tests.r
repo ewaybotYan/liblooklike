@@ -1,4 +1,5 @@
 source('householder.r')
+source('dac.r')
 
 tests <- function(n,inertia_rate,epsilon){
 	Test<-make_random_sym_matrix(n)
