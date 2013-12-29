@@ -216,6 +216,7 @@ dac <- function( T, inertia, epsilon){
 				print(c("!ev", k,h))
 			       	print(c("lambdas=",lambdas))
 				print(c("d=",d))
+                                print(c(lambdas - d))
 				exit()
 			}
 			return(r)
@@ -251,6 +252,11 @@ dac <- function( T, inertia, epsilon){
             print("#precheck")
             print( diag(d) + p * v %*% t(v) )
             print( check )
+            print("values")
+            print( (lambdas) )
+            print( sort(lambdas) )
+            print( sort(eigen(diag(d) + p * v %*% t(v))$values) )
+            print( sort(lambdas) - sort(eigen(diag(d) + p * v %*% t(v))$values) )
         }
             
                 
