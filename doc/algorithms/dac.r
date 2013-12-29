@@ -32,9 +32,7 @@ dac <- function( T, inertia, epsilon){
 	# note we rely on internal R function, so no actual recursion here
 	#res1   <- eigen(T1,symmetric=TRUE)
 	#res2   <- eigen(T2,symmetric=TRUE)
-        print("left dac")
 	res1    <- dac(T1, inertia, epsilon )
-        print("right dac")
 	res2    <- dac(T2, inertia, epsilon )
 	Q1      <- res1$vectors
 	Q2      <- res2$vectors
@@ -47,7 +45,6 @@ dac <- function( T, inertia, epsilon){
 	# at this stage T = Q %*% ( [D1  ]  + p * v %*% t(v) ) %*% t(Q)
 	#                           [  D2]
 	d     <- c( res1$values, res2$values )
-        print("oulala")
         check <- (Q %*% (diag(d) + p * v %*% t(v) ) %*% t(Q))
 
 	# we want positive values on s
@@ -57,8 +54,7 @@ dac <- function( T, inertia, epsilon){
 	#debug (check that we actually find T with the expression above)
 	check <- Q %*% S %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S ) 
 	if(max(abs(check-T))> epsilon ){
-            print(T)
-            print(check)
+            print(T - check)
             exit()
         }
 
@@ -103,8 +99,7 @@ dac <- function( T, inertia, epsilon){
 	#return(list(D=D,v=v,P=P))
 	check <- Q %*% S %*% P %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S %*% P )
 	if(max(abs(check-T))> epsilon ){
-            print(T)
-            print(check)
+            print(T-check)
             exit()
         }
 
@@ -127,11 +122,7 @@ dac <- function( T, inertia, epsilon){
 #        O <- t(O)
 	check <- Q %*% S %*% P %*% O %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S %*% P %*% O)
 	if(max(abs(check-T))> epsilon ){
-            print(O)*1
-            print(T)
-            print(O %*% d)
-            print(O %*% v)
-            print(check)
+            print(check-T)
             exit()
         }
 
@@ -142,7 +133,7 @@ dac <- function( T, inertia, epsilon){
 	while( m < j ){
 		k <- m+1
 		while( (k<=j) &&
-		      (abs(d[m] - d[k]) * v[m]*v[k] / sqrt(v[m] * v[k]))  < h ){
+		      (abs(d[m] - d[k]) * v[m]*v[k] / sqrt(v[m]^2 * v[k]^2))  < h ){
 			print(c("deflation part2 triggered",m,k,v[m]))
 			# rotate with givens
 			v[k] <- 0 
@@ -179,8 +170,7 @@ dac <- function( T, inertia, epsilon){
 
 	check <- Q %*% S %*% P %*% O %*% P2 %*% O2 %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S %*% P %*% O %*% P2 %*% O2)
 	if(max(abs(check-T))> epsilon ){
-            print(T)
-            print(check)
+            print(check-T)
             exit()
         }
 
@@ -265,8 +255,7 @@ dac <- function( T, inertia, epsilon){
         BASE <- Q %*% S %*% P %*% O %*% P2 %*% O2 %*% V
         check <- BASE %*% diag( c(lambdas) ) %*% t( BASE )
         if( max( abs ( check - T ) ) > epsilon ){
-            print( T )
-            print( check )           
+            print( check - T )
             exit()
         }
 

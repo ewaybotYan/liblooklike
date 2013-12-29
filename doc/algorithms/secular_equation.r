@@ -1,4 +1,3 @@
-
 find_approx_lambda <- function(c1,c2,c3,di,dj){
     b <- -1 * (c1+c2+c3*(di+dj))
         delta <- ((b)^2 - 4*c3*(c1*dj+c2*di+c3*di*dj))
@@ -78,7 +77,7 @@ roots_secular_equation <- function (p, v, d, trace){
 
         lambda <- (d[n-j-1]+d[n-j])/2
 #print(c("#",d[n-j-1],d[n-j]))
-            for (k in 1:6){
+            for (k in 1:10){
                 Psi <- psi(v,d,p,n-j-1,lambda)
                     DPsi <- dPsi(v,d,p,n-j-1,lambda)
                     c1 <-DPsi[1] * ( ( d[n-j-1] - lambda )^2 )
@@ -106,8 +105,7 @@ roots_secular_equation <- function (p, v, d, trace){
         lambda <- trace - found_rank
         if( lambda < d[n] )
             lambda <- d[n] + 10^-5
-        for(k in 1:20){
-            print( lambda )
+        for(k in 1:10){
             c1 = 1 + p * (lambda - d[n]) * sum( (v[1:n-1]^2) / (lambda - d[1:n-1])^2 ) - p * sum( (v[1:n-1]^2) / ( lambda - d[1:n-1] ) )
             c2 = (v[n]^2) + ((lambda - d[n])^2) * sum( (v[1:n-1]^2) / ( lambda - d[1:n-1] )^2 )
             new = d[n] + p * c2 / c1
@@ -116,7 +114,6 @@ roots_secular_equation <- function (p, v, d, trace){
             }else{
                 lambda <- new
             }
-            print(c(lambda,c1,c2,p))
         }
         lambda_k[n] = lambda
     }else{
@@ -124,7 +121,6 @@ roots_secular_equation <- function (p, v, d, trace){
          if( lambda > d[1] )
             lambda <- d[1] - 10^-5
         for(k in 1:20){
-            print( lambda )
             c1 = 1 + p * (lambda - d[1]) * sum( (v[seq(2,n)]^2) / (lambda - d[seq(2,n)])^2 ) - p * sum( (v[seq(2,n)]^2) / ( lambda - d[seq(2,n)] ) )
             c2 = (v[1]^2) + ((lambda - d[1])^2) * sum( (v[seq(2,n)]^2) / ( lambda - d[seq(2,n)] )^2 )
             new = d[1] + p * c2 / c1
@@ -133,7 +129,6 @@ roots_secular_equation <- function (p, v, d, trace){
             }else{
                 lambda <- new
             }
-            print(c(lambda,c1,c2,p))
         }
         lambda_k[1] = lambda
     }
