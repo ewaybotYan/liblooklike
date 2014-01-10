@@ -1,5 +1,6 @@
 source('normalisation.r')
 source('householder.r')
+source('dac.r')
 
 tests <- function(m,n,inertia_rate,epsilon){
         A <- matrix(runif(n*m,0,255),m,n)
