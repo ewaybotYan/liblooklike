@@ -1,5 +1,9 @@
 source('secular_equation.r')
 
+matrix_norm_2 <- function( T ){
+    return( sqrt( sum( T^2 ) ) / ( dim(T)[1]* dim(T)[2]  ))
+}
+
 dac <- function( T, inertia, epsilon){
 	#print(T)
 	n <- dim(cbind(T))[1]
@@ -30,10 +34,10 @@ dac <- function( T, inertia, epsilon){
 
 	# apply divide and conquer
 	# note we rely on internal R function, so no actual recursion here
-	#res1   <- eigen(T1,symmetric=TRUE)
-	#res2   <- eigen(T2,symmetric=TRUE)
-	res1    <- dac(T1, inertia, epsilon )
-	res2    <- dac(T2, inertia, epsilon )
+	res1   <- eigen(T1,symmetric=TRUE)
+	res2   <- eigen(T2,symmetric=TRUE)
+	#res1    <- dac(T1, inertia, epsilon )
+	#res2    <- dac(T2, inertia, epsilon )
 	Q1      <- res1$vectors
 	Q2      <- res2$vectors
 	# r1     <- dac(T1, 1.1, epsilon)
@@ -45,6 +49,7 @@ dac <- function( T, inertia, epsilon){
 	# at this stage T = Q %*% ( [D1  ]  + p * v %*% t(v) ) %*% t(Q)
 	#                           [  D2]
 	d     <- c( res1$values, res2$values )
+        print( sort(d) )
         check <- (Q %*% (diag(d) + p * v %*% t(v) ) %*% t(Q))
 
 	# we want positive values on s
@@ -54,7 +59,9 @@ dac <- function( T, inertia, epsilon){
 	#debug (check that we actually find T with the expression above)
 	check <- Q %*% S %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S ) 
 	if(max(abs(check-T))> epsilon ){
-       #     print(T - check)
+            print(c("cuppen failed",max(abs(check-T))))
+            print(n)
+            print(T - check)
             exit()
         }
 
@@ -63,8 +70,7 @@ dac <- function( T, inertia, epsilon){
 	# deflation
 	P <- diag(n) # deflation  operations
 	# zero out values too small for single precision
-	h <- epsilon * mean(abs(sapply(1:n,function(k){return
-				  (norm((diag(d)+p*v%*%t(v))[,k]))})))
+	h <- epsilon * matrix_norm_2(diag(d)+p*v%*%t(v))
 	i <- 1 # active column
 	j <- n # target column for switching
 	while( i < j ){
@@ -72,7 +78,7 @@ dac <- function( T, inertia, epsilon){
 			while( abs(p*(v[j])*sqrt(t(v)%*%v) ) < h && j > i ){
 				j <- j-1
 			}
-			print(c("deflation part1 triggered",p , v[i]))
+			print(c("deflation part1 triggered",h , v[i]))
 			if( i != j ){
 				# switch values manually
 				v[i] <- v[j]
@@ -136,7 +142,8 @@ dac <- function( T, inertia, epsilon){
 	while( m < j ){
 		k <- m+1
 		while( (k<=j) &&
-		      (abs(d[m] - d[k]) * v[m]*v[k] / sqrt(v[m]^2 * v[k]^2))  < h ){
+		      #(abs(d[m] - d[k]) * v[m]*v[k] / sqrt(v[m]^2 * v[k]^2))  < h ){
+		      abs(d[m] - d[k]) < h ){
 			print(c("deflation part2 triggered",m,k,v[m]))
 			# rotate with givens
 			v[k] <- 0 
@@ -224,20 +231,20 @@ dac <- function( T, inertia, epsilon){
 		}
 	}
 
-	# check matrix state
-	for( i in 1:n )
-		if( is.nan(lambdas[i]))
-			print(c("!l",i))
-
-
-	# check matrix state
-	for( i in 1:n )
-		for( j in 1:n)
-			if( is.nan(V[i,j])){
-				print(c("!!V",i,j ))
-				print(V)
-				exit()
-			}
+#	# check matrix state
+#	for( i in 1:n )
+#		if( is.nan(lambdas[i]))
+#			print(c("!l",i))
+#
+#
+#	# check matrix state
+#	for( i in 1:n )
+#		for( j in 1:n)
+#			if( is.nan(V[i,j])){
+#				print(c("!!V",i,j ))
+#				print(V)
+#				exit()
+#			}
 
         # precheck 
         check <- V %*% diag(c(lambdas)) %*% t(V)
@@ -265,6 +272,7 @@ dac <- function( T, inertia, epsilon){
 	#U2 <- ( diag(dsort) + p * v2 %*% t(v2) ) 
 
         print("done")
+        print(c("j:",j,"n:",n))
 	#return(list(Q=Q,P=P,S=S,O=O,U1=U1,U2=U2,V=V,lambdas=lambdas,v=v,v2=v2,p=p,d=dsort))
 	#V <- res$O %*% res$V %*% t(S)
 	return( list(vectors = Q %*% S %*% P %*% O %*% V, values=lambdas ) )

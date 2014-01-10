@@ -1,15 +1,16 @@
+source('normalisation.r')
 source('householder.r')
 
-tests <- function(n,inertia_rate,epsilon){
-	Test<-make_random_sym_matrix(n)
-	Matrices<-householder_matrix(Test)
+tests <- function(m,n,inertia_rate,epsilon){
+        A <- matrix(runif(n*m,0,255),m,n)
+        A <- normalisation(A)
+        B <- A %*% t(A)
+	M <- householder_matrix(B)
 	A<-Matrices$A
 	H<-Matrices$H
 	res <- dac(A,inertia_rate,epsilon)
 	print("maximum difference between diagonalized matrix and computed eigenvalues")
-	print(max(abs( ((t(res$vectors) %*% A %*% res$vectors)) - diag(res$values))))
+	print(max(abs( ((t(res$vectors) %*% A %*% res$vectors)) - diag(c(res$values)))))
 	print("maximum difference between the computed eigen values and R ones")
-	print(max(abs( sort(res$values) - sort(eigen(Test)$values) )))
-	print("maximum difference between the computed eigen vectors and R ones")
-	print(max(abs( sort(res$vectors[1]) - sort(eigen(Test)$vectors[1]) )))
+	print(max(abs( sort(c(res$values)) - sort(eigen(Test)$values) )))
 }
