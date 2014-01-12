@@ -139,6 +139,22 @@ add_executable(
 
 target_link_libraries(test_matrix ${OPENCL_LIBRARIES})
 
+# test_file
+
+add_executable(
+  test_file
+  test_file.cpp
+  ${PROJECT_SOURCE_DIR}/src/matrix.cpp
+  ${PROJECT_SOURCE_DIR}/src/file.cpp
+  ${PROJECT_SOURCE_DIR}/src/image.cpp
+  ${PROJECT_SOURCE_DIR}/src/mathexpression.cpp
+  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+  
+target_link_libraries(test_file "jpeg")
+target_link_libraries(test_file ${OPENCL_LIBRARIES})
+
 #######
 # tests
 
@@ -155,3 +171,6 @@ add_test( test_mathexpression2 ${EXECUTABLE_OUTPUT_PATH}/test_mathexpression2 "$
 
 # test_matrix
 add_test( test_matrix ${EXECUTABLE_OUTPUT_PATH}/test_matrix "${PROJECT_SOURCE_DIR}/kernels" )
+
+# test_file
+add_test( test_file ${EXECUTABLE_OUTPUT_PATH}/test_file "${PROJECT_SOURCE_DIR}/data/photos" )
