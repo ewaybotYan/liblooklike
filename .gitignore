@@ -4,3 +4,4 @@
 draft/
 build/
 *.kdev4
+*.user
