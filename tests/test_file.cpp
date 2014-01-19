@@ -8,6 +8,7 @@
 #include<iostream>
 #include<cstdio>
 
+#include "../include/jpegfile.h"
 #include "../include/image.h"
 #include "../include/file.h"
 #include "../include/exception.h"
@@ -47,7 +48,7 @@ int main ( const int argc, const char* argv[] ) {
         fout.write(ImageData,
                              fin.getWidth(),fin.getHeight(),
                              "test.jpg");
-        delete ImageData;
+        delete[] ImageData;
         std::cout << "testing array of files load\n";
         Matrix m = arrayOfImagesFromFiles( std::string(argv[argc-2]) );
     } catch( Error& e ) {

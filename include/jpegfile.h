@@ -2,15 +2,20 @@
 #define JPEGFILE_H
 
 #include <jpeglib.h>
+#include <memory>
 
 #include "image.h"
 #include "file.h"
 
-class JPEGImageInFile : protected ImageInFile {
+
+// #########
+// # classes
+
+class JPEGImageInFile : public ImageInFile {
 
 private:
 
-  File m_file;
+  std::shared_ptr<File> m_file;
   bool hasJPEGMagicNb( );
   struct jpeg_decompress_struct m_info;
   struct jpeg_error_mgr m_jerr;
@@ -19,11 +24,11 @@ public:
 
   /// @note make a call to @ref setSourceFile
   JPEGImageInFile( const std::string filePath );
+  JPEGImageInFile(){}
+  ~JPEGImageInFile(){}
 
   void setSourceFile(std::string filePath) override;
-
-  template<typename ScalarT>
-  void writeToMemory( ScalarT* mem, int width, int height ) override;
+  void load ( float *mem, unsigned int width, unsigned int height ) override;
 
 };
 
@@ -31,14 +36,14 @@ public:
 class JPEGImageOutFile : public ImageOutFile{
 
     public:
+        JPEGImageOutFile(){}
+        ~JPEGImageOutFile(){}
 
-        template<typename ScalarT>
-        virtual void write ( ScalarT* mem,
-                                       const unsigned int width,
-                                       const unsigned int height,
-                                       const std::string filePath ) override;
+        void write ( float* mem,
+                     const unsigned int width,
+                     const unsigned int height,
+                     const std::string filePath ) override;
 
 };
-
 
 #endif // JPEGFILE_H

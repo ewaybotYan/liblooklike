@@ -8,7 +8,7 @@ enable_testing()
 # BUILD FLAGS
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11 -O0")
-set(warnings "-Wall -Wextra -Werror")
+set(warnings "-Wall -Wextra -Werror -pedantic")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${warnings}")
 
 #######

@@ -18,6 +18,7 @@ private:
   FILE* m_file = nullptr;
   
 public:
+  File(){}
   
   File( const std::string filePath, const std::string mode = "rb" ){
         m_file = std::fopen( filePath.c_str(), mode.c_str() );

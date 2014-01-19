@@ -8,9 +8,10 @@
 #include <deque>
 #include <memory>
 
-#include "../include/file.h"
+#include "../include/jpegfile.h"
 #include "../include/matrix.h"
 #include "../include/exception.h"
+#include "../include/image.h"
 
 // #######################
 // # Functions declaration
@@ -18,7 +19,7 @@
 Matrix arrayOfImagesFromFiles ( const std::string path ) {
     DIR *dir;
     struct dirent *ent;
-    std::deque<JPEGFile> imagefiles;
+    std::deque<JPEGImageInFile> imagefiles;
 
     // first, get all jpeg files fro path
     if ( ( dir = opendir ( path.c_str() ) ) == NULL )
@@ -42,7 +43,7 @@ Matrix arrayOfImagesFromFiles ( const std::string path ) {
     // then get the average size
     unsigned int avgWidth = 0;
     unsigned int avgHeight = 0;
-    for ( JPEGFile f : imagefiles ) {
+    for ( JPEGImageInFile f : imagefiles ) {
         avgWidth += f.getWidth();
         avgHeight += f.getHeight();
     }
@@ -57,14 +58,22 @@ Matrix arrayOfImagesFromFiles ( const std::string path ) {
 
     //then load the pixels from these files
     float* offset = values;
-    for ( JPEGFile f : imagefiles ) {
+    for ( JPEGImageInFile f : imagefiles ) {
 #ifndef NDEBUG
     std::cout << "loading pixels\n" ;
 #endif
-        f.writeToMemory<float> ( offset, avgWidth, avgHeight );
+        f.load( offset, avgWidth, avgHeight );
         offset += avgWidth * avgHeight;
     }
 
     delete[] values;
     return m;
+}
+
+unsigned int ImageInFile::getWidth() const {
+    return m_width;
+}
+
+unsigned int ImageInFile::getHeight() const {
+    return m_height;
 }
