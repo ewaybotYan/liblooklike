@@ -6,11 +6,14 @@
 #include <dirent.h>
 #include <string>
 #include <deque>
+#include <memory>
 
 #include "../include/file.h"
 #include "../include/matrix.h"
 #include "../include/exception.h"
 
+// #######################
+// # Functions declaration
 
 Matrix arrayOfImagesFromFiles ( const std::string path ) {
     DIR *dir;
@@ -59,8 +62,9 @@ Matrix arrayOfImagesFromFiles ( const std::string path ) {
     std::cout << "loading pixels\n" ;
 #endif
         f.writeToMemory<float> ( offset, avgWidth, avgHeight );
-        offset += avgWidth*avgHeight*sizeof ( float );
+        offset += avgWidth * avgHeight;
     }
 
+    delete[] values;
     return m;
 }

@@ -34,13 +34,21 @@ int main ( const int argc, const char* argv[] ) {
         char ch;
         char* ref = (char*)sampleTxt.c_str();
         while((ch=std::fgetc(F))!=EOF && ch != '\n' && ch != '\0'){
-#ifndef NDEBUG
-            std::cout << ch << "\n";
-#endif
             if( ch != *ref++ )
                 throw Error("Cannot recognise sample file");
         }
 
+        std::cout << "testing simple image file opening\n";
+        std::string filePath = std::string(argv[argc-2]) + "/100a.jpg";
+        JPEGImageInFile fin(filePath);
+        JPEGImageOutFile fout;
+        float* ImageData = new float[fin.getHeight()*fin.getWidth()];
+        fin.load(ImageData,fin.getWidth(),fin.getHeight());
+        fout.write(ImageData,
+                             fin.getWidth(),fin.getHeight(),
+                             "test.jpg");
+        delete ImageData;
+        std::cout << "testing array of files load\n";
         Matrix m = arrayOfImagesFromFiles( std::string(argv[argc-2]) );
     } catch( Error& e ) {
         e.printMsg();
