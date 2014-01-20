@@ -22,6 +22,8 @@ class Matrix: public MathExpression {
 	/// @param values values of the matrix
     /// @param m     number of lines in the matrix
     /// @param n     number of columns in the matrix
+    /// @param keepInCLMem indicates wether the computed result should be kept
+    ///        in OpenCL memory even if there are no parent expressions.
 	Matrix ( float* values,
 		const unsigned int m,
 		const unsigned int n,
@@ -32,6 +34,8 @@ class Matrix: public MathExpression {
 	/// @param kernelName  name of the kernel to call for the computation
     /// @param m number of lines in the matrix
     /// @param n number of columns in the matrix
+    /// @param keepInCLMem indicates wether the computed result should be kept
+    ///        in OpenCL memory even if there are no parent expressions.
 	Matrix ( const std::string programName,
 		const std::string kernelName,
 		const unsigned int m,
@@ -42,8 +46,8 @@ class Matrix: public MathExpression {
     ///        two matrices.
     /// @param A left operand
     /// @param B right operand
-    /// @param keepInCLMem Keep in OpenCL memory even if no parent expression
-    ///        exists.
+    /// @param keepInCLMem indicates wether the computed result should be kept
+    ///        in OpenCL memory even if there are no parent expressions.
     /// @return result of the matrix product A*B
 	static Matrix mul ( Matrix& A, Matrix& B, const bool keepInCLMem = false );
 
@@ -51,13 +55,15 @@ class Matrix: public MathExpression {
     ///        matrices.
     /// @param A left operand
     /// @param B right operand
-    /// @param keepInCLMem Keep in OpenCL memory even if no parent expression
-    ///        exists.
+    /// @param keepInCLMem indicates wether the computed result should be kept
+    ///        in OpenCL memory even if there are no parent expressions.
     /// @return result of the matrix product A+B
 	static Matrix add ( Matrix& A, Matrix& B, const bool keepInCLMem = false );
 
     /// Center and normalizes the columns of a matrix.
     /// @param A Input matrix
+    /// @param keepInCLMem indicates wether the computed result should be kept
+    ///        in OpenCL memory even if there are no parent expressions.
     /// @return input matrix with normalized columns
 	static Matrix normalize ( Matrix& A, const bool keepInCLMem = false );
 

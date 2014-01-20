@@ -18,25 +18,38 @@
 class Error: public std::exception{
 
   public:
+
+    /// Default constructor
     Error( ) throw();
+
+    /// @param errorMsg error message that will be displayed
     Error( const char* errorMsg ) throw();
+
+    /// @param errorMsg error message that will be displayed
     Error( std::string errorMsg ) throw();
-    const char* what() const throw();
+
+    /// @return the message associated to this exception
+    const char* what() const throw() override;
+
 #ifndef NDEBUG
     /// prints a formatted error message on the standard error output stream
     void printMsg();
 #endif
 
   protected:
+
+    /// the content of this variable is printed by @ref printMsg()
     std::string errorMsg;
 
 };
+
 
 /// exception that prints a human readable message for OpenCL error
 class CLError : public Error{
 
   public:
     /// @param clErrorNb the error number returned/set by most OpenCL functions
+    /// @param msg optionnal error message
     CLError( const int clErrorNb, const std::string msg = "" ) throw();
 
 };

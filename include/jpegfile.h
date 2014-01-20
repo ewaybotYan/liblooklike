@@ -11,32 +11,41 @@
 // #########
 // # classes
 
+/// Handles Jpeg file reading
 class JPEGImageInFile : public ImageInFile {
 
-private:
+    public:
 
-  std::shared_ptr<File> m_file;
-  bool hasJPEGMagicNb( );
-  struct jpeg_decompress_struct m_info;
-  struct jpeg_error_mgr m_jerr;
+        /// @param filePath path to the jpeg file to read
+        /// @note makes a call to @ref setSourceFile
+        JPEGImageInFile( const std::string filePath );
 
-public:
+        /// default constructor
+        JPEGImageInFile(){}
+        /// default destructor
+        ~JPEGImageInFile(){}
 
-  /// @note make a call to @ref setSourceFile
-  JPEGImageInFile( const std::string filePath );
-  JPEGImageInFile(){}
-  ~JPEGImageInFile(){}
+        void setSourceFile(std::string filePath) override;
+        void load ( float *mem, unsigned int width, unsigned int height ) override;
 
-  void setSourceFile(std::string filePath) override;
-  void load ( float *mem, unsigned int width, unsigned int height ) override;
+    private:
 
+        std::shared_ptr<File> m_file;
+        bool hasJPEGMagicNb( );
+        struct jpeg_decompress_struct m_info;
+        struct jpeg_error_mgr m_jerr;
 };
 
 
+/// Handle monochromatic to JPEG file conversion
 class JPEGImageOutFile : public ImageOutFile{
 
     public:
+
+        /// default constructor
         JPEGImageOutFile(){}
+
+        /// default destructor
         ~JPEGImageOutFile(){}
 
         void write ( float* mem,

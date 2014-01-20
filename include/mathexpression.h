@@ -63,6 +63,9 @@ class MathExpression {
 
     protected:
 
+        /// @todo remove the use of isTerminal and rely on m_children size.
+        /// @param isTerminal indicates wether the expression needs computation
+        ///        or if it is just loaded from memory.
         /// @param keepInCLMem indicates wether data of the expression has to be
         ///        kept in OpenCL device memory even if no parent expression is
         ///        using it.
@@ -74,6 +77,7 @@ class MathExpression {
 
         /// @brief says if the expression has to be computed before one can read
         ///        its value
+        /// @todo  use m_children to give the answer
         bool isComputed();
 
         /// @brief Gives the general state of the MathExpression (see state

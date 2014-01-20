@@ -16,27 +16,33 @@
 
 #include "../include/exception.h"
 
-
+/// @brief Manages the OpenCL environment during the program execution.
+/// This class is similar to cl::Context with extended roles.
+/// It handles environment setup, kernel loading and compilation, the creation
+/// of cl::CommandQueue objects.
 class Context{
   public:
     Context();
-    /// @param programs_path absolute path to the opencl .cl programs files
+    /// @param programsPath absolute path to the opencl .cl programms files
     /// @throw Error
-    Context( std::string programspath );
+    Context( std::string programsPath );
 
-    /// @note   getKernel will load the program from the program path, build 
-    ///         it and returns the kernel if it was not already loaded
+    /// Obtain a compiled cl::Kernel from the @ref Context.
+    /// @ref getKernel will load the program from the program path, build
+    /// it and returns the kernel if it was not already loaded
     /// @param  programName name of the program without the .cl extension
     /// @param  kernelName  name of the kernel function
-    /// @return returns the kernel name kernelName from the program file
-    ///         <programName>.cl in the path set at context creation
+    /// @return returns the kernel named (kernelName) from the program file
+    ///         (programName).cl in the path set at context creation
     /// @throw  CLError
     cl::Kernel getKernel( const std::string programName,
         const std::string kernelName );
 
 #ifndef NDEBUG
+    /// @return the cl::Context associated to the @ref Context object
     cl::Context& getContext(); 
 
+    /// @return an array of the cl::devices associated to the current context
     std::vector<cl::Device> getDevices();
 #endif
 

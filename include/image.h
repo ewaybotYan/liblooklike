@@ -70,8 +70,13 @@ class ImageInFile{
         ~ImageInFile(){}
     protected:
 
+        /// the image width in pixels
         unsigned int m_width = 0;
+
+        /// the image height in pixels
         unsigned int m_height = 0;
+
+        /// @note constructor is protected because this is an abstract class
         ImageInFile(){}
 };
 
