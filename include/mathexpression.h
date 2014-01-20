@@ -102,19 +102,20 @@ class MathExpression {
         /// @param ctx a valid context
         /// @param queue the queue in which execution will start
         /// @startuml{MathExpression_evaluate_activity.png}
+        ///     skinparam monochrome true
         ///     (*) --> evaluate()
-        ///     if "already\nqueued" then
-        ///      -> [true] "SUCCESS"
+        ///     if "already\nqueued?" then
+        ///      --> [true] "SUCCESS"
         ///     else
         ///
         ///      if "has children?" then
         ///
-        ///       --> "treat\n children" as preChildrenSteps
+        ///       -->[true] "treat\n children" as preChildrenSteps
         ///
-        ///       if "has non-\nenqueued\nchildren" then
+        ///       if "has non-\nenqueued\nchildren?" then
         ///        -->[true] "try memory\nallocation\nfor children"
         ///
-        ///        if "all failed" then
+        ///        if "all failed?" then
         ///         --> [true] "FAILURE"
         ///        else
         ///         --> [false] "enqueue\nchildren"
@@ -126,7 +127,7 @@ class MathExpression {
         ///      else
         ///       -->[false] postChildrenStep
         ///
-        ///       if "allocation\n succeeded" then
+        ///       if "allocation\n succeeded?" then
         ///        --->[true] "enqueue"
         ///        ---> "SUCCESS"
         ///        ---> (*)
