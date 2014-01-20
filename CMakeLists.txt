@@ -22,7 +22,7 @@ set(PROJECT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 include(CMakeDependentOption)
 
 option(USE_POCL "Use POCL instead of a standard OpenCL library" FALSE)
-option(BUILD_DOCUMENTATION "Build project code documentation" FALSE)
+option(BUILD_DOCUMENTATION "Build project code documentation" TRUE)
 CMAKE_DEPENDENT_OPTION(USE_PLANTUML
                        "Generate UML Diagrams in  focumentation"
                        TRUE

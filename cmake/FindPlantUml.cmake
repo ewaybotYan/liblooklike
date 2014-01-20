@@ -1,9 +1,8 @@
 find_file(
     PLANTUML_PATH
     "plantuml.jar"
-    PATHS ${PLANTUML_PATH} "/opt/plantuml/"
+    PATHS ${PLANTUML_PATH} "/opt/plantuml/" ${CMAKE_MODULE_PATH}
     DOC "plantuml.jar file path"
-    NO_DEFAULT_PATH
 )
 
 if( ${PLANTUML_PATH} STREQUAL "PLANTUML_PATH-NOTFOUND" )
