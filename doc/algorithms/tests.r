@@ -13,4 +13,5 @@ tests <- function(n,inertia_rate,epsilon){
 	print(max(abs( sort(res$values) - sort(eigen(Test)$values) )))
 	print("maximum difference between the computed eigen vectors and R ones")
 	print(max(abs( sort(res$vectors[1]) - sort(eigen(Test)$vectors[1]) )))
+    return (Test)
 }

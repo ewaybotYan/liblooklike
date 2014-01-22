@@ -24,9 +24,18 @@ dac <- function( T, inertia, epsilon){
 	u    <- beta * ((1:n)==k) + ((1:n) == k+1)
 	Tmp  <- T - p * u %*% t(u)
 	T1   <- Tmp[1:k,1:k]
-	T2   <- Tmp[seq(k+1,n),seq(k+1,n)]
+	T2   <- Tmp[seq(k+1,n),seq(k+1,n)]                              #T2 pas vu comme un vect en dim 3
 	# at this stage T = [T1  ] + p * u %*% t(u)
 	#                   [  T2]
+    print('T2=')
+    print(T2)
+
+    T3 <- rbind( 
+                  cbind( T1, matrix(0,k,n-k) ),
+                  cbind( matrix( 0, n-k, k ), T2 )
+                )
+    print ('T3-T=')
+    print(T3 + p * u %*% t(u) - T)
 
 	# apply divide and conquer
 	# note we rely on internal R function, so no actual recursion here
@@ -41,18 +50,28 @@ dac <- function( T, inertia, epsilon){
                     cbind( Q1, matrix(0,k,n-k) ),
                     cbind( matrix( 0, n-k, k ), Q2 )
                   )
+    print('Q1=')
+    print(Q1)
+    print('Q2=')
+    print(Q2)
+    print('Q=')
+    print(Q)
 	v    <- t(Q) %*% u
 	# at this stage T = Q %*% ( [D1  ]  + p * v %*% t(v) ) %*% t(Q)
 	#                           [  D2]
 	d     <- c( res1$values, res2$values )
         check <- (Q %*% (diag(d) + p * v %*% t(v) ) %*% t(Q))
 
-	# we want positive values on s
+	# we want positive values on s                                          ???????????????????????
 	S    <- diag( sapply(v,sign) )
+    print('S=')
+    print(S)
 	d    <- d  # is not changed in this new base
 	v    <- S %*% v
 	#debug (check that we actually find T with the expression above)
-	check <- Q %*% S %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S ) 
+	check <- Q %*% S %*% ( diag(d) + p * v %*% t(v) ) %*% t( Q %*% S )
+    print('check-T=')
+    print(check-T)
 	if(max(abs(check-T))> epsilon ){
        #     print(T - check)
             exit()
