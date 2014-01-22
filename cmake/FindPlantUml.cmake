@@ -1,5 +1,3 @@
-message("-- checking for plantUML")
-
 find_file(
     PLANTUML_PATH
     "plantuml.jar"

@@ -10,7 +10,12 @@ if(BUILD_DOCUMENTATION)
         MESSAGE(FATAL_ERROR "Doxygen is needed to build the documentation.")
     ENDIF()
 
-    set( HAVE_DOT "YES" ) # for doxyfile
+    find_package(Dot)
+    if(DOT_EXECUTABLE_PATH_FOUND)
+        set( HAVE_DOT "YES" ) # for doxyfile
+    else()
+        set( HAVE_DOT "NO" ) # for doxyfile
+    endif()
 
     if(USE_PLANTUML)
         find_package(Java COMPONENTS Runtime)
