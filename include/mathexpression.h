@@ -1,5 +1,5 @@
 /**
- * @file   expression.h
+ * @file   mathexpression.h
  * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
  * @brief  The evaluation of a whole expression is handled by an Expression
  *         object. It makes it easier to understand the process.

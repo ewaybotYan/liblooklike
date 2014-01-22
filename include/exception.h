@@ -36,7 +36,7 @@ class Error: public std::exception{
 class CLError : public Error{
 
   public:
-    /// param clErrorNb the error number returned/set by most OpenCL functions
+    /// @param clErrorNb the error number returned/set by most OpenCL functions
     CLError( const int clErrorNb, const std::string msg = "" ) throw();
 
 };
