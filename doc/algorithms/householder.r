@@ -1,15 +1,15 @@
 
 householder_symetry_vector <- function( u, k ){
   n <- length( u )
-  v <- u * ((1:n)>k)
-  v <- v - (-1) * sign( u[k+1] ) * norm(v) * ((1:n)==k+1)
-  return (v)
+  v <- matrix(u * ((1:n)>k),n,1)
+  v <- v - (-1) * sign( u[k+1] ) * sqrt(t(v)%*%v) * ((1:n)==k+1)
+  return ( v )
 }
 
 P_k <- function( A, k ){
-  n <- dim(A)[1]
   v = householder_symetry_vector( A[,k], k )
-  return( diag(n) - 2 * ( v %*% t(v) ) / ( norm(v)^2 ) )
+  n <- dim(v)[1]
+  return( diag(n) - 2 * ( v %*% t(v) ) / matrix(( t(v) %*% v ),n,n) )
 }
 
 householder_matrix <- function( A ){

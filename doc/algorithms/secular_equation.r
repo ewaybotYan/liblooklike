@@ -86,7 +86,7 @@ roots_secular_equation <- function (p, v, d, trace){
                     if( is.nan(c1 * c2 * c3* d[n-j-1] * d[n-j]) ){
                         print( c( "! ",j,c1 , c2 , c3, d[n-j-1] , d[n-j]))
                     }
-                lambda	<- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
+                lambda <- find_approx_lambda(c1,c2,c3,d[n-j-1],d[n-j])
                     if( (lambda < d[n-j-1]) || (lambda >d[n-j]) ){
                         print(c("wtf???", d[n-j-1], lambda, d[n-j] ))
                             print(c("d=",d))

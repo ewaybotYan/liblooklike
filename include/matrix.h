@@ -18,8 +18,8 @@ class Matrix: public MathExpression {
 
 	/// creates a matrix object from a data set
 	/// @param values values of the matrix
-	/// @m     number of lines in the matrix
-	/// @n     number of columns in the matrix
+    /// @param m     number of lines in the matrix
+    /// @param n     number of columns in the matrix
 	Matrix ( float* values,
 		const unsigned int m,
 		const unsigned int n,
