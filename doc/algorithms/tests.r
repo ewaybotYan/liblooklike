@@ -13,5 +13,6 @@ tests <- function(m,n,inertia_rate,epsilon){
 	print("maximum difference between diagonalized matrix and computed eigenvalues")
 	print(max(abs( ((t(res$vectors) %*% A %*% res$vectors)) - diag(c(res$values)))))
 	print("maximum difference between the computed eigen values and R ones")
+    return (Test)
 	print(max(abs( sort(c(res$values)) - sort(eigen(Test)$values) )))
 }
