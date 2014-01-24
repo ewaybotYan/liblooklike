@@ -26,16 +26,14 @@ if(BUILD_DOCUMENTATION)
         endif()
     endif()
 
-# doxygen doc target
+    # doxygen doc target
     SET( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in     )
     SET( doxyfile             ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile        )
     SET( doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
     SET( doxy_output_root     ${DOC_OUTPUT_PATH}                          )
     SET( doxy_input           "${CMAKE_CURRENT_SOURCE_DIR}/../include"    )
     set( doxy_input           "${doxy_input} ${CMAKE_CURRENT_SOURCE_DIR}" )
-
-    # set doxygen paths in Doxyfile
-    CONFIGURE_FILE( ${doxyfile_in} ${doxyfile} @ONLY )
+    set( doxygen_log          "${CMAKE_CURRENT_BINARY_DIR}/doxygen.log"   )
 
     ADD_CUSTOM_COMMAND( OUTPUT ${doxy_html_index_file}
     COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
@@ -47,15 +45,17 @@ if(BUILD_DOCUMENTATION)
                        DEPENDS ${doxy_html_index_file}
                                ${plantuml_images} )
 
-#optional plantuml target
+    #optional plantuml target
+    if( USE_PLANTUML AND PLANTUML_PATH_FOUND )
+        set( image_dir "${CMAKE_CURRENT_BINARY_DIR}/uml_images")
+        file(MAKE_DIRECTORY ${image_dir})
+        ADD_CUSTOM_TARGET( plantuml
+        COMMAND ${Java_JAVA_EXECUTABLE} -jar ${PLANTUML_PATH} -o "${image_dir}" "${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h"
+        COMMENT "Generating UML diagrams for documentation")
+        add_dependencies( doc plantuml)
+    endif()
 
-if( USE_PLANTUML AND PLANTUML_PATH_FOUND )
-    set( image_dir "${CMAKE_CURRENT_SOURCE_DIR}/uml_images")
-    file(MAKE_DIRECTORY ${image_dir})
-    ADD_CUSTOM_TARGET( plantuml
-    COMMAND ${Java_JAVA_EXECUTABLE} -jar ${PLANTUML_PATH} -v -o "${image_dir}" "${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h"
-    COMMENT "Generating UML diagrams for documentation")
-    add_dependencies( doc plantuml)
-endif()
+    # set doxygen paths in Doxyfile
+    CONFIGURE_FILE( ${doxyfile_in} ${doxyfile} @ONLY )
 
 endif(BUILD_DOCUMENTATION)

@@ -1,17 +1,18 @@
+string(REPLACE ":" " " PATH $ENV{PATH})
+
 find_file(
     DOT_EXECUTABLE_PATH
     "dot"
-    PATHS $ENV{PATH}
+    PATHS ${PATH}
     DOC "dot executable path"
-    NO_DEFAULT_PATH
 )
 
 if( ${DOT_EXECUTABLE_PATH} STREQUAL "DOT_EXECUTABLE_PATH-NOTFOUND" )
     set( DOT_EXECUTABLE_PATH_FOUND FALSE )
-    message("--   dot not found")
+    message("-- Dot not found")
 else()
     set( DOT_EXECUTABLE_PATH_FOUND TRUE )
     execute_process(COMMAND "dot -V"
                 OUTPUT_VARIABLE DOT_VERSION)
-    message("--   found dot (${DOT_VERSION})")
+    message("-- Found dot (${DOT_VERSION})")
 endif()

@@ -73,3 +73,4 @@ endif(USE_GUI)
 
 add_subdirectory(tests)
 add_subdirectory(doc)
+add_subdirectory(src)

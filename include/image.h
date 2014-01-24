@@ -1,6 +1,11 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+/**
+ * @file  image.h
+ * @brief classes for image files
+*/
+
 #include "file.h"
 #include "matrix.h"
 
@@ -8,28 +13,44 @@
 // ############################
 // # genereal purpose functions
 
+/// @brief Generates an array of monochomatic images from JPEG files in a
+///        directory
+/// @param path Path to a directory where the input files are
+/// @return A matrix with the pixels of the images, each line correspond to one
+///         image, each line is the concatenation of the lines of pixel of one
+///         image.
+/// @note The directory may contain non JPEG files, they will be ignored.
+/// @warning There is no rule to sort the lines according to the filenames.
 Matrix arrayOfImagesFromFiles(const std::string path);
 
 
 // #######################
 // # generic image classes
 
+/// @brief Abstract class for image file loading
+/// @startuml{ImageInFile_state.png}
+///     [*] --> Empty
+///     Empty --> AssociatedToAFile : setSourceFile()
+///     AssociatedToAFile --> AssociatedToAFile : read operations
+///     AssociatedToAFile --> [*]
+/// @enduml
 class ImageInFile{
 
     public:
 
-        /// @return width of the image if a source file was specified,
+        /// @return Width of the image if a source file was specified,
         ///         default value is 0 otherwise.
-        /// @note   setSourceFile can be used in order to set width
+        /// @note   @ref setSourceFile can be used in order to set width.
         unsigned int getWidth() const;
 
-        /// @return height of the image if a source file was specified,
+        /// @return Height of the image if a source file was specified,
         ///         default value is 0 otherwise.
-        /// @note   setSourceFile can be used in order to set height
+        /// @note   @ref setSourceFile can be used in order to set height
         unsigned int getHeight() const;
 
-        /// read the header of a source file, after a call to this function,
-        /// getWidth and getHeight must return appropriate values after
+        /// @brief Read the header of a source file.
+        /// After a call to this function, getWidth and getHeight must return
+        /// appropriate values after.
         /// @warning see implementations of this class for exception catching
         virtual void setSourceFile(std::string filePath) = 0;
 
@@ -55,6 +76,7 @@ class ImageInFile{
 };
 
 
+/// @brief Abstract class for image file creation
 class ImageOutFile{
 
     public:

@@ -9,9 +9,11 @@
 
 #include<CL/cl.hpp>
 
-#include "../include/mathexpression.h"
-#include "../include/context.h"
+#include "mathexpression.h"
+#include "context.h"
 
+/// @brief Implements main aspects of mathematical matrices for
+///        @ref MathExpression .
 class Matrix: public MathExpression {
 
     public:
@@ -28,21 +30,35 @@ class Matrix: public MathExpression {
 	/// create an matrix whose value is the result of a computation
 	/// @param programName name of the file where the kernel is (without .cl)
 	/// @param kernelName  name of the kernel to call for the computation
-	/// @m     number of lines in the matrix
-	/// @n     number of columns in the matrix
+    /// @param m number of lines in the matrix
+    /// @param n number of columns in the matrix
 	Matrix ( const std::string programName,
 		const std::string kernelName,
 		const unsigned int m,
 		const unsigned int n,
 		const bool keepInCLMem = false );
 
-	/// creates a computed matrix as the result of the multiplication of two matrices
+    /// @brief Creates a computed matrix as the result of the multiplication of
+    ///        two matrices.
+    /// @param A left operand
+    /// @param B right operand
+    /// @param keepInCLMem Keep in OpenCL memory even if no parent expression
+    ///        exists.
+    /// @return result of the matrix product A*B
 	static Matrix mul ( Matrix& A, Matrix& B, const bool keepInCLMem = false );
 
-	/// creates a computed matrix as the result of the sum of two matrices
+    /// @brief Creates a computed matrix as the result of the sum of two
+    ///        matrices.
+    /// @param A left operand
+    /// @param B right operand
+    /// @param keepInCLMem Keep in OpenCL memory even if no parent expression
+    ///        exists.
+    /// @return result of the matrix product A+B
 	static Matrix add ( Matrix& A, Matrix& B, const bool keepInCLMem = false );
 
-	/// center and normalizes the columns of a matrix
+    /// Center and normalizes the columns of a matrix.
+    /// @param A Input matrix
+    /// @return input matrix with normalized columns
 	static Matrix normalize ( Matrix& A, const bool keepInCLMem = false );
 
 	void retrieveData ( Context& context, cl::CommandQueue& queue ) override;
@@ -53,10 +69,15 @@ class Matrix: public MathExpression {
 	/// @return a 1D float array as the concatenation of the lines of the matrix
 	float* getValues() const;
 	
+    /// @return matrix width
 	int getWidth() const;
 	
+    /// @return matrix height
 	int getHeight() const;
+
 #ifndef NDEBUG
+    /// @brief Prints matrix on standard output in scientific notation with
+    ///        5 decimals.
 	void print();
 #endif
 
@@ -67,7 +88,7 @@ class Matrix: public MathExpression {
 	bool allocateForResult ( Context& context ) override;
 
     private:
-      
+
 	float* m_value;
 	int m_m;
 	int m_n;

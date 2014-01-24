@@ -8,8 +8,8 @@ find_file(
 
 if( ${PLANTUML_PATH} STREQUAL "PLANTUML_PATH-NOTFOUND" )
     set( PLANTUML_PATH_FOUND FALSE )
-    message("--   plantUML not found")
+    message("-- PlantUML not found")
 else()
     set( PLANTUML_PATH_FOUND TRUE )
-    message("--   found plantUML")
+    message("-- Found plantUML")
 endif()
