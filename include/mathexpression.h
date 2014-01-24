@@ -39,10 +39,6 @@ enum AllocationResult {
     COMPUTED_EXPRESSION_ALLOCATED
 };
 
-// ##################
-// # helper functions
-
-cl::Context* getContextFromQueue( cl::CommandQueue queue );
 
 // ###############
 // # MathExpresion

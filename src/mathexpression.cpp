@@ -15,12 +15,6 @@ bool checkChildrenEnqueued( const std::vector<MathExpression*> children ){
     return res;
 }
 
-/*
-   cl::Context getContextFromQueue( cl::CommandQueue queue ){
-   return queue.getInfo<CL_QUEUE_CONTEXT>();
-   }*/
-
-
 // ################
 // # constructor(s)
 
@@ -61,12 +55,6 @@ void MathExpression::addChild(MathExpression* child){
 void MathExpression::increaseParentNb(){
     m_nbParents++;
 }
-
-/*
-   void MathExpression::evaluate( Context& ctx ){
-   cl::CommandQueue queue = ctx.createQueue();
-   evaluate( ctx, queue );
-   }*/
 
 void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
 #ifndef NDEBUG
