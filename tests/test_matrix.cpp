@@ -122,6 +122,12 @@ cl_float normalized[n*m] = {
     0.084470538,   0.011873928,   0.012341131,   0.148958480,   -0.222465978
 };
 
+cl_float id[9] = {
+    1,0,0,
+    0,1,0,
+    0,0,1
+};
+
 const int aw = 20;
 const int ah = 5;
 
@@ -170,9 +176,11 @@ const int cw = 3;
 const int ch = 5;
 
 cl_float c[ah*bw] = {
-    -0.04008873,1.986873,-0.2833796,1.182132,-1.969775,
-    -1.532436,0.2200845,0.7200324,3.421073,-0.7900933,
-    -0.6098414,3.040098,0.8856889,-0.8036001,-1.455227
+    -3.39954e+00, -2.43957e-02, 1.19527e+00,
+    2.59287e+00, -2.18775e-01, -1.33932e+00,
+    1.19353e+00, 1.16815e+00, 5.26290e-01,
+    -8.57741e-02, 8.53603e-01, 1.16509e+00,
+    -1.65876e+00, -3.03817e-01, 4.52261e-01
 };
 
 void usage() {
@@ -193,14 +201,6 @@ int main ( int argc, char* argv[] ) {
         Context ctx ( path );
         cl::CommandQueue queue = ctx.createQueue();
         float error;
-
-        /*
-        // test matrix loading
-        Matrix v ( data, m, n );
-        v.evaluate( ctx, queue );
-        v.retrieveData( ctx, queue );
-        v.print();
-    */
 
         // test normalization
         cout << "testing normalization\n";
@@ -223,6 +223,24 @@ int main ( int argc, char* argv[] ) {
             dat.print();
             return -1;
         }
+
+/*        // test simple multiplication
+        Matrix ID( id, 3, 3);
+        Matrix ID2 = Matrix::mul(ID,ID);
+        ID2.evaluate(ctx, queue);
+        ID2.retrieveData(ctx, queue);
+        float* id2 = ID2.getValues();
+        for( int k = 0; k < 9; k++ ){
+            error = max( error, abs( id[k] - id2[k] ) );
+        }
+        if ( error < 0.0000001 ) {
+            std::cerr << "computed without noticeable error.\n";
+        } else {
+            std::cout << "computed result matches with error!\n";
+            ID2.print();
+            return -1;
+        }
+        ID2.print();*/
         
         // test multiplication
         cout << "testing multiplication\n";
@@ -236,10 +254,10 @@ int main ( int argc, char* argv[] ) {
         for( int k = 0; k < ch*cw; k++ ){
             error = max( error, abs( res2[k] - c[k] ) );
         }
-        if ( error < 0.0000001 ) {
-            std::cerr << "computed without noticeable error.\n";
+        if ( error < 0.0001 ) {
+            std::cerr << "computed without noticeable error\n";
         } else {
-            std::cout << "computed result matches with error!\n";
+            std::cout << "computed result matches with error!: " << error << "\n";
             C.print();
             return -1;
         }

@@ -87,6 +87,7 @@ class MathExpression {
         /// @brief Return data buffers associated to the object value.
         /// @note  Buffer order might be important, see MathExpression
         ///        implementations for the meaning.
+        /// @todo  rename to getBuffer
         std::vector<cl::Buffer> getData();
 
         /// Gives the OpenCL event associated to the end of the computation.

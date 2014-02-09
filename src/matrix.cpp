@@ -186,19 +186,22 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
                         cl::NullRange,
                         cl::NDRange ( m_n ),
                         cl::NDRange ( 1 ),
-                        &dependencies,
+                        0,
                         &m_endOfEvaluation
                     );
             if ( error != CL_SUCCESS )
                 throw ( CLError ( error, "failed to enqueue kernel execution" ) );
-        }else if ( m_kernelName == "matrix_matrix_mul" ){
-	    //set arguments
+        }else if ( m_kernelName == "matrix_matrix_multiplication" ){
+#ifndef NDEBUG
+            std::cout << "evaluating multiplication\n";
+#endif
+            //set arguments
             kernel.setArg ( 0, m_data[0] );
             kernel.setArg ( 1, m_children[0]->getData() [0] );
-            kernel.setArg ( 2, m_children[0]->getData() [1] );
+            kernel.setArg ( 2, m_children[1]->getData() [0] );
             kernel.setArg<int> ( 3, m_m );
             kernel.setArg<int> ( 4, m_n );
-            kernel.setArg<int> (5, m_productDepth );
+            kernel.setArg<int> ( 5, m_productDepth );
 
             // prepare dependencies
             std::vector<cl::Event> dependencies;
@@ -211,12 +214,16 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
                         cl::NullRange,
                         cl::NDRange ( m_n, m_m ),
                         cl::NDRange ( 1, 1 ),
-                        &dependencies,
+                        0,
                         &m_endOfEvaluation
                     );
             if ( error != CL_SUCCESS )
                 throw ( CLError ( error, "failed to enqueue kernel execution" ) );
-	}
+    }else{
+#ifndef NDEBUG
+            std::cerr << "no kernel specified!";
+#endif
+        }
 
     } else { // this is a terminal expression, just load data in the buffer
 #ifndef NDEBUG
