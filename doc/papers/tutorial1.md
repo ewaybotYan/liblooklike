@@ -27,9 +27,9 @@ designed algorithms, that can split work among the devices instead of queuing ta
 Thus if you replicate six times your computation devices and split work equally between each one,
 you can expect a performance improvement by a factor up to six.
 
-Figure [] shows the diffrence between sequential, and parallel execution.
+Figure [] shows the difference between sequential, and parallel execution.
 
-Further in this serie of tutorials, we will call computation device the object that take data input,
+Further in this series of tutorials, we shall call computation device the object that take data input,
 execute a computation on it and returns the result of the algorithm. Parallelization will happen
 inside this computation device.
 
