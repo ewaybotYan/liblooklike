@@ -152,7 +152,7 @@ cl::Kernel Context::getKernel( const std::string programName,
     // get kernel
     cl::Kernel kernel = cl::Kernel( iter->second, kernelName.c_str(), &error );
     if( error != CL_SUCCESS )
-        throw( CLError( error, "could not find or load kernel") );
+        throw( CLError( error, "could not find or load kernel"+kernelName+" from "+programName ) );
 
 #ifndef NDEBUG
     std::cout << "got kernel " << kernelName << " from " << programName << "\n";

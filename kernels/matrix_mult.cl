@@ -7,12 +7,14 @@
 //! wA is A's width and wB is B's width            !//
 //////////////////////////////////////////////////////
 __kernel void
-matrix_matrix_multiplication( __global float* C, __global float* A, __global float* B, 
-           int wA, int wB)
+matrix_matrix_multiplication ( __global float* C,
+                               __global float* A,
+                               __global float* B,
+                               int wA, int wB )
 {
 
     //Block size
-    int block_size = BLOCK_SIZE;
+    const int block_size = BLOCK_SIZE;
 
     // Block index
     int bx = get_group_id(0);
@@ -23,19 +25,19 @@ matrix_matrix_multiplication( __global float* C, __global float* A, __global flo
     int j = get_local_id(1);
 
     // Index of the first sub-matrix of A processed by the block
-    int aStart = wA * block_size * by;
+    int aStart = wA * BLOCK_SIZE * by;
 
     // Index of the lsAt sub-matrix of A processed by the block
     int aEnd   = aStart + wA - 1;
 
     // Step size used to iterate through the sub-matrices of A
-    int aStep  = block_size;
+    int aStep  = BLOCK_SIZE;
 
     // Index of the first sub-matrix of B processed by the block
-    int bStart = block_size * bx;
+    int bStart = BLOCK_SIZE * bx;
 
     // Step size used to iterate through the sub-matrices of B
-    int bStep  = block_size * wB;
+    int bStep  = BLOCK_SIZE * wB;
 
     // Csub is used to store the element of the block sub-matrix
     // that is computed by the thread
@@ -49,11 +51,11 @@ matrix_matrix_multiplication( __global float* C, __global float* A, __global flo
 
         // Declaration of the local memory array sA 
         // used to store the sub-matrix of A
-        __local float sA[block_size][block_size];
+        __local float sA[BLOCK_SIZE * BLOCK_SIZE];
 
         // Declaration of the local memory array sB 
         // used to store the sub-matrix of B
-        __local float sB[block_size][block_size];
+        __local float sB[BLOCK_SIZE * BLOCK_SIZE];
 
         // Load the matrices from device memory
         // to shared memory; each thread loads
@@ -69,7 +71,7 @@ matrix_matrix_multiplication( __global float* C, __global float* A, __global flo
         // of the block sub-matrix        
         #pragma unroll
         for (int k = 0; k < block_size; ++k)
-            Csub += sA[j + k * block_size] * sB[k + i * block_size];
+            Csub += (sA[j + k * block_size] * sB[k + i * block_size]);
 
         // Synchronize to make sure that the preceding
         // computation is done before loading two new

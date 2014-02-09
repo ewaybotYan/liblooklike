@@ -13,4 +13,7 @@ add_library (looklike
              ../src/mathexpression.cpp
              ../include/matrix.h
              ../src/matrix.cpp
+             ../kernels/matrix_mult.cl
+             ../kernels/matrix_norm.cl
+             ../kernels/scalar_product.cl
              )

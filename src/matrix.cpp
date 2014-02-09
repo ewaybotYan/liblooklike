@@ -51,7 +51,7 @@ Matrix::Matrix ( const std::string programName,
 Matrix  Matrix::mul ( Matrix& A, Matrix& B, const bool keepInCLMem) {
     if( A.getWidth() != B.getHeight() )
       throw( Error("cannot multiply matrices: dimensions mismatch") );
-    Matrix result ( "matrix_mult", "matrix_matrix_mul", A.getHeight(), B.getWidth(), keepInCLMem );
+    Matrix result ( "matrix_mult", "matrix_matrix_multiplication", A.getHeight(), B.getWidth(), keepInCLMem );
     result.addChild ( &A );
     result.addChild ( &B );
     return result;

@@ -62,7 +62,7 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
 #endif
     if( m_state >= QUEUED)
         return;
-    if( m_children.size() > 0 ){ 
+    if( m_children.size() > 0 ){
         while( !checkChildrenEnqueued( m_children ) ){
             for( MathExpression* child : m_children )
                 if( child->getState() == QUEUED )
@@ -70,28 +70,34 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
             deallocateMemory();
             AllocationResult allocationRes = allocateMemory( ctx );
             if( allocationRes < ONE_COMPUTED_EXPRESSION_ALLOCATED )
-                throw Error("not enouph memory to compute expression");
+                throw Error("not enough memory to compute child expression");
+            // evaluate children for whom memory is available
             for( MathExpression* child : m_children )
-                child->evaluate( ctx,  queue );
+                if( child->getState() == ALLOCATED )
+                    child->evaluate( ctx,  queue );
         }
     }else{ // allocate for terminal expression
         AllocationResult allocationRes = allocateMemory( ctx );
         if( allocationRes < ONE_COMPUTED_EXPRESSION_ALLOCATED )
-            throw Error("not enouph memory to compute expression");
+            throw Error("not enough memory to compute expression");
     }
     enqueue( ctx, queue );
     m_state = QUEUED;
 }
 
 AllocationResult MathExpression::allocateMemory( Context& context ){
+    // skip simple cases
+    if( m_state >= QUEUED ) // if memory is not needed, nothing is done
+        return NONE_ALLOCATED;
+    if( m_state >= ALLOCATED )
+        return COMPUTED_EXPRESSION_ALLOCATED;
+
 #ifndef NDEBUG
     std::cout << "allocating memory" << std::endl;
 #endif
-    if( m_state >= QUEUED ) // if memory is not needed, nothing is done
-        return NONE_ALLOCATED; 
     if( m_isTerminal ){
         if( allocateForResult(context) ){
-            return TERMINAL_EXPRESSION_ALLOCATED; 
+            return TERMINAL_EXPRESSION_ALLOCATED;
         }else{
             return NONE_ALLOCATED;
         }
@@ -103,21 +109,18 @@ AllocationResult MathExpression::allocateMemory( Context& context ){
             best = best < tmp ? tmp : best;
             worst = worst > tmp ? tmp : worst;
         }
-        if( worst <= ONE_COMPUTED_EXPRESSION_ALLOCATED ){
-            return best;
-        }else{// all subexpressions allocated
+        if( worst != NONE_ALLOCATED ){
             bool resAllocated = allocateForResult( context );
             if( resAllocated ){
                 m_state = ALLOCATED;
                 return COMPUTED_EXPRESSION_ALLOCATED;
-            }else{
-                if( best == TERMINAL_EXPRESSION_ALLOCATED ){
-                    deallocateMemory();
-                    return NONE_ALLOCATED;
-                }else{
-                    return ONE_COMPUTED_EXPRESSION_ALLOCATED;
-                }
             }
+        }
+        if( best == TERMINAL_EXPRESSION_ALLOCATED ){
+            deallocateMemory();
+            return NONE_ALLOCATED;
+        }else{
+            return ONE_COMPUTED_EXPRESSION_ALLOCATED;
         }
     }
 }

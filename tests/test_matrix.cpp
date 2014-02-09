@@ -215,7 +215,7 @@ int main ( int argc, char* argv[] ) {
             error = max( error, abs( res[k] - normalized[k] ) );
         }
         if ( error < 0.0000001 ) {
-            std::cerr << "computed without noticeable error.\n";
+            std::cout << "computed without noticeable error.\n";
         } else {
             std::cout << "computed result matches with error!\n";
             nor.print();
@@ -228,7 +228,7 @@ int main ( int argc, char* argv[] ) {
         cout << "testing multiplication\n";
         Matrix A( a, ah, aw );
         Matrix B( b, bh, bw );
-        Matrix C( c, ch, cw );
+        Matrix C = Matrix::mul(A,B);
         C.evaluate( ctx, queue );
         C.retrieveData( ctx, queue );
         float* res2 = C.getValues();

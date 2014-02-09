@@ -46,16 +46,6 @@ float Real::getValue( ) {
     throw( Error("Cannot get value as it has not been computed") );
   return *m_value;
 }
-/*
-float Real::getValue( Context& context, cl::CommandQueue& queue ){
-  if( isComputed() && getState() >= QUEUED ) {
-    getEndOfEvaluation().wait();
-    retrieveData( context, queue );
-  }else{
-    throw Error("Cannot get value as it has not been computed");
-  }
-  return *m_value;
-}*/
 
 void Real::setProgramName(const std::string programName) {
     m_programName = programName;
@@ -88,6 +78,10 @@ bool Real::allocateForResult( Context& context ) {
                           &error
                       ));
     if(error != CL_SUCCESS) {
+#ifndef NDEBUG
+        CLError e = CLError(error, "error in memory allocation for Real");
+        e.printMsg();
+#endif
         return false;
     } else {
         m_state = ALLOCATED;

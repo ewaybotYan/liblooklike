@@ -192,13 +192,13 @@ void Error::printMsg(){
 
 CLError::CLError( const int clErrorNb, const std::string msg ) throw(){
   std::string errorMsg;
-  if( msg.compare("") == false ){
+//  if( msg.compare("") == false ){
     this->errorMsg = msg +
       "(OpenCL error " + std::to_string(clErrorNb) + " " 
       + clErrorCodeName( clErrorNb ) +")\n";
-  }else{
+/*  }else{
     this->errorMsg = 
       "OpenCL error " + std::to_string(clErrorNb) + " " 
       + clErrorCodeName( clErrorNb )+"\n";
-  }
+  }*/
 }
