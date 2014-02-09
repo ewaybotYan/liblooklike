@@ -2,7 +2,7 @@ The overall process as defined in OpenCL
 ========================================
 
 The OpenCL specification divides the computation process into several parts.
-We will present each of them below, and introduce the naming convention used in the specification.
+We shall present each of them below, and introduce the naming convention used in the specification.
 
 
 choosing a platform
@@ -27,8 +27,7 @@ starting a context
 
 A context has several roles, it manages memory buffers, devices and command queues. The context in a
 Object oriented programming point of view is what matches best what we have called computation
-device so far. It is the root object during the whole computation process, wich means it handles devices, 
-memory, buffers and command queues. 
+device so far. It is the root object during the whole computation process, wich means it handles devices, memory, buffers and command queues. 
 
 
 The context is usually created from a list of devices listed by the platform selected during the
@@ -38,7 +37,7 @@ previous step.
 allocating memory
 -----------------
 
-The memory model of OpenCL is more complicated than in a stadard computer. For example, data can be
+The memory model of OpenCL is more complicated than in a standard computer. For example, data can be
 split or shared implicitly between devices. More generally there is an abstraction layer between the
 real memory management inside the computation device and the OpenCL interface. The purpose of this
 complex system is to make parallelization possible in the device without low level hardware 
