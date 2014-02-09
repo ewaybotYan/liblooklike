@@ -49,11 +49,11 @@ matrix_matrix_multiplication ( __global float* C,
              a <= aEnd;
              a += aStep, b += bStep) {
 
-        // Declaration of the local memory array sA 
+        // Declaration of the local memory array sA
         // used to store the sub-matrix of A
         __local float sA[BLOCK_SIZE * BLOCK_SIZE];
 
-        // Declaration of the local memory array sB 
+        // Declaration of the local memory array sB
         // used to store the sub-matrix of B
         __local float sB[BLOCK_SIZE * BLOCK_SIZE];
 
@@ -68,7 +68,7 @@ matrix_matrix_multiplication ( __global float* C,
 
         // Multiply the two matrices together;
         // each thread computes one element
-        // of the block sub-matrix        
+        // of the block sub-matrix
         #pragma unroll
         for (int k = 0; k < BLOCK_SIZE; ++k)
             Csub += (sA[k + i * BLOCK_SIZE] * sB[j + k * BLOCK_SIZE]);

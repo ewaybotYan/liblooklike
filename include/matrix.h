@@ -79,7 +79,7 @@ class Matrix: public MathExpression {
 	int getWidth() const;
 	
     /// @return matrix height
-	int getHeight() const;
+    int getHeight() const;
 
 #ifndef NDEBUG
     /// @brief Prints matrix on standard output in scientific notation with
@@ -92,6 +92,8 @@ class Matrix: public MathExpression {
 	void enqueue ( Context& context, cl::CommandQueue& queue ) override;
 
 	bool allocateForResult ( Context& context ) override;
+
+    int m_productDepth; // width of A or height of B if the is the result of A * B
 
     private:
 

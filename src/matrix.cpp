@@ -54,6 +54,7 @@ Matrix  Matrix::mul ( Matrix& A, Matrix& B, const bool keepInCLMem) {
     Matrix result ( "matrix_mult", "matrix_matrix_multiplication", A.getHeight(), B.getWidth(), keepInCLMem );
     result.addChild ( &A );
     result.addChild ( &B );
+    result.m_productDepth = A.getWidth();
     return result;
 }
 
@@ -194,9 +195,10 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
 	    //set arguments
             kernel.setArg ( 0, m_data[0] );
             kernel.setArg ( 1, m_children[0]->getData() [0] );
-	    kernel.setArg ( 2, m_children[0]->getData() [1] );
+            kernel.setArg ( 2, m_children[0]->getData() [1] );
             kernel.setArg<int> ( 3, m_m );
             kernel.setArg<int> ( 4, m_n );
+            kernel.setArg<int> (5, m_productDepth );
 
             // prepare dependencies
             std::vector<cl::Event> dependencies;
@@ -207,8 +209,8 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
             error = queue.enqueueNDRangeKernel (
                         kernel,
                         cl::NullRange,
-                        cl::NDRange ( 1 ),
-                        cl::NDRange ( m_m, m_n ),
+                        cl::NDRange ( m_n, m_m ),
+                        cl::NDRange ( 1, 1 ),
                         &dependencies,
                         &m_endOfEvaluation
                     );
