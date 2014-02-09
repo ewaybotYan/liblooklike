@@ -60,8 +60,8 @@ matrix_matrix_multiplication ( __global float* C,
         // Load the matrices from device memory
         // to shared memory; each thread loads
         // one element of each matrix
-        sA[j + i * block_size] = A[a + wA * j + i];
-        sB[j + i * block_size] = B[b + wB * j + i];
+        sA[j + i * block_size] = A[a + j + i * wA];
+        sB[j + i * block_size] = B[b + j + i * wB];
 
         // Synchronize to make sure the matrices are loaded
         barrier(CLK_LOCAL_MEM_FENCE);
