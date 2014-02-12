@@ -195,30 +195,60 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
 #ifndef NDEBUG
             std::cout << "evaluating multiplication\n";
 #endif
-            //set arguments
-            kernel.setArg ( 0, m_data[0] );
-            kernel.setArg ( 1, m_children[0]->getData() [0] );
-            kernel.setArg ( 2, m_children[1]->getData() [0] );
-            kernel.setArg<int> ( 3, m_m );
-            kernel.setArg<int> ( 4, m_n );
-            kernel.setArg<int> ( 5, m_productDepth );
+				//set arguments
+				kernel.setArg ( 0, m_data[0] );
+				kernel.setArg ( 1, m_children[0]->getData() [0] );
+				kernel.setArg ( 2, m_children[1]->getData() [0] );
+				kernel.setArg<int> ( 3, m_m );
+				kernel.setArg<int> ( 4, m_n );
+				kernel.setArg<int> ( 5, m_productDepth );
 
-            // prepare dependencies
-            std::vector<cl::Event> dependencies;
-            dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
+				// prepare dependencies
+				std::vector<cl::Event> dependencies;
+				dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
 
-            //enqueue kernel execution
-            cl_int error;
-            error = queue.enqueueNDRangeKernel (
-                        kernel,
-                        cl::NullRange,
-                        cl::NDRange ( m_n, m_m ),
-                        cl::NDRange ( 1, 1 ),
-                        0,
-                        &m_endOfEvaluation
-                    );
-            if ( error != CL_SUCCESS )
-                throw ( CLError ( error, "failed to enqueue kernel execution" ) );
+				//enqueue kernel execution
+				cl_int error;
+				error = queue.enqueueNDRangeKernel (
+							kernel,
+							cl::NullRange,
+							cl::NDRange ( m_n, m_m ),
+							cl::NDRange ( 1, 1 ),
+							0,
+							&m_endOfEvaluation
+						);
+				if ( error != CL_SUCCESS )
+					throw ( CLError ( error, "failed to enqueue kernel execution" ) );
+					
+	}else if (m_kernelName == "matrix_vector_multiplication"){
+		
+		if (m_children(1).getWidth()!=1)
+			throw ( CLError ( 1, "You should multiply a matrix by a vector, the vector being on the right hand size." ) );
+
+							//set arguments
+				kernel.setArg ( 0, m_data[0] );
+				kernel.setArg ( 1, m_children[0]->getData() [0] );
+				kernel.setArg ( 2, m_children[1]->getData() [0] );
+				kernel.setArg<int> ( 3, m_m );
+				kernel.setArg<int> ( 4, 1 );
+				kernel.setArg<int> ( 5, m_productDepth );
+
+				// prepare dependencies
+				std::vector<cl::Event> dependencies;
+				dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
+
+				//enqueue kernel execution
+				cl_int error;
+				error = queue.enqueueNDRangeKernel (
+							kernel,
+							cl::NullRange,
+							cl::NDRange ( 1, m_m ),
+							cl::NDRange ( 1, 1 ),
+							0,
+							&m_endOfEvaluation
+						);
+				if ( error != CL_SUCCESS )
+					throw ( CLError ( error, "failed to enqueue kernel execution" ) );
     }else{
 #ifndef NDEBUG
             std::cerr << "no kernel specified!";
