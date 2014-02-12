@@ -43,13 +43,51 @@ enum AllocationResult {
 // ###############
 // # MathExpresion
 
-/// @brief Abstract class that describes a mathematical object both as the 
-///        result of a computation and as an OpenCl object.
+/// @brief Abstract class that describes a mathematical object that need
+///        (or not) to be evaluated before having a value.
+/// @detailed The principle of Mathexpression is to hold the elements that can
+///            be computed in a mathematical expression.
+///
+///            Example:
+///                 in a = b + c <br/>
+///                 a, b and c are all mathexpressions. It can also be
+///                 represented as a tree where a is the root node,
+///                 and has two children b and c.
+///                 In order to compute a, we will execute evaluate().
+///                 And then retrieve data from the computation device with
+///                 retrieveData()
+///
+///            As shown in the example above, the expression is represented as
+///            a tree. The terminal nodes are basically values known by the
+///            program on the computer side, whereas the other nodes are values
+///            obtained by computation on their children nodes.
+///
+///            The behaviour of evaluate is fixed, however, it uses several
+///            virtual functions that are specific to the type of
+///            expressions, namely:
+///            - @ref allocateMemoryForResult()
+///            - @ref enqueue()
+///            - @ref retrieveData()
+///            It is highly recommanded to read the description of these
+///            methods and the @ref test_mathexpression example in /examples
+///            before trying to implement them.
+///
+/// @note The memory objects on the computer side can be stored anywhere in the
+///       implementation of this class. However, OpenCL memory buffers, should
+///       always be stored in @ref m_data as they will be automatically
+///       deallocated.
+///
 /// @startuml{MathExpression_state.png}
 ///     [*] --> Initial
-///     Initial --> Ready_for_computation : [All_children_enqueued]
-///     Ready_for_computation --> Enqueued : [Memory allocation OK]
-///     Enqueued --> Computed : [end event triggered]
+///     Initial --> Evaluating : evaluate()
+///     state Evaluating{
+///         [*] --> MemoryAllocationForChildren
+///         MemoryAllocationForChildren --> enqueuedChildren
+///         enqueuedChildren --> MemoryAllocatedForResult : [All_children_enqueued] allocateMemoryForResult()
+///         MemoryAllocatedForResult --> Enqueued : [Memory allocation OK] enqueue()
+///         Enqueued --> [*]
+///     }
+///     Evaluating --> Computed : [end event triggered]
 ///     Computed --> [*]
 /// @enduml
 class MathExpression {
@@ -104,6 +142,9 @@ class MathExpression {
         void createQueue();
 
         /// @brief compute the value of the Expression
+        /// @detailed This function will allocated memory for children and
+        ///           evaluate them recursively until it enqueues the execution
+        ///           for this expression.
         /// @param ctx a valid context
         /// @param queue the queue in which execution will start
         /// @startuml{MathExpression_evaluate_activity.png}
@@ -157,7 +198,12 @@ class MathExpression {
 
     protected:
 
-        /// @brief launch evaluation
+        /// @brief launch evaluation of the object
+        /// @detailed For a terminal node, this will most likely enqueue a
+        ///            writeBuffer operation. Otherwise, this will ask the
+        ///            @ref Context object for one or more kernels, set the
+        ///            arguments accordingly and enqueue execution of the
+        ///            algorithms.
         /// @note  evaluate may fail if no memory space was allocated for the
         ///        object. It is up to the parent Expression evaluate function
         ///        to allocate memory and execute evaluate again.
@@ -178,7 +224,9 @@ class MathExpression {
         /// @warning all buffers allocated by allocateForResult should come here
         std::vector<cl::Buffer> m_data;
 
-        /// dependencies requiered to compute this
+        /// dependencies requiered to compute this expression
+        /// @warning Any dependency not specified here will be ignored during
+        ///          the evaluation.
         std::vector<MathExpression*> m_children;
 
         /// end of computation event
@@ -197,8 +245,10 @@ class MathExpression {
         /// @brief   allocate memory in which we will put the result of this
         ///          computation
         /// @warning All the memory buffers created here must be stored inside
-        ///          m_data because memory deallocation is automatic.
-        /// @warning do not forget to update m_state if allocation is successfull
+        ///          m_data because memory deallocation is done by the
+        ///          Mathexpression mother class.
+        /// @warning do not forget to update m_state if allocation is
+        ///          successfull
         virtual bool allocateForResult( Context& context ) = 0;
 
         /// @brief Deallocate the memory for this expression AND its dependent
@@ -213,8 +263,8 @@ class MathExpression {
         // # members
 
         // is it a terminal expression or a computed one?
-        // this is used in allocation to check wether a expression that needs to be
-        // computed has buffers in order to store its value
+        // this is used in allocation to check wether a expression that needs to
+        // be computed has buffers in order to store its value
         bool m_isTerminal;
 
         // the event associated to the computation in the openCL queue

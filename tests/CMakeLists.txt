@@ -38,8 +38,8 @@ include_directories(
 
 add_executable(
   test_mathexpression
-  test_mathexpression.cpp
-  real.cpp
+  ../examples/test_mathexpression.cpp
+  ../examples/real.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/mathexpression.cpp
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
@@ -56,7 +56,7 @@ include_directories(
 add_executable(
   test_mathexpression2
   test_mathexpression2.cpp
-  real.cpp
+  ../examples/real.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/mathexpression.cpp
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
