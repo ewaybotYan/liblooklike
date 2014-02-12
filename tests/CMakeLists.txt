@@ -10,32 +10,10 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
   )
 
+set(LIBS ${OPENCL_LIBRARIES} ${Armadillo_LIBRARIES})
+
 #############
 # executables
-
-# test_preview
-
-if(USE_GUI)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}")
-
-  include_directories(
-    ${Qt5Gui_INCLUDES}
-    ${OPENGL_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include 
-    "/usr/include/qt"
-    )
-
-  add_executable(
-    test_preview 
-    test_preview.cpp 
-    ../src/openglwindow.cpp
-    ../src/previewwindow.cpp
-    )
-
-  target_link_libraries(test_preview ${OPENGL_LIBRARIES})
-
-  qt5_use_modules(test_preview Gui)
-endif(USE_GUI)
 
 # test_context
 
@@ -50,7 +28,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   )
 
-target_link_libraries(test_context ${OPENCL_LIBRARIES})
+target_link_libraries(test_context ${LIBS})
 
 # test_mathexpression
 
@@ -67,7 +45,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   )
 
-target_link_libraries(test_mathexpression ${OPENCL_LIBRARIES})
+target_link_libraries(test_mathexpression ${LIBS})
 
 # test_mathexpression2
 
@@ -84,7 +62,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   )
 
-target_link_libraries(test_mathexpression2 ${OPENCL_LIBRARIES})
+target_link_libraries(test_mathexpression2 ${LIBS})
 
 # test_matrix
 
@@ -101,7 +79,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   )
 
-target_link_libraries(test_matrix ${OPENCL_LIBRARIES})
+target_link_libraries(test_matrix ${LIBS})
 
 # test_file
 
@@ -123,7 +101,7 @@ add_executable(
   )
   
 target_link_libraries(test_file "jpeg")
-target_link_libraries(test_file ${OPENCL_LIBRARIES})
+target_link_libraries(test_file ${LIBS})
 
 #######
 # tests

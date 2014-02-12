@@ -17,3 +17,5 @@ add_library (looklike
              ../kernels/matrix_norm.cl
              ../kernels/scalar_product.cl
              )
+
+target_link_libraries ( looklike ${Armadillo_LIBS} )

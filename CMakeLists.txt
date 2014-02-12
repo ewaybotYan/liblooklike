@@ -50,23 +50,7 @@ else(USE_POCL)
   endif( !OPENCL_HAS_CPP_BINDINGS )
 endif(USE_POCL)
 
-if(USE_GUI)
-  # for qt precompliation operations
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  set(CMAKE_AUTOMOC ON)
-
-  # find include dir
-  find_package(Qt5Gui REQUIRED)
-  find_package(OpenGL REQUIRED)
-
-  if (Qt5Gui_FOUND)
-    message(STATUS "qt5 found")
-  else (Qt5Gui_FOUND)
-    message(ERROR "qt5 not found")
-  endif (Qt5Gui_FOUND)
-
-  add_definitions(${Qt5Gui_DEFINITIONS})
-endif(USE_GUI)
+find_package(Armadillo REQUIRED)
 
 #############
 # SUBPROJECTS
