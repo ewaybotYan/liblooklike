@@ -98,7 +98,9 @@ class Matrix: public MathExpression {
     private:
 
 	float* m_value;
+	/// matrix height
 	int m_m;
+	/// matrix width
 	int m_n;
 	std::string m_programName;
 	std::string m_kernelName;
