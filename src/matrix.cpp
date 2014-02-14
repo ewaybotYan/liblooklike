@@ -21,23 +21,23 @@
 // # constructors
 
 Matrix::Matrix ( cl_float* values, 
-		 const unsigned int m, 
-		 const unsigned int n, 
-		 const bool keepInCLMem) : 
-		 MathExpression ( true, keepInCLMem ) {
+                 const unsigned int m,
+                 const unsigned int n,
+                 const bool keepInCLMem) :
+    MathExpression ( true, keepInCLMem ) {
     m_value = new cl_float[m*n];
     for( unsigned int i = 0; i < m*n; i++ )
-	m_value[i] = values[i];
+        m_value[i] = values[i];
     m_m = m;
     m_n = n;
 }
 
 Matrix::Matrix ( const std::string programName, 
-		 const std::string kernelName, 
-		 const unsigned int m, 
-		 const unsigned int n, 
-		 const bool keepInCLMem ) : 
-		 MathExpression ( false, keepInCLMem ) {
+                 const std::string kernelName,
+                 const unsigned int m,
+                 const unsigned int n,
+                 const bool keepInCLMem ) :
+    MathExpression ( false, keepInCLMem ) {
     m_value = 0;
     m_m = m;
     m_n = n;
@@ -50,7 +50,7 @@ Matrix::Matrix ( const std::string programName,
 
 Matrix  Matrix::mul ( Matrix& A, Matrix& B, const bool keepInCLMem) {
     if( A.getWidth() != B.getHeight() )
-      throw( Error("cannot multiply matrices: dimensions mismatch") );
+        throw( Error("cannot multiply matrices: dimensions mismatch") );
     Matrix result ( "matrix_mult", "matrix_matrix_multiplication", A.getHeight(), B.getWidth(), keepInCLMem );
     result.addChild ( &A );
     result.addChild ( &B );
@@ -60,7 +60,7 @@ Matrix  Matrix::mul ( Matrix& A, Matrix& B, const bool keepInCLMem) {
 
 Matrix  Matrix::add ( Matrix& A, Matrix& B, const bool keepInCLMem) {
     if( (A.getHeight() != B.getHeight())||(A.getWidth()!=B.getWidth() ) )
-      throw( Error("cannot add matrices: dimensions mismatch") );      
+        throw( Error("cannot add matrices: dimensions mismatch") );
     Matrix result ( "matrix", "matrix_matrix_add", A.getHeight(), A.getWidth(), keepInCLMem );
     result.addChild ( &A );
     result.addChild ( &B );
@@ -80,7 +80,7 @@ Matrix Matrix::normalize ( Matrix& A, const bool keepInCLMem) {
 float Matrix::getValue ( const int i, const int j ) {
     if ( m_value == 0 ){
         throw ( Error ( "Cannot get value as it has not been computed" ) );
-	return 0;
+        return 0;
     }
     return m_value[ i*m_n+j ];
 }
@@ -94,18 +94,18 @@ int Matrix::getWidth() const{
 }
 
 int Matrix::getHeight() const{
-  return m_m;
+    return m_m;
 }
 
 #ifndef NDEBUG
 void Matrix::print(){
-  std::cout.precision(5);  
-  std::cout << std::scientific;
-  for( int i=0;i<m_m;i++ ){
-    for( int j=0;j<m_n;j++ )
-      std::cout << m_value[i*m_n+j] << " ";
-    std::cout << "\n";
-  }
+    std::cout.precision(5);
+    std::cout << std::scientific;
+    for( int i=0;i<m_m;i++ ){
+        for( int j=0;j<m_n;j++ )
+            std::cout << m_value[i*m_n+j] << " ";
+        std::cout << "\n";
+    }
 }
 #endif
 
@@ -125,11 +125,11 @@ void  Matrix::retrieveData ( Context& context, cl::CommandQueue& queue ){
     m_value = new cl_float[m_m*m_n];
     m_endOfEvaluation.wait();
     error = queue.enqueueReadBuffer (
-        getData() [0],
-        CL_TRUE,
-        0,
-        sizeof ( cl_float ) * m_m * m_n,
-        m_value );
+                getData() [0],
+            CL_TRUE,
+            0,
+            sizeof ( cl_float ) * m_m * m_n,
+            m_value );
     if ( error != CL_SUCCESS )
         throw ( CLError ( error, "failed to enqueue data reading" ) );
 }
@@ -150,7 +150,7 @@ bool Matrix::allocateForResult ( Context& context ) {
                            sizeof ( cl_float ) * m_m * m_n,
                            NULL,
                            &error
-                       ) );
+                           ) );
     if ( error != CL_SUCCESS ) {
         return false;
     } else {
@@ -188,68 +188,67 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
                         cl::NDRange ( 1 ),
                         0,
                         &m_endOfEvaluation
-                    );
+                        );
             if ( error != CL_SUCCESS )
                 throw ( CLError ( error, "failed to enqueue kernel execution" ) );
         }else if ( m_kernelName == "matrix_matrix_multiplication" ){
 #ifndef NDEBUG
             std::cout << "evaluating multiplication\n";
 #endif
-				//set arguments
-				kernel.setArg ( 0, m_data[0] );
-				kernel.setArg ( 1, m_children[0]->getData() [0] );
-				kernel.setArg ( 2, m_children[1]->getData() [0] );
-				kernel.setArg<int> ( 3, m_m );
-				kernel.setArg<int> ( 4, m_n );
-				kernel.setArg<int> ( 5, m_productDepth );
+            //set arguments
+            kernel.setArg ( 0, m_data[0] );
+            kernel.setArg ( 1, m_children[0]->getData() [0] );
+            kernel.setArg ( 2, m_children[1]->getData() [0] );
+            kernel.setArg<int> ( 3, m_m );
+            kernel.setArg<int> ( 4, m_n );
+            kernel.setArg<int> ( 5, m_productDepth );
 
-				// prepare dependencies
-				std::vector<cl::Event> dependencies;
-				dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
+            // prepare dependencies
+            std::vector<cl::Event> dependencies;
+            dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
 
-				//enqueue kernel execution
-				cl_int error;
-				error = queue.enqueueNDRangeKernel (
-							kernel,
-							cl::NullRange,
-							cl::NDRange ( m_n, m_m ),
-							cl::NDRange ( 1, 1 ),
-							0,
-							&m_endOfEvaluation
-						);
-				if ( error != CL_SUCCESS )
-					throw ( CLError ( error, "failed to enqueue kernel execution" ) );
-					
-	}else if (m_kernelName == "matrix_vector_multiplication"){
-		
-		if (m_children(1).getWidth()!=1)
-			throw ( CLError ( 1, "You should multiply a matrix by a vector, the vector being on the right hand size." ) );
+            //enqueue kernel execution
+            cl_int error;
+            error = queue.enqueueNDRangeKernel (
+                        kernel,
+                        cl::NullRange,
+                        cl::NDRange ( m_n, m_m ),
+                        cl::NDRange ( 1, 1 ),
+                        0,
+                        &m_endOfEvaluation
+                        );
 
-							//set arguments
-				kernel.setArg ( 0, m_data[0] );
-				kernel.setArg ( 1, m_children[0]->getData() [0] );
-				kernel.setArg ( 2, m_children[1]->getData() [0] );
-				kernel.setArg<int> ( 3, m_m );
-				kernel.setArg<int> ( 4, 1 );
-				kernel.setArg<int> ( 5, m_productDepth );
+            if ( error != CL_SUCCESS )
+                throw ( CLError ( error, "failed to enqueue kernel execution" ) );
 
-				// prepare dependencies
-				std::vector<cl::Event> dependencies;
-				dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
+        }else if (m_kernelName == "matrix_vector_multiplication"){
 
-				//enqueue kernel execution
-				cl_int error;
-				error = queue.enqueueNDRangeKernel (
-							kernel,
-							cl::NullRange,
-							cl::NDRange ( 1, m_m ),
-							cl::NDRange ( 1, 1 ),
-							0,
-							&m_endOfEvaluation
-						);
-				if ( error != CL_SUCCESS )
-					throw ( CLError ( error, "failed to enqueue kernel execution" ) );
-    }else{
+            //set arguments
+            kernel.setArg ( 0, m_data[0] );
+            kernel.setArg ( 1, m_children[0]->getData() [0] );
+            kernel.setArg ( 2, m_children[1]->getData() [0] );
+            kernel.setArg<int> ( 3, m_m );
+            kernel.setArg<int> ( 4, 1 );
+            kernel.setArg<int> ( 5, m_productDepth );
+
+            // prepare dependencies
+            std::vector<cl::Event> dependencies;
+            dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
+
+            //enqueue kernel execution
+            cl_int error;
+            error = queue.enqueueNDRangeKernel (
+                        kernel,
+                        cl::NullRange,
+                        cl::NDRange ( 1, m_m ),
+                        cl::NDRange ( 1, 1 ),
+                        0,
+                        &m_endOfEvaluation
+                        );
+
+            if ( error != CL_SUCCESS )
+                throw ( CLError ( error, "failed to enqueue kernel execution" ) );
+        }else{
 #ifndef NDEBUG
             std::cerr << "no kernel specified!";
 #endif
@@ -262,12 +261,12 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
         cl_int error;
         error = queue.enqueueWriteBuffer (
                     getData()[0],
-                    CL_TRUE,
-                    0,
-                    sizeof ( cl_float ) * m_m * m_n,
-                    m_value,
-                    0,
-                    &getEndOfEvaluation()
+                CL_TRUE,
+                0,
+                sizeof ( cl_float ) * m_m * m_n,
+                m_value,
+                0,
+                &getEndOfEvaluation()
                 );
         if ( error != CL_SUCCESS )
             throw ( CLError ( error, "failed to enqueue memory transfer" ) );
