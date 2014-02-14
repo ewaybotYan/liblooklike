@@ -43,7 +43,7 @@ enum AllocationResult {
 // ###############
 // # MathExpresion
 
-/// @brief Abstract class that describes a mathematical object that need
+/// @brief Abstract class that describes a mathematical object that needs
 ///        (or not) to be evaluated before having a value.
 /// @detailed The principle of Mathexpression is to hold the elements that can
 ///            be computed in a mathematical expression.
@@ -62,9 +62,10 @@ enum AllocationResult {
 ///            program on the computer side, whereas the other nodes are values
 ///            obtained by computation on their children nodes.
 ///
-///            The behaviour of evaluate is fixed, however, it uses several
-///            virtual functions that are specific to the type of
-///            expressions, namely:
+///            The behaviour of @ref evaluate() is fixed however: recursively
+///            evaluate children expressions then the value of the current
+///            expression. However, it relies on several virtual functions in
+///            order to permit any kind of computation :
 ///            - @ref allocateMemoryForResult()
 ///            - @ref enqueue()
 ///            - @ref retrieveData()

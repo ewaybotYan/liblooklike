@@ -7,9 +7,6 @@
 // trick to supress unused variable warning
 #define _unused(x) ((void)x)
 
-const int maxNbAllocations = 4;
-int nbAllocations = 0;
-
 // ##############
 // # constructors
 
@@ -42,11 +39,12 @@ Real Real::mul( Real& a, Real& b, const bool keepInCLMem ) {
 // # getters and setters
 
 float Real::getValue( ) {
-  if( m_value == 0 )
-    throw( Error("Cannot get value as it has not been computed") );
-  return *m_value;
+    if( m_value == 0 )
+        throw( Error("Cannot get value as it has not been computed") );
+    return *m_value;
 }
 
+/*
 void Real::setProgramName(const std::string programName) {
     m_programName = programName;
 }
@@ -55,35 +53,36 @@ void Real::setProgramName(const std::string programName) {
 void Real::setKernelName(const std::string kernelName) {
     m_kernelName = kernelName;
 }
-
+*/
 
 // ###################
 // # memory operations
 
+// allocateForResult is in charge of creating a buffer in order to store the
+// result of the computation in OpenCL memory
 bool Real::allocateForResult( Context& context ) {
-  #ifndef NDEBUG
-  std::cout << "allocating for result" << std::endl;
+#ifndef NDEBUG
+    std::cout << "allocating for result" << std::endl;
 #endif
     if(m_data.size() != 0)//buffer already created
         return true;
 
     cl_int error;
-    cl_mem_flags memFlags = 0;
-    memFlags = CL_MEM_READ_WRITE;
+    cl_mem_flags memFlags = CL_MEM_READ_WRITE;
+
+    // we make sure to store the buffer in m_data
     m_data.push_back( cl::Buffer(
                           context.getContext(),
                           memFlags,
                           sizeof(float),
                           NULL,
                           &error
-                      ));
+                          ));
+
     if(error != CL_SUCCESS) {
-#ifndef NDEBUG
-        CLError e = CLError(error, "error in memory allocation for Real");
-        e.printMsg();
-#endif
         return false;
     } else {
+        // in case of successful memory allocation, we upfate the state flag
         m_state = ALLOCATED;
         return true;
     }
@@ -93,21 +92,31 @@ bool Real::allocateForResult( Context& context ) {
 // #########
 // # methods
 
+
+// enqueue() is supposed to put the necessary operations in the OpenCL command
+// queue so that the
 void Real::enqueue( Context& context, cl::CommandQueue& queue ) {
+
+    // Tho different cases: either this is a terminal expression, or a computed
+    // one.
     if( isComputed() ) {
-      #ifndef NDEBUG
-  std::cout << "enqueing computation kernel" << std::endl;
-#endif
+        // In the case of a computed expression, we identify the operation to
+        // use and load the appropriate kernel. In this example, all computed
+        // are the result of binary operations, and kernels have the same
+        // arguments, so we just start the kernel with those two arguments.
+
         // create kernel
         cl::Kernel kernel = context.getKernel( m_programName, m_kernelName );
         kernel.setArg(0, m_data[0]);
         kernel.setArg(1, m_children[0]->getData()[0]);
         kernel.setArg(2, m_children[1]->getData()[0]);
-// prepare dependencies
+
+        // prepare dependencies
         std::vector<cl::Event> dependencies;
         for( MathExpression* child : m_children )
             dependencies.push_back((child->getEndOfEvaluation()));
-        //enqueue kernel execution
+
+        // enqueue kernel execution
         cl_int error;
         error = queue.enqueueNDRangeKernel(
                     kernel,
@@ -116,29 +125,40 @@ void Real::enqueue( Context& context, cl::CommandQueue& queue ) {
                     cl::NDRange(1, 1),
                     &dependencies,
                     &m_endOfEvaluation
-                );
+                    );
+
+        // handle errors
         if( error != CL_SUCCESS )
             throw( CLError(error, "failed to enqueue kernel execution") );
-    } else { // this is a terminal expression, just load data in the buffer
-      #ifndef NDEBUG
-  std::cout << "enquing data load" << std::endl;
-#endif
-      cl_int error;
+
+    } else {
+        // This is a terminal expression, the typical behaviour is to enqueue
+        // the memory transfer from the local memory.
+
+        cl_int error;
         error = queue.enqueueWriteBuffer(
                     getData()[0],
-                    CL_FALSE,
-                    0,
-		    sizeof(float),
-                    m_value,
-                    0,
-                    &getEndOfEvaluation()
+                CL_FALSE,
+                0,
+                sizeof(float),
+                m_value,
+                0,
+                &getEndOfEvaluation()
                 );
-	 if( error != CL_SUCCESS )
+
+        if( error != CL_SUCCESS )
             throw( CLError(error, "failed to enqueue memory transfer") );
     }
+
+    // Do not forget to update the object state
     m_state = QUEUED;
 }
 
+
+// RetrieveData has no predefined behaviour. It is intended to bring back the
+// computed value of the expression from the openCL memory.
+// Note that no checking is done to ensure the object computation is over, or
+// has even started.
 void Real::retrieveData( Context& context, cl::CommandQueue& queue ){
 #ifndef NDEBUG
     std::cout << "retrieving data" << std::endl;
@@ -149,10 +169,10 @@ void Real::retrieveData( Context& context, cl::CommandQueue& queue ){
     m_value = new float;
     error = queue.enqueueReadBuffer(
                 getData()[0],
-                CL_TRUE,
-                0,
-                sizeof(float),
-                m_value);
-    if( error != CL_SUCCESS ) 
-      throw( CLError( error, "failed to enqueue data reading" ) );
+            CL_TRUE,
+            0,
+            sizeof(float),
+            m_value);
+    if( error != CL_SUCCESS )
+        throw( CLError( error, "failed to enqueue data reading" ) );
 }
