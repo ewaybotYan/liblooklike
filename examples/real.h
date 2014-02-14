@@ -34,8 +34,6 @@ class Real : public MathExpression{
     void retrieveData(Context& context, cl::CommandQueue& queue ) override;
 
   protected:
-//    void setProgramName( const std::string programName );
-//    void setKernelName( const std::string kernelName );
 
     // virtual methods from MathExpression, see real.cpp
     void enqueue( Context& context, cl::CommandQueue& queue ) override;

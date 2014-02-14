@@ -44,17 +44,6 @@ float Real::getValue( ) {
     return *m_value;
 }
 
-/*
-void Real::setProgramName(const std::string programName) {
-    m_programName = programName;
-}
-
-
-void Real::setKernelName(const std::string kernelName) {
-    m_kernelName = kernelName;
-}
-*/
-
 // ###################
 // # memory operations
 
