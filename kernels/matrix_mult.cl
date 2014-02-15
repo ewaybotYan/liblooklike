@@ -20,3 +20,12 @@ matrix_matrix_multiplication ( __global float* C,
     }
     C[i*w+j]=tmp;
 }
+
+__kernel void
+matrix_vector_multiplication ( __global float* C,
+                               __global float* A,
+                               __global float* B,
+                               int h, int depth )
+{
+/// todo
+}

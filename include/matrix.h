@@ -91,9 +91,7 @@ class Matrix: public MathExpression {
 
 	void enqueue ( Context& context, cl::CommandQueue& queue ) override;
 
-	bool allocateForResult ( Context& context ) override;
-
-    int m_productDepth; // width of A or height of B if the is the result of A * B
+    bool allocateForResult ( Context& context ) override;
 
     private:
 
