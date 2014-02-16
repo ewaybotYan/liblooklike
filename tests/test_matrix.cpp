@@ -183,6 +183,46 @@ cl_float c[ah*bw] = {
     -1.65876e+00, -3.03817e-01, 4.52261e-01
 };
 
+const int dw = 3;
+const int dh = 10;
+
+cl_float d[] = {
+    -0.672176100313663, 0.982970510609448, 0.963422774802893,
+    0.47969525353983, -0.792758866213262, -0.700564979575574,
+    -0.510637621860951, 0.965859301388264, -0.557234819047153,
+    0.242043844889849, -0.709015088621527, 0.360391605645418,
+    -0.180058415513486, 0.182935355696827, -0.0173743129707873,
+    -0.871813292615116, 0.143214712385088, -0.591558926273137,
+    -0.537013613153249, 0.917296357918531, 0.867652168497443,
+    -0.313218762166798, -0.14472596347332, 0.994639678858221,
+    -0.551489709876478, -0.918175089173019, -0.356234864797443,
+    0.932277136016637, 0.362914749421179, 0.580362921115011
+};
+
+const int vw = 1;
+const int vh = 3;
+
+cl_float v[] = {
+    -0.808329938910902, -0.874941137619317, -0.275909008458257
+};
+
+const int dvw = 1;
+const int dvh = 10;
+
+cl_float dv[] = {
+    -0.582518293216928,
+    0.499157498148006,
+    -0.278560251850659,
+    0.325259891303901,
+    -0.00971733074735336,
+    0.742624778975908,
+    -0.607889187313593,
+    0.105380754445424,
+    1.34742320887373,
+    -1.23124392223253
+};
+
+
 void usage() {
     cerr << "Error in " << __FILE__ << " :\n"
          << "usage :\n test_matrix path_to_kernel_directory"
@@ -223,24 +263,6 @@ int main ( int argc, char* argv[] ) {
             dat.print();
             return -1;
         }
-
-/*        // test simple multiplication
-        Matrix ID( id, 3, 3);
-        Matrix ID2 = Matrix::mul(ID,ID);
-        ID2.evaluate(ctx, queue);
-        ID2.retrieveData(ctx, queue);
-        float* id2 = ID2.getValues();
-        for( int k = 0; k < 9; k++ ){
-            error = max( error, abs( id[k] - id2[k] ) );
-        }
-        if ( error < 0.0000001 ) {
-            std::cerr << "computed without noticeable error.\n";
-        } else {
-            std::cout << "computed result matches with error!\n";
-            ID2.print();
-            return -1;
-        }
-        ID2.print();*/
         
         // test multiplication
         cout << "testing multiplication\n";
@@ -259,6 +281,26 @@ int main ( int argc, char* argv[] ) {
         } else {
             std::cout << "computed result matches with error!: " << error << "\n";
             C.print();
+            return -1;
+        }
+
+        // test multiplication
+        cout << "testing matrix vector multiplication\n";
+        Matrix D( d, dh, dw );
+        Matrix V( v, vh, vw );
+        Matrix DV = Matrix::mul(D,V);
+        DV.evaluate( ctx, queue );
+        DV.retrieveData( ctx, queue );
+        float* res3 = DV.getValues();
+
+        for( int k = 0; k < dvh*dvw; k++ ){
+            error = max( error, abs( res3[k] - dv[k] ) );
+        }
+        if ( error < 0.0001 ) {
+            std::cerr << "computed without noticeable error\n";
+        } else {
+            std::cout << "computed result matches with error!: " << error << "\n";
+            DV.print();
             return -1;
         }
 

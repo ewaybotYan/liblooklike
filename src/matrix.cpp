@@ -232,10 +232,10 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
             kernel.setArg ( 0, m_data[0] );
             kernel.setArg ( 1, m_children[0]->getData() [0] );
             kernel.setArg ( 2, m_children[1]->getData() [0] );
-            kernel.setArg<int> ( 3, m_m );
-            kernel.setArg<int> ( 4, m_n );
+            kernel.setArg<int> ( 3, m_n );
+            /// @todo use cast
             int productDepth = ((Matrix*)m_children[0])->getWidth();
-            kernel.setArg<int> ( 5, productDepth );
+            kernel.setArg<int> ( 4, productDepth );
 
             // prepare dependencies
             std::vector<cl::Event> dependencies;
@@ -262,9 +262,9 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
             kernel.setArg ( 0, m_data[0] );
             kernel.setArg ( 1, m_children[0]->getData() [0] );
             kernel.setArg ( 2, m_children[1]->getData() [0] );
-            kernel.setArg<int> ( 3, m_m );
+            /// @todo use cast
             int productDepth = ((Matrix*)m_children[0])->getWidth();
-            kernel.setArg<int> ( 4, productDepth );
+            kernel.setArg<int> ( 3, productDepth );
 
             // prepare dependencies
             std::vector<cl::Event> dependencies;
