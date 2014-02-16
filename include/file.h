@@ -25,9 +25,6 @@ public:
 	if ( m_file == nullptr ) {
 	  throw("opening file "+filePath+" failed");
 	}
-#ifndef NDEBUG
-    std::cout << "opened file : " << filePath << "\n";
-#endif
   }
   
    FILE* getFile() const{

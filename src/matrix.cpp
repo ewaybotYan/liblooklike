@@ -98,7 +98,7 @@ Matrix Matrix::normalize ( Matrix& A, const bool keepInCLMem) {
 
 Matrix Matrix::covariance( Matrix& A, const bool keepInCLMem) {
     Matrix result ( "matrix_mult", "matrix_covariance",
-                    A.getWidth(), A.getWidth(),
+                    A.getHeight(), A.getHeight(),
                     keepInCLMem );
     result.addChild ( &A );
     return result;
@@ -172,7 +172,7 @@ void  Matrix::retrieveData ( Context& context, cl::CommandQueue& queue ){
 
 bool Matrix::allocateForResult ( Context& context ) {
 #ifndef NDEBUG
-    std::cout << "allocating for result" << std::endl;
+    std::cout << "allocating for result " << m_n << "x" << m_m << std::endl;
 #endif
     if ( m_data.size() != 0 ) //buffer already created
         return true;

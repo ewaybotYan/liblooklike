@@ -74,6 +74,7 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
             for( MathExpression* child : m_children )
                 if( child->getState() == QUEUED )
                     child->getEndOfEvaluation().wait();
+            deallocateMemory();
             AllocationResult allocationRes = allocateMemory( ctx );
             if( allocationRes < ONE_COMPUTED_EXPRESSION_ALLOCATED )
                 throw Error("not enough memory to compute child expression");
@@ -81,7 +82,6 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
             for( MathExpression* child : m_children )
                 if( child->getState() == ALLOCATED )
                     child->evaluate( ctx,  queue );
-            deallocateMemory();
         }
     }else{ // allocate for terminal expression
         AllocationResult allocationRes = allocateMemory( ctx );

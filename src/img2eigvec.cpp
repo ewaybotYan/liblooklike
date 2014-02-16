@@ -60,8 +60,16 @@ int main(int argc, char* argv[]){
 #endif
 
         covMat.evaluate(ctx, queue);
+#ifndef NDEBUG
+        std::cout << "waiting end of evaluation.\n";
+#endif
         covMat.getEndOfEvaluation().wait();
+#ifndef NDEBUG
+        std::cout << "done.\n";
+#endif
         covMat.retrieveData(ctx, queue);
+        normalized.evaluate(ctx, queue);
+        normalized.retrieveData(ctx, queue);
 
         arma::fvec eigval;
         arma::fmat eigvec;
@@ -70,6 +78,12 @@ int main(int argc, char* argv[]){
                            covMat.getHeight());
         arma::eig_sym(eigval, eigvec, covMat2);
 
+        arma::fmat X(normalized.getValues(),
+                        normalized.getWidth(),
+                        normalized.getHeight());
+        arma::fmat vars = X * eigvec;
+        normalized.print();
+
         int previewW = array.avgWidth;
         int previewH = array.avgHeight;
 #ifndef NDEBUG
@@ -77,11 +91,13 @@ int main(int argc, char* argv[]){
         std::cout << "preparing preview of size : " << previewW << "x" << previewH << " .\n";
 #endif
         float* previewData = new float[previewW*previewH];
-        for(int i=0; i < previewW * previewH; i++)
-                previewData[i] = eigvec(eigvec.n_cols-1,i);
+        for(int i=0; i < previewW * previewH; i++){
+                previewData[i] = vars(i,eigvec.n_cols-1);
+        }
+        std::cout << "done computing\n";
         Matrix preview(previewData,array.avgHeight,array.avgWidth);
         MatrixToImage(preview,"/tmp/vectorPreview.jpg");
-
+        delete previewData;
     } catch ( Error& err ) {
         err.printMsg();
         return -1;

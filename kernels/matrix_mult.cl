@@ -32,9 +32,9 @@ matrix_covariance ( __global float* C,
     const int i = get_global_id(0);
     const int j = get_global_id(1);
     for( int k=0; k < h; k++ ){
-        tmp += T[k*w+i] * T[k*w+j];
+        tmp += T[i*w+k] * T[j*w+k];
     }
-    //C[i*w+j] = tmp;
+    C[i*h+j] = tmp;
 }
 
 

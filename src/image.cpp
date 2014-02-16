@@ -84,13 +84,19 @@ void MatrixToImage( const Matrix src, const std::string savePath ) {
     float* it = src.getValues();
     float minVal = *it;
     float maxVal = *it;
-    for( ; it < it+src.getWidth()*src.getHeight(); it++){
-        minVal = std::min(minVal, *it);
-        maxVal = std::max(maxVal, *it);
+    float avg=0;
+    for( int i= 0; i < src.getWidth()*src.getHeight(); i++){
+        minVal = std::min(minVal, it[i]);
+        maxVal = std::max(maxVal, it[i]);
+        avg += it[i];
     }
+    avg/=src.getWidth()*src.getHeight();
+#ifndef NDEBUG
+    std::cout << "vector rng : " << minVal << " " << avg << " " << maxVal << "\n";
+#endif
     it = src.getValues();
-    for( ; it < it+src.getWidth()*src.getHeight(); it++){
-        *it = (*it - minVal)*255/(maxVal-minVal);
+    for( int i= 0; i < src.getWidth()*src.getHeight(); i++){
+        it[i] = (it[i] - minVal)*255/(maxVal-minVal);
     }
 
     // save it
