@@ -16,7 +16,7 @@
 // #######################
 // # Functions declaration
 
-Matrix arrayOfImagesFromFiles ( const std::string path ) {
+ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
     DIR *dir;
     struct dirent *ent;
     std::deque<JPEGImageInFile> imagefiles;
@@ -52,6 +52,7 @@ Matrix arrayOfImagesFromFiles ( const std::string path ) {
 #ifndef NDEBUG
     std::cout << "chosen image size is : " << avgWidth << "x" << avgHeight << "\n";
 #endif
+
     // create result object
     float* values = new float[avgWidth*avgHeight*imagefiles.size()];
     Matrix m ( values, imagefiles.size(), avgWidth*avgHeight );
@@ -67,12 +68,44 @@ Matrix arrayOfImagesFromFiles ( const std::string path ) {
     }
 
     delete[] values;
-    return m;
+
+    ArrayOfImages res = {
+        avgWidth,
+        avgHeight,
+        m
+    };
+    return res;
 }
+
+
+void MatrixToImage( const Matrix src, const std::string savePath ) {
+
+    // scale data
+    float* it = src.getValues();
+    float minVal = *it;
+    float maxVal = *it;
+    for( ; it < it+src.getWidth()*src.getHeight(); it++){
+        minVal = std::min(minVal, *it);
+        maxVal = std::max(maxVal, *it);
+    }
+    it = src.getValues();
+    for( ; it < it+src.getWidth()*src.getHeight(); it++){
+        *it = (*it - minVal)*255/(maxVal-minVal);
+    }
+
+    // save it
+    JPEGImageOutFile fout;
+    fout.write( src.getValues(),
+                src.getWidth(),
+                src.getHeight(),
+                savePath);
+}
+
 
 unsigned int ImageInFile::getWidth() const {
     return m_width;
 }
+
 
 unsigned int ImageInFile::getHeight() const {
     return m_height;

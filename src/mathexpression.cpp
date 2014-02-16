@@ -25,6 +25,7 @@ MathExpression::MathExpression( const bool isTerminal, const bool keepInCLMem ){
 }
 
 
+
 // #################
 // # getters/setters
 
@@ -32,17 +33,21 @@ bool MathExpression::isComputed(){
     return !m_isTerminal;
 }
 
+
 ExpressionState MathExpression::getState(){
     return m_state;
 }
+
 
 std::vector<cl::Buffer> MathExpression::getData(){
     return m_data;
 }
 
+
 cl::Event& MathExpression::getEndOfEvaluation(){
     return m_endOfEvaluation;
 }
+
 
 // #########
 // # methods
@@ -52,9 +57,11 @@ void MathExpression::addChild(MathExpression* child){
     child->increaseParentNb();
 }
 
+
 void MathExpression::increaseParentNb(){
     m_nbParents++;
 }
+
 
 void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
 #ifndef NDEBUG
@@ -67,7 +74,6 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
             for( MathExpression* child : m_children )
                 if( child->getState() == QUEUED )
                     child->getEndOfEvaluation().wait();
-            deallocateMemory();
             AllocationResult allocationRes = allocateMemory( ctx );
             if( allocationRes < ONE_COMPUTED_EXPRESSION_ALLOCATED )
                 throw Error("not enough memory to compute child expression");
@@ -75,6 +81,7 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
             for( MathExpression* child : m_children )
                 if( child->getState() == ALLOCATED )
                     child->evaluate( ctx,  queue );
+            deallocateMemory();
         }
     }else{ // allocate for terminal expression
         AllocationResult allocationRes = allocateMemory( ctx );
@@ -84,6 +91,7 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
     enqueue( ctx, queue );
     m_state = QUEUED;
 }
+
 
 AllocationResult MathExpression::allocateMemory( Context& context ){
     // skip simple cases
@@ -125,6 +133,7 @@ AllocationResult MathExpression::allocateMemory( Context& context ){
     }
 }
 
+
 void MathExpression::deallocateMemory(){
 #ifndef NDEBUG
     std::cout << "deallocating memory" << std::endl;
@@ -134,6 +143,7 @@ void MathExpression::deallocateMemory(){
     if( m_nbParents <= 0 )
         deallocateForResult();
 }
+
 
 void MathExpression::deallocateForResult() {
 #ifndef NDEBUG

@@ -50,7 +50,7 @@ int main ( const int argc, const char* argv[] ) {
                              "test.jpg");
         delete[] ImageData;
         std::cout << "testing array of files load\n";
-        Matrix m = arrayOfImagesFromFiles( std::string(argv[argc-2]) );
+        ArrayOfImages m = arrayOfImagesFromFiles( std::string(argv[argc-2]) );
     } catch( Error& e ) {
         e.printMsg();
         return -1;

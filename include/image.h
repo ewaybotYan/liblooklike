@@ -13,6 +13,12 @@
 // ############################
 // # genereal purpose functions
 
+struct ArrayOfImages{
+        unsigned int avgWidth;
+        unsigned int avgHeight;
+        Matrix images;
+};
+
 /// @brief Generates an array of monochomatic images from JPEG files in a
 ///        directory
 /// @param path Path to a directory where the input files are
@@ -21,8 +27,14 @@
 ///         image.
 /// @note The directory may contain non JPEG files, they will be ignored.
 /// @warning There is no rule to sort the lines according to the filenames.
-Matrix arrayOfImagesFromFiles(const std::string path);
+ArrayOfImages arrayOfImagesFromFiles(const std::string path);
 
+
+/// @brief Saves a matrix as an monochomatic image.
+/// @detailed This function takes the float values of the matrix, scale and
+///           round them to fit in range 0 to 255.
+/// @param src the matrix whoose elements are the pixels
+void MatrixToImage( const Matrix src, const std::string savePath );
 
 // #######################
 // # generic image classes

@@ -67,6 +67,9 @@ class Matrix: public MathExpression {
     /// @return input matrix with normalized columns
 	static Matrix normalize ( Matrix& A, const bool keepInCLMem = false );
 
+    /// @brief Computes t(T) * T.
+    static Matrix covariance ( Matrix& T, const bool keepInCLMem = false );
+
 	void retrieveData ( Context& context, cl::CommandQueue& queue ) override;
 	
 	/// @return the value of the matrix at line i and column j

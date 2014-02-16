@@ -57,17 +57,17 @@ Matrix  Matrix::mul ( Matrix& A, Matrix& B, const bool keepInCLMem) {
 
     if( B.getWidth() == 1 ) {// optimised matrix vector product
         Matrix result ( "matrix_mult", "matrix_vector_multiplication",
-                            A.getHeight(),
-                            1,
-                            keepInCLMem );
+                        A.getHeight(),
+                        1,
+                        keepInCLMem );
         result.addChild ( &A );
         result.addChild ( &B );
         return result;
     }else{
         Matrix result ( "matrix_mult", "matrix_matrix_multiplication",
-                    A.getHeight(),
-                    B.getWidth(),
-                    keepInCLMem );
+                        A.getHeight(),
+                        B.getWidth(),
+                        keepInCLMem );
         result.addChild ( &A );
         result.addChild ( &B );
         return result;
@@ -75,7 +75,7 @@ Matrix  Matrix::mul ( Matrix& A, Matrix& B, const bool keepInCLMem) {
 }
 
 
-Matrix  Matrix::add ( Matrix& A, Matrix& B, const bool keepInCLMem) {
+Matrix Matrix::add ( Matrix& A, Matrix& B, const bool keepInCLMem) {
     if( (A.getHeight() != B.getHeight())||(A.getWidth()!=B.getWidth() ) )
         throw( Error("cannot add matrices: dimensions mismatch") );
     Matrix result ( "matrix", "matrix_matrix_add",
@@ -90,6 +90,15 @@ Matrix  Matrix::add ( Matrix& A, Matrix& B, const bool keepInCLMem) {
 Matrix Matrix::normalize ( Matrix& A, const bool keepInCLMem) {
     Matrix result ( "matrix_norm", "matrix_normalize",
                     A.getHeight(), A.getWidth(),
+                    keepInCLMem );
+    result.addChild ( &A );
+    return result;
+}
+
+
+Matrix Matrix::covariance( Matrix& A, const bool keepInCLMem) {
+    Matrix result ( "matrix_mult", "matrix_covariance",
+                    A.getWidth(), A.getWidth(),
                     keepInCLMem );
     result.addChild ( &A );
     return result;
@@ -216,6 +225,30 @@ void Matrix::enqueue ( Context& context, cl::CommandQueue& queue ) {
                         cl::NullRange,
                         cl::NDRange ( m_n ),
                         cl::NDRange ( 1 ),
+                        &dependencies,
+                        &m_endOfEvaluation
+                        );
+            if ( error != CL_SUCCESS )
+                throw ( CLError ( error, "failed to enqueue kernel execution" ) );
+
+        }else if ( m_kernelName == "matrix_covariance" ) {
+            //set arguments
+            kernel.setArg ( 0, m_data[0] );
+            kernel.setArg ( 1, m_children[0]->getData() [0] );
+            kernel.setArg<int> ( 2, ((Matrix*)m_children[0])->getWidth() );
+            kernel.setArg<int> ( 3, ((Matrix*)m_children[0])->getHeight() );
+
+            // prepare dependencies
+            std::vector<cl::Event> dependencies;
+            dependencies.push_back ( m_children[0]->getEndOfEvaluation() );
+
+            //enqueue kernel execution
+            cl_int error;
+            error = queue.enqueueNDRangeKernel (
+                        kernel,
+                        cl::NullRange,
+                        cl::NDRange ( m_m, m_n ),
+                        cl::NDRange ( 1, 1 ),
                         &dependencies,
                         &m_endOfEvaluation
                         );

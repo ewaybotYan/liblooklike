@@ -18,4 +18,12 @@ add_library (looklike
              ../kernels/scalar_product.cl
              )
 
-target_link_libraries ( looklike ${Armadillo_LIBS} )
+# target_link_libraries ( looklike ${Armadillo_LIBS} )
+
+add_executable(img2eigvec
+            img2eigvec.cpp
+)
+
+set(LIBS ${OPENCL_LIBRARIES} ${ARMADILLO_LIBRARIES} looklike "jpeg")
+
+target_link_libraries( img2eigvec ${LIBS} )

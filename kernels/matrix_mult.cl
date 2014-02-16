@@ -21,6 +21,23 @@ matrix_matrix_multiplication ( __global float* C,
     C[i*w+j]=tmp;
 }
 
+
+// computes T*t(T)
+__kernel void
+matrix_covariance ( __global float* C,
+                    __global float* T,
+                    int w, int h )
+{
+    float tmp = 0;
+    const int i = get_global_id(0);
+    const int j = get_global_id(1);
+    for( int k=0; k < h; k++ ){
+        tmp += T[k*w+i] * T[k*w+j];
+    }
+    //C[i*w+j] = tmp;
+}
+
+
 __kernel void
 matrix_vector_multiplication ( __global float* C,
                                __global float* A,
