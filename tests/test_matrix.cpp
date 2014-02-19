@@ -255,7 +255,7 @@ int main ( int argc, char* argv[] ) {
             error = max( error, abs( res[k] - normalized[k] ) );
         }
         if ( error < 0.0000001 ) {
-            std::cout << "computed without noticeable error.\n";
+            cout << "computed without noticeable error.\n";
         } else {
             std::cout << "computed result matches with error!\n";
             nor.print();

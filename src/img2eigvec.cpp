@@ -7,7 +7,7 @@
 
 void usage(){
     std::cout << "Usage:\n";
-    std::cout << "img2eigvec [-o output_file] [-i database_id] path_to_files\n";
+    std::cout << "img2eigvec [-o output_file] [-i database_id] path_to_kernels path_to_pictures\n";
 }
 
 /*
@@ -68,8 +68,8 @@ int main(int argc, char* argv[]){
         std::cout << "done.\n";
 #endif
         covMat.retrieveData(ctx, queue);
-        normalized.evaluate(ctx, queue);
         normalized.retrieveData(ctx, queue);
+        images.retrieveData(ctx, queue);
 
         arma::fvec eigval;
         arma::fmat eigvec;
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
                         normalized.getWidth(),
                         normalized.getHeight());
         arma::fmat vars = X * eigvec;
-        normalized.print();
+        //images.print();
 
         int previewW = array.avgWidth;
         int previewH = array.avgHeight;

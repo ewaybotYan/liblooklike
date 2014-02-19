@@ -55,7 +55,6 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
 
     // create result object
     float* values = new float[avgWidth*avgHeight*imagefiles.size()];
-    Matrix m ( values, imagefiles.size(), avgWidth*avgHeight );
 
     //then load the pixels from these files
     float* offset = values;
@@ -67,7 +66,9 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
         offset += avgWidth * avgHeight;
     }
 
-    delete[] values;
+    Matrix m ( values, imagefiles.size(), avgWidth*avgHeight );
+
+    delete[] values;// Matrix constructor keeps a copy of the values
 
     ArrayOfImages res = {
         avgWidth,

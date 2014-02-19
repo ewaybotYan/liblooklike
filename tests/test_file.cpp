@@ -19,7 +19,7 @@ using namespace std;
 std::string sampleTxt = "This is a sample text.";
 
 void usage () {
-  cerr << "usage :\n test_file " 
+  cerr << "usage :\n test_file path/to/photos/ path/to/sample_file.txt"
     << endl;
 }
 
