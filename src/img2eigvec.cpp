@@ -10,13 +10,6 @@ void usage(){
     std::cout << "img2eigvec [-o output_file] [-i database_id] path_to_kernels path_to_pictures\n";
 }
 
-/*
-void help(){
-    std::cout << "img2eigvec is a programm that generates the eigen vectors "
-                 + "of the Principal Component Analysis algorithm.\n"
-                 + "Its output is a text file containing ";
-
-}*/
 
 int main(int argc, char* argv[]){
     if(argc < 2){

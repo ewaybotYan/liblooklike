@@ -4,6 +4,9 @@ project(liblooklike)
 
 enable_testing()
 
+# recommended option for cmake: -DCMAKE_BUILD_TYPE=DEBUG
+# -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wunreachable-code"
+
 #######
 # PATHS
 
