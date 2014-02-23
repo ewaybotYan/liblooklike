@@ -1,22 +1,22 @@
 /**
- * @file   test_mathexpression.cpp
+ * @file   test_algorithm.cpp
  * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
- * @brief  unit tests for MathExpression class
+ * @brief  unit tests for Algorithm class
  * @detailled This file along with real.h and real.cpp contain an example
  * implementation of the @ref Mathexpression class and how to use it.
  *
- * @page test_mathexpression MathExpression Example
+ * @page test_algorithm Algorithm Example
  * @section program Example program
- *  @include test_mathexpression.cpp
- * @section header Example MathExpression children
+ *  @include test_algorithm.cpp
+ * @section header Example Algorithm children
  *  @include real.h
- * @section definition Example MathExpression implementation
+ * @section definition Example Algorithm implementation
  *  @include real.cpp
  */
 
 #include "../include/exception.h"
 #include "../include/context.h"
-#include "../include/mathexpression.h"
+#include "../include/algorithm.h"
 #include "real.h"
 
 #include<iostream>
@@ -26,7 +26,7 @@ using namespace std;
 
 void usage(){
   cerr << "Error in " << __FILE__ << " :\n"
-    << "usage :\n test_mathexpression path_to_kernel_directory" 
+    << "usage :\n test_algorithm path_to_kernel_directory" 
     << endl;
 }
 

@@ -1,7 +1,7 @@
 /**
  *  @file   matrix.cpp
  *  @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
- *  @brief  implements methods from @ref MathExpression for matrices
+ *  @brief  implements methods from @ref Algorithm for matrices
  */
 
 #ifndef NDEBUG
@@ -9,7 +9,7 @@
 #endif
 
 #include "../include/exception.h"
-#include "../include/mathexpression.h"
+#include "../include/algorithm.h"
 
 #include "../include/matrix.h"
 #include "../include/context.h"
@@ -25,7 +25,7 @@ Matrix::Matrix ( cl_float* values,
                  const unsigned int m,
                  const unsigned int n,
                  const bool keepInCLMem) :
-    MathExpression ( true, keepInCLMem ) {
+    Algorithm ( true, keepInCLMem ) {
     m_value = new cl_float[m*n];
     for( unsigned int i = 0; i < m*n; i++ )
         m_value[i] = values[i];
@@ -39,7 +39,7 @@ Matrix::Matrix ( const std::string programName,
                  const unsigned int m,
                  const unsigned int n,
                  const bool keepInCLMem ) :
-    MathExpression ( false, keepInCLMem ) {
+    Algorithm ( false, keepInCLMem ) {
     m_value = 0;
     m_m = m;
     m_n = n;

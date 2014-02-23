@@ -3,12 +3,12 @@
 
 #include<string>
 
-#include "../include/mathexpression.h"
+#include "../include/algorithm.h"
 #include "../include/context.h"
 
 // Real is an implementation of the Mathexpression class with the (simplified)
 // behaviour of a real number.
-class Real : public MathExpression{
+class Real : public Algorithm{
 
   public:
 
@@ -30,18 +30,18 @@ class Real : public MathExpression{
     // the expression from the program.
     float getValue();
 
-    // virtual method from MathExpression, see real.cpp
+    // virtual method from Algorithm, see real.cpp
     void retrieveData(Context& context, cl::CommandQueue& queue ) override;
 
   protected:
 
-    // virtual methods from MathExpression, see real.cpp
+    // virtual methods from Algorithm, see real.cpp
     void enqueue( Context& context, cl::CommandQueue& queue ) override;
     bool allocateForResult( Context& context ) override;
 
   private:
 
-    // The implementation of MathExpression is likely to have its own memory
+    // The implementation of Algorithm is likely to have its own memory
     // space in order to store its initial or computed value in memory.
     float* m_value;
 

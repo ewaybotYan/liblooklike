@@ -1,5 +1,5 @@
 /**
- * @file   mathexpression.h
+ * @file   algorithm.h
  * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
  * @brief  The evaluation of a whole expression is handled by an Expression
  *         object. It makes it easier to understand the process.
@@ -17,7 +17,7 @@
 // ###################
 // # State description
 
-/// Used to explicitely define the state of a MathExpression.
+/// Used to explicitely define the state of a Algorithm.
 enum ExpressionState {
     INITIAL,///< initial state
     ALLOCATED,///< Data buffers are allocated on computation device.
@@ -33,7 +33,7 @@ enum AllocationResult {
     /// from computer memory, has had memory allocated on computation device.
     TERMINAL_EXPRESSION_ALLOCATED,
     /// One expression requiring computation has memory allocated for its input
-    /// and output data buffers, this is not the top MathExpression
+    /// and output data buffers, this is not the top Algorithm
     ONE_COMPUTED_EXPRESSION_ALLOCATED,
     /// present expression and all its direct dependencies have memory allocated
     COMPUTED_EXPRESSION_ALLOCATED
@@ -50,7 +50,7 @@ enum AllocationResult {
 ///
 ///            Example:
 ///                 in a = b + c <br/>
-///                 a, b and c are all mathexpressions. It can also be
+///                 a, b and c are all algorithms. It can also be
 ///                 represented as a tree where a is the root node,
 ///                 and has two children b and c.
 ///                 In order to compute a, we will execute evaluate().
@@ -70,7 +70,7 @@ enum AllocationResult {
 ///            - @ref enqueue()
 ///            - @ref retrieveData()
 ///            It is highly recommanded to read the description of these
-///            methods and the @ref test_mathexpression example in /examples
+///            methods and the @ref test_algorithm example in /examples
 ///            before trying to implement them.
 ///
 /// @note The memory objects on the computer side can be stored anywhere in the
@@ -78,7 +78,7 @@ enum AllocationResult {
 ///       always be stored in @ref m_data as they will be automatically
 ///       deallocated.
 ///
-/// @startuml{MathExpression_state.png}
+/// @startuml{Algorithm_state.png}
 ///     [*] --> Initial
 ///     Initial --> Evaluating : evaluate()
 ///     state Evaluating{
@@ -91,14 +91,14 @@ enum AllocationResult {
 ///     Evaluating --> Computed : [end event triggered]
 ///     Computed --> [*]
 /// @enduml
-class MathExpression {
+class Algorithm {
 
     public:
 
         // ##########################
         // # constructors/destructors
 
-        ~MathExpression(){}
+        ~Algorithm(){}
 
     protected:
 
@@ -108,7 +108,7 @@ class MathExpression {
         /// @param keepInCLMem indicates wether data of the expression has to be
         ///        kept in OpenCL device memory even if no parent expression is
         ///        using it.
-        MathExpression( const bool isTerminal, const bool keepInCLMem );
+        Algorithm( const bool isTerminal, const bool keepInCLMem );
 
     public:
         // #################
@@ -119,12 +119,12 @@ class MathExpression {
         /// @todo  use m_children to give the answer
         bool isComputed();
 
-        /// @brief Gives the general state of the MathExpression (see state
+        /// @brief Gives the general state of the Algorithm (see state
         ///        diagram for a better understanding).
         ExpressionState getState();
 
         /// @brief Return data buffers associated to the object value.
-        /// @note  Buffer order might be important, see MathExpression
+        /// @note  Buffer order might be important, see Algorithm
         ///        implementations for the meaning.
         /// @todo  rename to getBuffer
         std::vector<cl::Buffer> getData();
@@ -148,7 +148,7 @@ class MathExpression {
         ///           for this expression.
         /// @param ctx a valid context
         /// @param queue the queue in which execution will start
-        /// @startuml{MathExpression_evaluate_activity.png}
+        /// @startuml{Algorithm_evaluate_activity.png}
         ///     skinparam monochrome true
         ///     (*) --> evaluate()
         ///     if "already\nqueued?" then
@@ -192,7 +192,7 @@ class MathExpression {
         /// @brief adds a dependency to the expression
         /// @param child the expression needed to evaluate
         /// @warning the user has to push the children in the right order
-        void addChild( MathExpression* child );
+        void addChild( Algorithm* child );
 
         /// @todo handle the number of parents for memory deallocation
         void increaseParentNb();
@@ -228,7 +228,7 @@ class MathExpression {
         /// dependencies requiered to compute this expression
         /// @warning Any dependency not specified here will be ignored during
         ///          the evaluation.
-        std::vector<MathExpression*> m_children;
+        std::vector<Algorithm*> m_children;
 
         /// end of computation event
         cl::Event m_endOfEvaluation;

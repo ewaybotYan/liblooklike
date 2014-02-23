@@ -3,14 +3,14 @@
 #include<CL/cl.hpp>
 
 #include "../include/exception.h"
-#include "../include/mathexpression.h"
+#include "../include/algorithm.h"
 
 // #################
 // # local functions
 
-bool checkChildrenEnqueued( const std::vector<MathExpression*> children ){
+bool checkChildrenEnqueued( const std::vector<Algorithm*> children ){
     bool res = true;
-    for( MathExpression* child : children )
+    for( Algorithm* child : children )
         res = res && child->getState() >= QUEUED;
     return res;
 }
@@ -18,7 +18,7 @@ bool checkChildrenEnqueued( const std::vector<MathExpression*> children ){
 // ################
 // # constructor(s)
 
-MathExpression::MathExpression( const bool isTerminal, const bool keepInCLMem ){
+Algorithm::Algorithm( const bool isTerminal, const bool keepInCLMem ){
     m_isTerminal = isTerminal;
     if( keepInCLMem )
         m_nbParents = 1;
@@ -29,22 +29,22 @@ MathExpression::MathExpression( const bool isTerminal, const bool keepInCLMem ){
 // #################
 // # getters/setters
 
-bool MathExpression::isComputed(){
+bool Algorithm::isComputed(){
     return !m_isTerminal;
 }
 
 
-ExpressionState MathExpression::getState(){
+ExpressionState Algorithm::getState(){
     return m_state;
 }
 
 
-std::vector<cl::Buffer> MathExpression::getData(){
+std::vector<cl::Buffer> Algorithm::getData(){
     return m_data;
 }
 
 
-cl::Event& MathExpression::getEndOfEvaluation(){
+cl::Event& Algorithm::getEndOfEvaluation(){
     return m_endOfEvaluation;
 }
 
@@ -52,18 +52,18 @@ cl::Event& MathExpression::getEndOfEvaluation(){
 // #########
 // # methods
 
-void MathExpression::addChild(MathExpression* child){
+void Algorithm::addChild(Algorithm* child){
     m_children.push_back(child);
     child->increaseParentNb();
 }
 
 
-void MathExpression::increaseParentNb(){
+void Algorithm::increaseParentNb(){
     m_nbParents++;
 }
 
 
-void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
+void Algorithm::evaluate( Context& ctx,  cl::CommandQueue& queue ){
 #ifndef NDEBUG
     std::cout << "evaluating" << std::endl;
 #endif
@@ -71,7 +71,7 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
         return;
     if( m_children.size() > 0 ){
         while( !checkChildrenEnqueued( m_children ) ){
-            for( MathExpression* child : m_children )
+            for( Algorithm* child : m_children )
                 if( child->getState() == QUEUED )
                     child->getEndOfEvaluation().wait();
             deallocateMemory();
@@ -79,7 +79,7 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
             if( allocationRes < ONE_COMPUTED_EXPRESSION_ALLOCATED )
                 throw Error("not enough memory to compute child expression");
             // evaluate children for whom memory is available
-            for( MathExpression* child : m_children )
+            for( Algorithm* child : m_children )
                 if( child->getState() == ALLOCATED )
                     child->evaluate( ctx,  queue );
         }
@@ -93,7 +93,7 @@ void MathExpression::evaluate( Context& ctx,  cl::CommandQueue& queue ){
 }
 
 
-AllocationResult MathExpression::allocateMemory( Context& context ){
+AllocationResult Algorithm::allocateMemory( Context& context ){
     // skip simple cases
     if( m_state >= QUEUED ) // if memory is not needed, nothing is done
         return NONE_ALLOCATED;
@@ -112,7 +112,7 @@ AllocationResult MathExpression::allocateMemory( Context& context ){
     }else{
         AllocationResult best = NONE_ALLOCATED;// best memory allocation state
         AllocationResult worst = TERMINAL_EXPRESSION_ALLOCATED;// worst memory allocation state
-        for( MathExpression* child : m_children ){
+        for( Algorithm* child : m_children ){
             AllocationResult tmp = child->allocateMemory( context );
             best = best < tmp ? tmp : best;
             worst = worst > tmp ? tmp : worst;
@@ -134,18 +134,18 @@ AllocationResult MathExpression::allocateMemory( Context& context ){
 }
 
 
-void MathExpression::deallocateMemory(){
+void Algorithm::deallocateMemory(){
 #ifndef NDEBUG
     std::cout << "deallocating memory" << std::endl;
 #endif
-    for( MathExpression* child : m_children )
+    for( Algorithm* child : m_children )
         child->deallocateMemory();
     if( m_nbParents <= 0 )
         deallocateForResult();
 }
 
 
-void MathExpression::deallocateForResult() {
+void Algorithm::deallocateForResult() {
 #ifndef NDEBUG
     std::cout << "deallocating for result" << std::endl;
 #endif

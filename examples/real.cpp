@@ -1,5 +1,5 @@
 #include "../include/exception.h"
-#include "../include/mathexpression.h"
+#include "../include/algorithm.h"
 
 #include "real.h"
 #include "../include/context.h"
@@ -10,12 +10,12 @@
 // ##############
 // # constructors
 
-Real::Real( const float value, const bool keepInCLMem ) : MathExpression( true, keepInCLMem ) {
+Real::Real( const float value, const bool keepInCLMem ) : Algorithm( true, keepInCLMem ) {
     m_value = new float;
     *m_value = value;
 }
 
-Real::Real( const bool keepInCLMem, const std::string programName, const std::string kernelName  ) : MathExpression( false, keepInCLMem ) {
+Real::Real( const bool keepInCLMem, const std::string programName, const std::string kernelName  ) : Algorithm( false, keepInCLMem ) {
     m_value = 0;
     m_programName = programName;
     m_kernelName = kernelName;
@@ -102,7 +102,7 @@ void Real::enqueue( Context& context, cl::CommandQueue& queue ) {
 
         // prepare dependencies
         std::vector<cl::Event> dependencies;
-        for( MathExpression* child : m_children )
+        for( Algorithm* child : m_children )
             dependencies.push_back((child->getEndOfEvaluation()));
 
         // enqueue kernel execution

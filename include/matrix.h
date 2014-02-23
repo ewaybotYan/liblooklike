@@ -4,17 +4,17 @@
 /**
  *  @file   matrix.h
  *  @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
- *  @brief  implements methods from @ref MathExpression for matrices
+ *  @brief  implements methods from @ref Algorithm for matrices
  */
 
 #include<CL/cl.hpp>
 
-#include "mathexpression.h"
+#include "algorithm.h"
 #include "context.h"
 
 /// @brief Implements main aspects of mathematical matrices for
-///        @ref MathExpression .
-class Matrix: public MathExpression {
+///        @ref Algorithm .
+class Matrix: public Algorithm {
 
     public:
 

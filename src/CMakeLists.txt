@@ -9,8 +9,8 @@ add_library (looklike
              ../src/image.cpp
              ../include/jpegfile.h
              ../src/jpegfile.cpp
-             ../include/mathexpression.h
-             ../src/mathexpression.cpp
+             ../include/algorithm.h
+             ../src/algorithm.cpp
              ../include/matrix.h
              ../src/matrix.cpp
              ../kernels/matrix_mult.cl
