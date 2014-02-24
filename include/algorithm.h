@@ -7,10 +7,8 @@
  *         be done with them.
  */
 
-#ifndef EXPRESSION_H
-#define EXPRESSION_H
-
-#include<CL/cl.hpp>
+#ifndef ALGORITHM_H
+#define ALGORITHM_H
 
 #include "context.h"
 
@@ -64,33 +62,17 @@ enum AllocationResult {
 ///
 ///            The behaviour of @ref evaluate() is fixed however: recursively
 ///            evaluate children expressions then the value of the current
-///            expression. However, it relies on several virtual functions in
-///            order to permit any kind of computation :
-///            - @ref allocateMemoryForResult()
-///            - @ref enqueue()
-///            - @ref retrieveData()
+///            expression. However, it relies on two virtual functions:
+///                - @ref allocateMemoryForResult()
+///                - @ref enqueue()
 ///            It is highly recommanded to read the description of these
 ///            methods and the @ref test_algorithm example in /examples
 ///            before trying to implement them.
 ///
-/// @note The memory objects on the computer side can be stored anywhere in the
-///       implementation of this class. However, OpenCL memory buffers, should
-///       always be stored in @ref m_data as they will be automatically
-///       deallocated.
-///
-/// @startuml{Algorithm_state.png}
-///     [*] --> Initial
-///     Initial --> Evaluating : evaluate()
-///     state Evaluating{
-///         [*] --> MemoryAllocationForChildren
-///         MemoryAllocationForChildren --> enqueuedChildren
-///         enqueuedChildren --> MemoryAllocatedForResult : [All_children_enqueued] allocateMemoryForResult()
-///         MemoryAllocatedForResult --> Enqueued : [Memory allocation OK] enqueue()
-///         Enqueued --> [*]
-///     }
-///     Evaluating --> Computed : [end event triggered]
-///     Computed --> [*]
-/// @enduml
+/// @note @ref allocateForResult() and @ref deallocateForResult() are meant to
+///       be used for special computation systems that have their own memory
+///       like OpenCL. If the memory is the RAM, you might not want to throw the
+///       result of your computation away.
 class Algorithm {
 
     public:
@@ -98,118 +80,41 @@ class Algorithm {
         // ##########################
         // # constructors/destructors
 
-        ~Algorithm(){}
+        ~Algorithm();
 
-    protected:
 
-        /// @todo remove the use of isTerminal and rely on m_children size.
-        /// @param isTerminal indicates wether the expression needs computation
-        ///        or if it is just loaded from memory.
-        /// @param keepInCLMem indicates wether data of the expression has to be
-        ///        kept in OpenCL device memory even if no parent expression is
-        ///        using it.
-        Algorithm( const bool isTerminal, const bool keepInCLMem );
-
-    public:
         // #################
         // # getters/setters
-
-        /// @brief says if the expression has to be computed before one can read
-        ///        its value
-        /// @todo  use m_children to give the answer
-        bool isComputed();
 
         /// @brief Gives the general state of the Algorithm (see state
         ///        diagram for a better understanding).
         ExpressionState getState();
 
-        /// @brief Return data buffers associated to the object value.
-        /// @note  Buffer order might be important, see Algorithm
-        ///        implementations for the meaning.
-        /// @todo  rename to getBuffer
-        std::vector<cl::Buffer> getData();
-
-        /// Gives the OpenCL event associated to the end of the computation.
-        /// @note You should check that computation is enqueued with
-        ///       @ref getState() before waiting for this event.
-        cl::Event& getEndOfEvaluation();
-
 
         // #########
         // # methods
 
-        /// @brief creates a cl CommandQueue that will be used internally for
-        ///        computation
-        void createQueue();
+        /// @brief adds a dependency to the expression
+        /// @param child an object that needs to be evaluated before this
+        ///        object can be computed
+        /// @warning children might be identified by their order in the
+        ///          implementation of this class.
+        void addChild( Algorithm* child );
+
+        virtual void waitEndOfEvaluation();
 
         /// @brief compute the value of the Expression
         /// @detailed This function will allocated memory for children and
         ///           evaluate them recursively until it enqueues the execution
         ///           for this expression.
-        /// @param ctx a valid context
-        /// @param queue the queue in which execution will start
-        /// @startuml{Algorithm_evaluate_activity.png}
-        ///     skinparam monochrome true
-        ///     (*) --> evaluate()
-        ///     if "already\nqueued?" then
-        ///      --> [true] "SUCCESS"
-        ///     else
-        ///
-        ///      if "has children?" then
-        ///
-        ///       -->[true] "treat\n children" as preChildrenSteps
-        ///
-        ///       if "has non-\nenqueued\nchildren?" then
-        ///        -->[true] "try memory\nallocation\nfor children"
-        ///
-        ///        if "all failed?" then
-        ///         --> [true] "FAILURE"
-        ///        else
-        ///         --> [false] "enqueue\nchildren"
-        ///         --> preChildrenSteps
-        ///        endif
-        ///       else
-        ///        --> [false] "Allocate\nfor result" as postChildrenStep
-        ///       endif
-        ///      else
-        ///       -->[false] postChildrenStep
-        ///
-        ///       if "allocation\n succeeded?" then
-        ///        --->[true] "enqueue"
-        ///        ---> "SUCCESS"
-        ///        ---> (*)
-        ///       else
-        ///        --->[false] "FAILURE"
-        ///        ---> (*)
-        ///       endif
-        ///      endif
-        ///
-        ///     endif
-        ///
-        /// @enduml
-        void evaluate( Context& ctx,  cl::CommandQueue& queue );
-
-        /// @brief adds a dependency to the expression
-        /// @param child the expression needed to evaluate
-        /// @warning the user has to push the children in the right order
-        void addChild( Algorithm* child );
-
-        /// @todo handle the number of parents for memory deallocation
-        void increaseParentNb();
+        bool evaluate( );
 
     protected:
 
+        // ###################
+        // # protected methods
+
         /// @brief launch evaluation of the object
-        /// @detailed For a terminal node, this will most likely enqueue a
-        ///            writeBuffer operation. Otherwise, this will ask the
-        ///            @ref Context object for one or more kernels, set the
-        ///            arguments accordingly and enqueue execution of the
-        ///            algorithms.
-        /// @note  evaluate may fail if no memory space was allocated for the
-        ///        object. It is up to the parent Expression evaluate function
-        ///        to allocate memory and execute evaluate again.
-        /// @note  evaluate might be a recursive function, if it depends on the
-        ///        existence of other operations results
         virtual void enqueue( Context& context, cl::CommandQueue& queue ) = 0;
 
         /// @brief   Must be called to bring back the computed results from
@@ -219,61 +124,48 @@ class Algorithm {
         virtual void retrieveData( Context& context,
                                    cl::CommandQueue& queue ) = 0;
 
-        /// describe the state of the expression
-        ExpressionState m_state = INITIAL;
+        void addParent( Algorithm* parent );
 
-        /// @warning all buffers allocated by allocateForResult should come here
-        std::vector<cl::Buffer> m_data;
+        /// Deallocate memory for a whole evaluation tree
+        /// @param hierarchyOffset number of levels to skip before actually
+        ///        deallocating memory.
+        void deallocateMemory( const int hierarchyOffset = 0 );
+
+        // ###################
+        // # protected memeber
 
         /// dependencies requiered to compute this expression
         /// @warning Any dependency not specified here will be ignored during
         ///          the evaluation.
         std::vector<Algorithm*> m_children;
-
-        /// end of computation event
-        cl::Event m_endOfEvaluation;
+        /// dependencies requiered to compute this expression
+        /// @warning Any dependency not specified here will be ignored during
+        ///          the evaluation.
+        std::vector<Algorithm*> m_parents;
 
     private:
+
+        /// @brief constructor is private because this is an abstract class.
+        Algorithm(){}
 
         // #################
         // # private methods
 
-        /// @brief  try to allocate memory on the opencl device for this element
-        ///         and its childs, priority is given to the children
-        /// @return true if allocation succeeded, false otherwise
-        AllocationResult allocateMemory( Context& context );
-
         /// @brief   allocate memory in which we will put the result of this
         ///          computation
-        /// @warning All the memory buffers created here must be stored inside
-        ///          m_data because memory deallocation is done by the
-        ///          Mathexpression mother class.
         /// @warning do not forget to update m_state if allocation is
         ///          successfull
-        virtual bool allocateForResult( Context& context ) = 0;
+        virtual bool allocateForResult() = 0;
 
-        /// @brief Deallocate the memory for this expression AND its dependent
-        ///        expressions computation on the computation device.
-        /// @todo  check circular dependencies?
-        void deallocateMemory();
-
-        /// Deallocate the memory buffers from @ref m_data
-        void deallocateForResult();
+        /// Deallocate the memory buffers
+        virtual void deallocateForResult();
 
         // #########
         // # members
 
-        // is it a terminal expression or a computed one?
-        // this is used in allocation to check wether a expression that needs to
-        // be computed has buffers in order to store its value
-        bool m_isTerminal;
-
-        // the event associated to the computation in the openCL queue
-        cl::Event m_computationState;
-
-        // number of parent expressions that will require our data
-        int m_nbParents = 0;
+        /// describe the state of the expression
+        ExpressionState m_state = INITIAL;
 
 };
 
-#endif
+#endif //ALGORITHM_H

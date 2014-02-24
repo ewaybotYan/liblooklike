@@ -11,6 +11,8 @@ add_library (looklike
              ../src/jpegfile.cpp
              ../include/algorithm.h
              ../src/algorithm.cpp
+             ../include/clalgorithm.hpp
+             ../src/clalgorithm.cpp
              ../include/matrix.h
              ../src/matrix.cpp
              ../kernels/matrix_mult.cl
