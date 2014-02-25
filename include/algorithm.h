@@ -10,7 +10,7 @@
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
-#include "context.h"
+#include<vector>
 
 // ###################
 // # State description
@@ -21,20 +21,6 @@ enum ExpressionState {
     ALLOCATED,///< Data buffers are allocated on computation device.
     QUEUED///< Computation is in the computation queue.
     /* COMPUTED// computation is over, result can be taken back*/
-};
-
-/// @brief Gives the result of a memory alocation on a Mathexpression
-enum AllocationResult {
-    /// No memory allocation happened
-    NONE_ALLOCATED,
-    /// A terminal expression, ie an expression that is just a data transfer
-    /// from computer memory, has had memory allocated on computation device.
-    TERMINAL_EXPRESSION_ALLOCATED,
-    /// One expression requiring computation has memory allocated for its input
-    /// and output data buffers, this is not the top Algorithm
-    ONE_COMPUTED_EXPRESSION_ALLOCATED,
-    /// present expression and all its direct dependencies have memory allocated
-    COMPUTED_EXPRESSION_ALLOCATED
 };
 
 
@@ -80,7 +66,7 @@ class Algorithm {
         // ##########################
         // # constructors/destructors
 
-        ~Algorithm();
+        ~Algorithm(){}
 
 
         // #################
@@ -101,28 +87,27 @@ class Algorithm {
         ///          implementation of this class.
         void addChild( Algorithm* child );
 
-        virtual void waitEndOfEvaluation();
+        virtual void waitEndOfEvaluation() = 0;
 
         /// @brief compute the value of the Expression
         /// @detailed This function will allocated memory for children and
         ///           evaluate them recursively until it enqueues the execution
         ///           for this expression.
-        bool evaluate( );
+        void evaluate();
 
     protected:
+
+        /// @brief constructor is private because this is an abstract class.
+        Algorithm(){}
 
         // ###################
         // # protected methods
 
         /// @brief launch evaluation of the object
-        virtual void enqueue( Context& context, cl::CommandQueue& queue ) = 0;
+        virtual void enqueue( ) = 0;
 
-        /// @brief   Must be called to bring back the computed results from
-        ///          the computation device to the program memory.
-        /// @warning Calling retrieveData before computation is over has an
-        ///          undefined behaviour.
-        virtual void retrieveData( Context& context,
-                                   cl::CommandQueue& queue ) = 0;
+        /// @brief   the actual recursive evaluation method
+        bool recEvaluate( int depth );
 
         void addParent( Algorithm* parent );
 
@@ -145,9 +130,6 @@ class Algorithm {
 
     private:
 
-        /// @brief constructor is private because this is an abstract class.
-        Algorithm(){}
-
         // #################
         // # private methods
 
@@ -158,7 +140,7 @@ class Algorithm {
         virtual bool allocateForResult() = 0;
 
         /// Deallocate the memory buffers
-        virtual void deallocateForResult();
+        virtual void deallocateForResult() = 0;
 
         // #########
         // # members

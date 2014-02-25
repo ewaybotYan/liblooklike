@@ -6,50 +6,78 @@
 #include "../include/algorithm.h"
 #include "../include/context.h"
 
-// Real is an implementation of the Mathexpression class with the (simplified)
-// behaviour of a real number.
-class Real : public Algorithm{
+// This is out base object, a real number.
+class Real{
 
   public:
 
-    // Most expressions will provide constructors that permit the creation of an
-    // object with a value. It the evaluation tree of an expression, these
-    // instances will be the terminal nodes.
-    Real( const float value, const bool keepInCLMem = false );
+    Real( const float value );
 
-    Real( const bool keepInCLMem, const std::string programName, const std::string kernelName  );
-
-    ~Real(){}
-
-    // Then comes expression generators that create expressions as the result
-    // of an operation or an algorithm.
-    static Real sum( Real& a, Real& b, const bool keepInCLMem = false );
-    static Real mul( Real& a, Real& b, const bool keepInCLMem = false );
-
-    // An implementation specific method be be used to access the value(s) of
-    // the expression from the program.
     float getValue();
-
-    // virtual method from Algorithm, see real.cpp
-    void retrieveData(Context& context, cl::CommandQueue& queue ) override;
-
-  protected:
-
-    // virtual methods from Algorithm, see real.cpp
-    void enqueue( Context& context, cl::CommandQueue& queue ) override;
-    bool allocateForResult( Context& context ) override;
 
   private:
 
-    // The implementation of Algorithm is likely to have its own memory
-    // space in order to store its initial or computed value in memory.
-    float* m_value;
+    float m_value = 0;
 
-    // One way to distinguish the type of expression is to store the program
-    // and kernel that will be used for the computation. This is only valid if
-    // all computations use their own specific kernel.
-    std::string m_programName;
-    std::string m_kernelName;
+};
+
+
+// In almost all of your implementations, you will want to load values from
+// memory. This operation can be considered as an algorithm. Inheritance from
+// Algorithm allows us to consider a value as a child of another algorithm.
+class RealValue: public Algorithm {
+
+    public:
+
+        RealValue(){}
+
+        RealValue( Real& value );
+
+        Real getResult();
+
+        void waitEndOfEvaluation() override;
+
+    protected:
+
+        void enqueue() override;
+
+    private:
+
+        bool allocateForResult() override;
+
+        void deallocateForResult() override;
+
+        Real* m_src = 0;
+        // The implementation of Algorithm is likely to have its own memory
+        // space in order to store its initial or computed value in memory.
+        float* m_tmp = 0;
+
+};
+
+
+// this is our algorithm
+class RealSum: public Algorithm {
+
+    public:
+
+        RealSum( RealValue &a, RealValue &b );
+
+        Real getResult();
+
+        void waitEndOfEvaluation() override;
+
+    protected:
+
+        void enqueue() override;
+
+    private:
+
+        bool allocateForResult() override;
+
+        void deallocateForResult() override;
+
+        float* m_tmp = 0;
+
 };
 
 #endif
