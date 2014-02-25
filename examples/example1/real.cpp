@@ -1,5 +1,5 @@
-#include "../include/exception.h"
-#include "../include/algorithm.h"
+#include <exception.h>
+#include <algorithm.h>
 
 #include "real.h"
 

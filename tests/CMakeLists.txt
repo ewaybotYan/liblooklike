@@ -18,8 +18,8 @@ set(LIBS ${OPENCL_LIBRARIES} ${Armadillo_LIBRARIES})
 # test_context
 
 include_directories(
-  ${OPENCL_INCLUDE_DIRS}
-  )
+  "${PROJECT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIRS}"
+)
 
 add_executable(
   test_context
@@ -32,37 +32,18 @@ target_link_libraries(test_context ${LIBS})
 
 # test_algorithm
 
-include_directories(
-  ${OPENCL_INCLUDE_DIRS}
-  )
-
 add_executable(
   test_algorithm
-  ../examples/test_algorithm.cpp
-  ../examples/real.cpp
-  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ../examples/example1/test_algorithm.cpp
+  ../examples/example1/real.cpp
+  ../examples/example1/real.h
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   )
-
-target_link_libraries(test_algorithm ${LIBS})
-
-# test_algorithm2
 
 include_directories(
-  ${OPENCL_INCLUDE_DIRS}
-  )
-
-add_executable(
-  test_algorithm2
-  test_algorithm2.cpp
-  ../examples/real.cpp
-  ${PROJECT_SOURCE_DIR}/src/context.cpp
-  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/exception.cpp
-  )
-
-target_link_libraries(test_algorithm2 ${LIBS})
+  "${PROJECT_SOURCE_DIR}/include"
+)
 
 # test_matrix
 

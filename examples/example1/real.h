@@ -3,8 +3,8 @@
 
 #include<string>
 
-#include "../include/algorithm.h"
-#include "../include/context.h"
+#include <algorithm.h>
+#include <context.h>
 
 // This is out base object, a real number.
 class Real{

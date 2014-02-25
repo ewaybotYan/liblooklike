@@ -14,9 +14,8 @@
  *  @include real.cpp
  */
 
-#include "../include/exception.h"
-#include "../include/context.h"
-#include "../include/algorithm.h"
+#include <exception.h>
+#include <algorithm.h>
 #include "real.h"
 
 #include<iostream>
