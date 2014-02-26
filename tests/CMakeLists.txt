@@ -33,7 +33,7 @@ target_link_libraries(test_context ${LIBS})
 # test_algorithm
 
 add_executable(
-  test_algorithm
+  test_algorithm1
   ../examples/example1/test_algorithm.cpp
   ../examples/example1/real.cpp
   ../examples/example1/real.h
@@ -44,6 +44,23 @@ add_executable(
 include_directories(
   "${PROJECT_SOURCE_DIR}/include"
 )
+
+# test_algorithm2
+
+add_executable(
+  test_algorithm2
+  ../examples/example2/test_algorithm.cpp
+  ../examples/example2/real.cpp
+  ../examples/example2/real.h
+  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+include_directories(
+  "${PROJECT_SOURCE_DIR}/include"
+)
+
+target_link_libraries(test_algorithm2 "pthread")
 
 # test_matrix
 
@@ -93,7 +110,7 @@ enable_testing()
 add_test( test_context ${EXECUTABLE_OUTPUT_PATH}/test_context "${CMAKE_CURRENT_SOURCE_DIR}" )
 
 # test_algorithm
-add_test( test_algorithm ${EXECUTABLE_OUTPUT_PATH}/test_algorithm "${CMAKE_CURRENT_SOURCE_DIR}" )
+add_test( test_algorithm1 ${EXECUTABLE_OUTPUT_PATH}/test_algorithm1 "${CMAKE_CURRENT_SOURCE_DIR}" )
 
 # test_algorithm2
 add_test( test_algorithm2 ${EXECUTABLE_OUTPUT_PATH}/test_algorithm2 "${CMAKE_CURRENT_SOURCE_DIR}" )
