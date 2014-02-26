@@ -3,37 +3,48 @@
 
 #include"algorithm.h"
 #include<CL/cl.hpp>
+#include<context.h>
 
-/// @warning do not forget to update m_computationEndEvent when you implement
-///          @ref evaluate()
-class ClAlgorithm : protected Algorithm {
+
+class ClAlgorithm : public Algorithm {
+
     public:
 
-        /// @detailed For a terminal node, this will most likely enqueue a
-        ///            writeBuffer operation. Otherwise, this will ask the
-        ///            @ref Context object for one or more kernels, set the
-        ///            arguments accordingly and enqueue execution of the
-        ///            algorithms.
+        ClAlgorithm(){}
 
-        /// @brief   Must be called to bring back the computed results from
-        ///          the computation device to the program memory.
-        /// @warning Calling retrieveData before computation is over has an
-        ///          undefined behaviour.
-        virtual void retrieveData( ) = 0;
+        /// @param context the context to be used by OpenCL functions of this
+        ///                object
+        /// @param queue   a queue that will be used to put the OpenCL commands
+        ClAlgorithm( Context* context, cl::CommandQueue* queue );
+
+        /// The default behaviour is to wait for the end event defined in
+        /// @ref m_endOfEvaluationEvent and then retrieve the data from the
+        /// OpenCL environment with @ref retrieveData() .
+        virtual void waitEndOfEvaluation() override;
+
+        /// @brief   Bring back the result of the OpenCL computation in computer
+        ///          memory.
+        /// @warning Calling retrieveData before computation has an undefined
+        ///          behaviour.
+        virtual void retrieveData() = 0;
 
         /// Gives the OpenCL event associated to the end of the computation.
         /// @note You should check that computation is enqueued with
         ///       @ref getState() before waiting for this event.
         cl::Event& getEndOfEvaluation();
-    private:
 
         /// The context on which this algorithm will be run
-        Context& context;
-        /// the queue that will recieve the commands used in the algorithm
-        cl::CommandQueue& queue;
+        Context* m_context = 0;
 
-        ///         /// the event associated to the computation in the openCL queue
-        /// This variable is most likely to be set by @ref enqueue
+        /// the queue that will recieve the commands used in the algorithm
+        cl::CommandQueue* m_queue = 0;
+    private:
+
+        /// The end event associated to m_endOfEvaluation
+        /// Every command started in OpenCL has an associated end event
+        /// @note    This variable is most likely to be set by @ref enqueue
+        /// @warning do not foget to set this value when you define
+        ///          @ref enqueue()
         cl::Event m_endOfEvaluationEvent;
 
 };

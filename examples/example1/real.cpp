@@ -11,7 +11,7 @@ Real::Real( const float value) {
     m_value = value;
 }
 
-float Real::getValue(){
+cl::Buffer* Real::getValue(){
     return m_value;
 }
 

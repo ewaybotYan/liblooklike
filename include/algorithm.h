@@ -106,7 +106,7 @@ class Algorithm {
         /// @brief launch evaluation of the object
         virtual void enqueue( ) = 0;
 
-        /// @brief   the actual recursive evaluation method
+        /// @brief the actual recursive evaluation method
         bool recEvaluate( int depth );
 
         void addParent( Algorithm* parent );

@@ -62,6 +62,26 @@ include_directories(
 
 target_link_libraries(test_algorithm2 "pthread")
 
+# test_algorithm3
+
+add_executable(
+  test_algorithm3
+  ../examples/example3/test_algorithm.cpp
+  ../examples/example3/real.cpp
+  ../examples/example3/real.h
+  ../examples/example3/real.cl
+  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+include_directories(
+  "${PROJECT_SOURCE_DIR}/include"
+)
+
+target_link_libraries(test_algorithm3 ${LIBS})
+
 # test_matrix
 
 include_directories(
