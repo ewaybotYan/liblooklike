@@ -144,8 +144,8 @@ void MatrixProd::enqueue(){
     // set arguments
     kernel.setArg ( 0, *getBuffer() );
     kernel.setArg ( 1, *(m_lOperand->getBuffer()) );
-    kernel.setArg ( 2, *(m_lOperand->getBuffer()) );
-    kernel.setArg<int> ( 3, getHeight() );
+    kernel.setArg ( 2, *(m_rOperand->getBuffer()) );
+    kernel.setArg<int> ( 3, getWidth() );
     int productDepth = m_lOperand->getWidth();
     kernel.setArg<int> ( 4, productDepth );
 
