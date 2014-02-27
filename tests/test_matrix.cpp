@@ -240,7 +240,7 @@ int main ( int argc, char* argv[] ) {
 
         Context ctx ( path );
         cl::CommandQueue queue = ctx.createQueue();
-        float error;
+        float error = 0;
 
         // test normalization
         cout << "testing normalization\n";
@@ -272,6 +272,7 @@ int main ( int argc, char* argv[] ) {
         C.evaluate();
         C.waitEndOfEvaluation();
         float* res2 = C.getResult();
+        error = 0;
 
         for( int k = 0; k < ch*cw; k++ ){
             error = max( error, abs( res2[k] - c[k] ) );
@@ -292,6 +293,7 @@ int main ( int argc, char* argv[] ) {
         DV.evaluate();
         DV.waitEndOfEvaluation();
         float* res3 = DV.getResult();
+        error = 0;
 
         for( int k = 0; k < dvh*dvw; k++ ){
             error = max( error, abs( res3[k] - dv[k] ) );
