@@ -58,7 +58,8 @@ int main( int argc, char* argv[] ){
         // evaluation of the children
         sum.evaluate();
 
-        // Wait for the end of the evaluation
+        // Wait for the end of the evaluation and retrieve the data from OpenCL
+        // buffers
         sum.waitEndOfEvaluation();
 
         // Then we use an implementation specific method to read the value of the

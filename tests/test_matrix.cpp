@@ -4,10 +4,9 @@
  * @brief  unit tests for Matrix class
  */
 
-#include "../include/exception.h"
-#include "../include/context.h"
-#include "../include/algorithm.h"
-#include "../include/matrix.h"
+#include <exception.h>
+#include <context.h>
+#include <matrix.h>
 
 #include<iostream>
 #include<cmath>
@@ -234,7 +233,8 @@ int main ( int argc, char* argv[] ) {
         usage();
         return -1;
     }
-    std::string path ( argv[argc-1] );
+
+    string path ( argv[argc-1] );
 
     try {
 
@@ -244,12 +244,12 @@ int main ( int argc, char* argv[] ) {
 
         // test normalization
         cout << "testing normalization\n";
-        Matrix dat ( data, m, n );
-        Matrix nor = Matrix::normalize( dat );
-        nor.evaluate( ctx, queue );
-        dat.retrieveData( ctx, queue );
-        nor.retrieveData( ctx, queue );
-        float* res = nor.getValues();
+        Matrix dat ( data, m, n, &ctx, &queue );
+        MatrixNorm nor( dat, &ctx, &queue );
+        nor.evaluate();
+        dat.waitEndOfEvaluation();
+        nor.waitEndOfEvaluation();
+        float* res = nor.getResult();
 
         for( int k = 0; k < m*n; k++ ){
             error = max( error, abs( res[k] - normalized[k] ) );
@@ -266,12 +266,12 @@ int main ( int argc, char* argv[] ) {
         
         // test multiplication
         cout << "testing multiplication\n";
-        Matrix A( a, ah, aw );
-        Matrix B( b, bh, bw );
-        Matrix C = Matrix::mul(A,B);
-        C.evaluate( ctx, queue );
-        C.retrieveData( ctx, queue );
-        float* res2 = C.getValues();
+        Matrix A( a, ah, aw, &ctx, &queue );
+        Matrix B( b, bh, bw, &ctx, &queue );
+        MatrixProd C( A, B, &ctx, &queue );
+        C.evaluate();
+        C.waitEndOfEvaluation();
+        float* res2 = C.getResult();
 
         for( int k = 0; k < ch*cw; k++ ){
             error = max( error, abs( res2[k] - c[k] ) );
@@ -286,12 +286,12 @@ int main ( int argc, char* argv[] ) {
 
         // test multiplication
         cout << "testing matrix vector multiplication\n";
-        Matrix D( d, dh, dw );
-        Matrix V( v, vh, vw );
-        Matrix DV = Matrix::mul(D,V);
-        DV.evaluate( ctx, queue );
-        DV.retrieveData( ctx, queue );
-        float* res3 = DV.getValues();
+        Matrix D( d, dh, dw, &ctx, &queue );
+        Matrix V( v, vh, vw, &ctx, &queue );
+        MatrixProd DV = MatrixProd(D,V, &ctx, &queue);
+        DV.evaluate();
+        DV.waitEndOfEvaluation();
+        float* res3 = DV.getResult();
 
         for( int k = 0; k < dvh*dvw; k++ ){
             error = max( error, abs( res3[k] - dv[k] ) );

@@ -14,6 +14,7 @@ class Real: public ClAlgorithm {
 
     public:
 
+        // todo check wether constructor is useful
         Real(){}
 
         Real( const float value, Context *context, cl::CommandQueue *queue );
@@ -22,11 +23,11 @@ class Real: public ClAlgorithm {
 
         cl::Buffer* getValue();
 
-        void retrieveData();
+        void retrieveData() override;
 
     protected:
 
-        void enqueue() override;
+        virtual void enqueue() override;
 
     private:
 

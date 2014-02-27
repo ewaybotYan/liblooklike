@@ -24,7 +24,6 @@ cl::Buffer* Real::getValue(){
 
 void Real::retrieveData(){
     cl_int error;
-    // m_endOfEvaluation.wait(); ---> up to the user to check
     error = m_queue->enqueueReadBuffer (
             *m_buffer,
             CL_TRUE,

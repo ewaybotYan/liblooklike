@@ -5,106 +5,153 @@
  *  @file   matrix.h
  *  @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
  *  @brief  implements methods from @ref Algorithm for matrices
+ *  @todo   update constructors
  */
 
-#include<CL/cl.hpp>
-
-#include "algorithm.h"
-#include "context.h"
+#include <CL/cl.h>
+#include <clalgorithm.hpp>
+#include <context.h>
 
 /// @brief Implements main aspects of mathematical matrices for
 ///        @ref Algorithm .
-class Matrix: public Algorithm {
+class Matrix: public ClAlgorithm {
 
     public:
 
-	/// creates a matrix object from a data set
-	/// @param values values of the matrix
-    /// @param m     number of lines in the matrix
-    /// @param n     number of columns in the matrix
-    /// @param keepInCLMem indicates wether the computed result should be kept
-    ///        in OpenCL memory even if there are no parent expressions.
-	Matrix ( float* values,
-		const unsigned int m,
-		const unsigned int n,
-		const bool keepInCLMem = false );
+        /// creates a matrix object from a data set
+        /// @param values values of the matrix
+        /// @param m     number of lines in the matrix
+        /// @param n     number of columns in the matrix
+        Matrix ( float* values,
+                 const unsigned int m,
+                 const unsigned int n,
+                 Context *context,
+                 cl::CommandQueue *queue );
 
-	/// create an matrix whose value is the result of a computation
-	/// @param programName name of the file where the kernel is (without .cl)
-	/// @param kernelName  name of the kernel to call for the computation
-    /// @param m number of lines in the matrix
-    /// @param n number of columns in the matrix
-    /// @param keepInCLMem indicates wether the computed result should be kept
-    ///        in OpenCL memory even if there are no parent expressions.
-	Matrix ( const std::string programName,
-		const std::string kernelName,
-		const unsigned int m,
-		const unsigned int n,
-		const bool keepInCLMem = false );
+        /// @return matrix width
+        int getWidth() const;
 
-    /// @brief Creates a computed matrix as the result of the multiplication of
-    ///        two matrices.
-    /// @param A left operand
-    /// @param B right operand
-    /// @param keepInCLMem indicates wether the computed result should be kept
-    ///        in OpenCL memory even if there are no parent expressions.
-    /// @return result of the matrix product A*B
-	static Matrix mul ( Matrix& A, Matrix& B, const bool keepInCLMem = false );
+        /// @return matrix height
+        int getHeight() const;
 
-    /// @brief Creates a computed matrix as the result of the sum of two
-    ///        matrices.
-    /// @param A left operand
-    /// @param B right operand
-    /// @param keepInCLMem indicates wether the computed result should be kept
-    ///        in OpenCL memory even if there are no parent expressions.
-    /// @return result of the matrix product A+B
-	static Matrix add ( Matrix& A, Matrix& B, const bool keepInCLMem = false );
+        /// @return a 1D float array as the concatenation of the lines of the matrix
+        cl_float* getResult() const;
 
-    /// Center and normalizes the columns of a matrix.
-    /// @param A Input matrix
-    /// @param keepInCLMem indicates wether the computed result should be kept
-    ///        in OpenCL memory even if there are no parent expressions.
-    /// @return input matrix with normalized columns
-	static Matrix normalize ( Matrix& A, const bool keepInCLMem = false );
+        /// @return the value of the matrix at line i and column j
+        float getResultValue( const int i, const int j );
 
-    /// @brief Computes t(T) * T.
-    static Matrix covariance ( Matrix& T, const bool keepInCLMem = false );
+        cl::Buffer* getBuffer();
 
-	void retrieveData ( Context& context, cl::CommandQueue& queue ) override;
-	
-	/// @return the value of the matrix at line i and column j
-	float getValue ( const int i, const int j );
-	
-	/// @return a 1D float array as the concatenation of the lines of the matrix
-	float* getValues() const;
-	
-    /// @return matrix width
-	int getWidth() const;
-	
-    /// @return matrix height
-    int getHeight() const;
+        void retrieveData () override;
 
 #ifndef NDEBUG
-    /// @brief Prints matrix on standard output in scientific notation with
-    ///        5 decimals.
-	void print();
+        /// @brief Prints matrix on standard output
+        void print();
 #endif
 
     protected:
 
-	void enqueue ( Context& context, cl::CommandQueue& queue ) override;
-
-    bool allocateForResult ( Context& context ) override;
+        virtual void enqueue () override;
 
     private:
 
-	float* m_value;
-	/// matrix height
-	int m_m;
-	/// matrix width
-	int m_n;
-	std::string m_programName;
-	std::string m_kernelName;
+        bool allocateForResult () override;
+
+        void deallocateForResult() override;
+
+        float* m_result = 0;
+
+        cl::Buffer* m_buffer = 0;
+
+        /// matrix height
+        int m_m;
+
+        /// matrix width
+        int m_n;
+
 };
+
+
+class MatrixProd : public Matrix{
+
+    public:
+        /// @brief Algorithm that computes product of two matrices.
+        /// @param A left operand
+        /// @param B right operand
+        MatrixProd ( Matrix& A, Matrix& B,
+                     Context *context,
+                     cl::CommandQueue *queue );
+
+    protected:
+
+        void enqueue() override;
+
+    private:
+
+        Matrix* m_lOperand = 0;
+        Matrix* m_rOperand = 0;
+};
+
+
+class MatrixSum : public Matrix{
+
+    public:
+        /// @brief Algorithm that computes product of two matrices.
+        /// @param A left operand
+        /// @param B right operand
+        MatrixSum ( Matrix& A, Matrix& B,
+                    Context *context,
+                    cl::CommandQueue *queue );
+
+    protected:
+
+        void enqueue() override;
+
+    private:
+
+        Matrix* m_lOperand = 0;
+        Matrix* m_rOperand = 0;
+};
+
+
+class MatrixNorm : public Matrix{
+
+    public:
+        /// @brief Algorithm that computes product of two matrices.
+        /// @param A left operand
+        /// @param B right operand
+        MatrixNorm ( Matrix& A,
+                     Context *context,
+                     cl::CommandQueue *queue );
+
+    protected:
+
+        void enqueue() override;
+
+    private:
+
+        Matrix* m_src = 0;
+};
+
+
+/// @brief Computes t(A) * A.
+class MatrixCovariance : public Matrix{
+
+    public:
+        /// @brief Algorithm that computes product of two matrices.
+        /// @param A left operand
+        MatrixCovariance ( Matrix& A,
+                           Context *context,
+                           cl::CommandQueue *queue );
+
+    protected:
+
+        void enqueue() override;
+
+    private:
+
+        Matrix* m_src = 0;
+};
+
 
 #endif // MATRIX_H

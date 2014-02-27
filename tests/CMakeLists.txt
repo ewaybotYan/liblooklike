@@ -94,6 +94,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/matrix.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   )
 

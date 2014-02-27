@@ -26,7 +26,7 @@ class Real: public Algorithm {
 
     protected:
 
-        void enqueue() override;
+        virtual void enqueue() override;
 
         // the buffer will contain the loaded or computed value.
         float* m_buffer = 0;
