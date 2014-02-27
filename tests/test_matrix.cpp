@@ -269,6 +269,10 @@ int main ( int argc, char* argv[] ) {
         Matrix A( a, ah, aw, &ctx, &queue );
         Matrix B( b, bh, bw, &ctx, &queue );
         MatrixProd C( A, B, &ctx, &queue );
+        A.evaluate();
+        B.evaluate();
+        A.waitEndOfEvaluation();
+        B.waitEndOfEvaluation();
         C.evaluate();
         C.waitEndOfEvaluation();
         float* res2 = C.getResult();

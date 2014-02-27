@@ -25,10 +25,11 @@ Matrix::Matrix ( cl_float* values,
                  Context *context,
                  cl::CommandQueue *queue ) :
     ClAlgorithm ( context, queue ) {
-    m_result = new cl_float[m*n];
-    if( values != 0 )
+    if( values != 0 ){
+        m_result = new cl_float[m*n];
         for( unsigned int i = 0; i < m*n; i++ )
             m_result[i] = values[i];
+    }
     m_m = m;
     m_n = n;
 }
@@ -56,8 +57,10 @@ cl::Buffer* Matrix::getBuffer(){
 
 void  Matrix::retrieveData (){
     cl_int error;
+    if(m_result == 0)
+        m_result = new cl_float[m_m*m_n];
     error = m_queue->enqueueReadBuffer (
-                *getBuffer(),
+                *m_buffer,
                 CL_TRUE,
                 0,
                 sizeof ( cl_float ) * m_m * m_n,
@@ -86,7 +89,7 @@ bool Matrix::allocateForResult () {
     std::cout << "allocating for result\n";
 #endif
     // todo check if this is possible
-    if ( getBuffer() != 0 ) //buffer already created
+    if ( m_buffer != 0 ) //buffer already created
         return true;
     cl_int error;
     cl_mem_flags memFlags = 0;
@@ -159,7 +162,7 @@ void MatrixProd::enqueue(){
     error = m_queue->enqueueNDRangeKernel (
                 kernel,
                 cl::NullRange,
-                cl::NDRange ( getHeight(), getWidth() ),
+                cl::NDRange ( getWidth(), getHeight() ),
                 cl::NDRange ( 1, 1 ),
                 &dependencies,
                 &getEndOfEvaluation()
