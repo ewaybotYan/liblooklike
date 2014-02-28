@@ -13,8 +13,10 @@
 // the concatenation of the lines of the matrix
 
 __kernel void
-matrix_normalize(__global float* R, __global float* A, int m, int n)
-{
+matrix_normalize( __global float* R,
+                  __global float* C,
+                  __global float* A,
+                  int m, int n){
     // Thread index
     int ty = get_global_id(0);
 
@@ -36,7 +38,9 @@ matrix_normalize(__global float* R, __global float* A, int m, int n)
     }
 
     // Normalize the matrix
+    float stdDev = sqrt(n_var);
+    C[ty] = stdDev;
     for (int k = 0; k < m; ++k) {
-        R[k * n + ty] = (A[k * n + ty] - mu) / sqrt(n_var);
+        R[k * n + ty] = (A[k * n + ty] - mu) / stdDev;
     }
 }

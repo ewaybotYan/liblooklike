@@ -3,6 +3,7 @@
 #include <armadillo>
 #include <image.h>
 #include <matrix.h>
+#include <matrixnorm.hpp>
 
 
 void usage(){
@@ -27,7 +28,7 @@ int main(int argc, char* argv[]){
         cl::CommandQueue queue = ctx.createQueue();
         ArrayOfImages array = arrayOfImagesFromFiles(imagePath);
 
-        Matrix images( *(array.pixels.get()),
+        MatrixLoader images( *(array.pixels.get()),
                        array.nbImages,
                        array.avgHeight * array.avgWidth,
                        &ctx,
@@ -47,7 +48,9 @@ int main(int argc, char* argv[]){
                   << normalized.getHeight()
                   << " .\n";
 #endif
-        MatrixCovariance covMat( normalized, &ctx, &queue );
+
+        MatrixCovariance covMat( *(normalized.getNormalizedMatrix() ),
+                                 &ctx, &queue );
 #ifndef NDEBUG
         std::cout << "generated covariance matrix of size"
                   << covMat.getWidth()
@@ -72,7 +75,7 @@ int main(int argc, char* argv[]){
                            covMat.getHeight());
         arma::eig_sym(eigval, eigvec, covMat2);
 
-        arma::fmat X(normalized.getResult(),
+        arma::fmat X(normalized.getNormalizedMatrix()->getResult(),
                         normalized.getWidth(),
                         normalized.getHeight());
         arma::fmat vars = X * eigvec;
@@ -89,7 +92,7 @@ int main(int argc, char* argv[]){
                 previewData[i] = vars(i,eigvec.n_cols-1);
         }
         std::cout << "done computing\n";
-        Matrix preview( previewData,
+        MatrixLoader preview( previewData,
                         array.avgHeight,
                         array.avgWidth,
                         &ctx, &queue );

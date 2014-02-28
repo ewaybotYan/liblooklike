@@ -7,6 +7,7 @@
 #include <exception.h>
 #include <context.h>
 #include <matrix.h>
+#include <matrixnorm.hpp>
 
 #include<iostream>
 #include<cmath>
@@ -244,12 +245,12 @@ int main ( int argc, char* argv[] ) {
 
         // test normalization
         cout << "testing normalization\n";
-        Matrix dat ( data, m, n, &ctx, &queue );
+        MatrixLoader dat ( data, m, n, &ctx, &queue );
         MatrixNorm nor( dat, &ctx, &queue );
         nor.evaluate();
         dat.waitEndOfEvaluation();
         nor.waitEndOfEvaluation();
-        float* res = nor.getResult();
+        float* res = nor.getNormalizedMatrix()->getResult();
 
         for( int k = 0; k < m*n; k++ ){
             error = max( error, abs( res[k] - normalized[k] ) );
@@ -266,8 +267,8 @@ int main ( int argc, char* argv[] ) {
         
         // test multiplication
         cout << "testing multiplication\n";
-        Matrix A( a, ah, aw, &ctx, &queue );
-        Matrix B( b, bh, bw, &ctx, &queue );
+        MatrixLoader A( a, ah, aw, &ctx, &queue );
+        MatrixLoader B( b, bh, bw, &ctx, &queue );
         MatrixProd C( A, B, &ctx, &queue );
         A.evaluate();
         B.evaluate();
@@ -291,8 +292,8 @@ int main ( int argc, char* argv[] ) {
 
         // test multiplication
         cout << "testing matrix vector multiplication\n";
-        Matrix D( d, dh, dw, &ctx, &queue );
-        Matrix V( v, vh, vw, &ctx, &queue );
+        MatrixLoader D( d, dh, dw, &ctx, &queue );
+        MatrixLoader V( v, vh, vw, &ctx, &queue );
         MatrixProd DV = MatrixProd(D,V, &ctx, &queue);
         DV.evaluate();
         DV.waitEndOfEvaluation();

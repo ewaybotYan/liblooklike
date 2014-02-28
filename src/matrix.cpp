@@ -19,19 +19,21 @@
 // ####################
 // # Base Matrix object
 
-Matrix::Matrix ( cl_float* values, 
-                 const unsigned int m,
-                 const unsigned int n,
-                 Context *context,
-                 cl::CommandQueue *queue ) :
-    ClAlgorithm ( context, queue ) {
-    if( values != 0 ){
-        m_result = new cl_float[m*n];
-        for( unsigned int i = 0; i < m*n; i++ )
-            m_result[i] = values[i];
-    }
+Matrix::Matrix ( const unsigned int m, const unsigned int n,
+                 Context *context, cl::CommandQueue *queue ) :
+    ClAlgorithm( context, queue ){
     m_m = m;
     m_n = n;
+}
+
+Matrix::Matrix ( std::vector<Algorithm*> dependencies,
+                 const unsigned int m, const unsigned int n,
+                 Context *context, cl::CommandQueue *queue ) :
+    ClAlgorithm( context, queue ){
+    m_m = m;
+    m_n = n;
+    for( auto child : dependencies )
+        addChild(child);
 }
 
 int Matrix::getWidth() const{
@@ -45,6 +47,12 @@ int Matrix::getHeight() const{
 
 cl_float* Matrix::getResult() const{
     return m_result;
+}
+
+void Matrix::setResult(float *values){
+    if(m_result == 0)
+        delete[] m_result;
+    m_result = values;
 }
 
 float Matrix::getResultValue ( const int i, const int j ) {
@@ -70,18 +78,7 @@ void  Matrix::retrieveData (){
 }
 
 void Matrix::enqueue() {
-    cl_int error;
-    error = m_queue->enqueueWriteBuffer (
-                *getBuffer(),
-                CL_TRUE,
-                0,
-                sizeof ( cl_float ) * m_m * m_n,
-                m_result,
-                0,
-                &getEndOfEvaluation()
-                );
-    if ( error != CL_SUCCESS )
-        throw ( CLError ( error, "failed to enqueue memory transfer" ) );
+    // nothing to do, everything is done in our dependencies
 }
 
 bool Matrix::allocateForResult () {
@@ -122,14 +119,46 @@ void Matrix::print(){
 }
 #endif
 
-// ########################
-// # main Matrix algorithms
+
+// ###############
+// # Matrix Loader
+
+MatrixLoader::MatrixLoader ( cl_float* values,
+                 const unsigned int m,
+                 const unsigned int n,
+                 Context *context,
+                 cl::CommandQueue *queue ) :
+    Matrix ( m, n, context, queue ) {
+    if( values == 0 )
+        throw Error("Matrix loader has no velues for input.");
+    m_result = new cl_float[m*n];
+    for( unsigned int i = 0; i < m*n; i++ )
+        m_result[i] = values[i];
+}
+
+void MatrixLoader::enqueue() {
+    cl_int error;
+    error = m_queue->enqueueWriteBuffer (
+                *getBuffer(),
+                CL_TRUE,
+                0,
+                sizeof ( cl_float ) * getWidth() * getHeight(),
+                m_result,
+                0,
+                &getEndOfEvaluation()
+                );
+    if ( error != CL_SUCCESS )
+        throw ( CLError ( error, "failed to enqueue memory transfer" ) );
+}
+
+
+// ################
+// # Matrix Product
 
 MatrixProd::MatrixProd ( Matrix& A, Matrix& B,
                          Context *context,
                          cl::CommandQueue *queue ) :
-    Matrix ( 0,
-             A.getHeight(), B.getWidth(),
+    Matrix ( A.getHeight(), B.getWidth(),
              context, queue ) {
     if( A.getWidth() != B.getHeight() )
         throw Error("Matrix dimensions are incompatible for matrix product.");
@@ -172,12 +201,13 @@ void MatrixProd::enqueue(){
         throw ( CLError ( error, "failed to enqueue kernel execution" ) );
 }
 
+// ############
+// # Matrix Sum
 
 MatrixSum::MatrixSum ( Matrix& A, Matrix& B,
                        Context *context,
                        cl::CommandQueue *queue ) :
-    Matrix ( 0,
-             A.getHeight(), A.getWidth(),
+    Matrix ( A.getHeight(), A.getWidth(),
              context, queue ) {
     if( A.getWidth() != B.getWidth() || A.getHeight() != B.getHeight() )
         throw Error("Matrix dimensions are incompatible for matrix sum.");
@@ -220,52 +250,13 @@ void MatrixSum::enqueue(){
 }
 
 
-MatrixNorm::MatrixNorm ( Matrix& A,
-                         Context *context,
-                         cl::CommandQueue *queue ) :
-    Matrix ( 0,
-             A.getHeight(), A.getWidth(),
-             context, queue ) {
-    addChild(&A);
-    m_src = &A;
-}
-
-void MatrixNorm::enqueue(){
-    // get kernel
-    cl::Kernel kernel = m_context->getKernel ( "matrix_norm",
-                                               "matrix_normalize" );
-
-    // set arguments
-    kernel.setArg ( 0, *getBuffer() );
-    kernel.setArg ( 1, *(m_src->getBuffer()) );
-    kernel.setArg<int> ( 2, getHeight() );
-    kernel.setArg<int> ( 3, getWidth() );
-
-    // prepare dependencies
-    std::vector<cl::Event> dependencies;
-    dependencies.push_back ( m_src->getEndOfEvaluation() );
-
-    //enqueue kernel execution
-    cl_int error;
-    error = m_queue->enqueueNDRangeKernel (
-                kernel,
-                cl::NullRange,
-                cl::NDRange ( getWidth() ),
-                cl::NDRange ( 1 ),
-                &dependencies,
-                &getEndOfEvaluation()
-                );
-
-    if ( error != CL_SUCCESS )
-        throw ( CLError ( error, "failed to enqueue kernel execution" ) );
-}
-
+// #####################################
+// # Matrix Covariance ( T -> T * t(T) )
 
 MatrixCovariance::MatrixCovariance ( Matrix& A,
                                      Context *context,
                                      cl::CommandQueue *queue ) :
-    Matrix ( 0,
-             A.getHeight(), A.getHeight(),
+    Matrix ( A.getHeight(), A.getHeight(),
              context, queue ) {
     addChild(&A);
     m_src = &A;

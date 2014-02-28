@@ -116,6 +116,17 @@ class Algorithm {
         ///        deallocating memory.
         void deallocateMemory( const int hierarchyOffset = 0 );
 
+        // the next two methods are protected because a class might regroup
+        // several algorithms in it and take care of the memory allocation
+        /// @brief   allocate memory in which we will put the result of this
+        ///          computation
+        /// @warning do not forget to update m_state if allocation is
+        ///          successfull
+        virtual bool allocateForResult() = 0;
+
+        /// Deallocate the memory buffers
+        virtual void deallocateForResult() = 0;
+
         // ###################
         // # protected memeber
 
@@ -129,18 +140,6 @@ class Algorithm {
         std::vector<Algorithm*> m_parents;
 
     private:
-
-        // #################
-        // # private methods
-
-        /// @brief   allocate memory in which we will put the result of this
-        ///          computation
-        /// @warning do not forget to update m_state if allocation is
-        ///          successfull
-        virtual bool allocateForResult() = 0;
-
-        /// Deallocate the memory buffers
-        virtual void deallocateForResult() = 0;
 
         // #########
         // # members

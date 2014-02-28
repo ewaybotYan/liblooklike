@@ -8,6 +8,7 @@
  *  @todo   update constructors
  */
 
+#include <vector>
 #include <CL/cl.h>
 #include <clalgorithm.hpp>
 #include <context.h>
@@ -18,11 +19,20 @@ class Matrix: public ClAlgorithm {
 
     public:
 
-        /// creates a matrix object from a data set
-        /// @param values values of the matrix
+        /// creates an empty matrix object
+        /// @param dependencies of the matrix
         /// @param m     number of lines in the matrix
         /// @param n     number of columns in the matrix
-        Matrix ( float* values,
+        Matrix ( const unsigned int m,
+                 const unsigned int n,
+                 Context *context,
+                 cl::CommandQueue *queue );
+
+        /// creates a matrix object without value but with dependencies
+        /// @param dependencies of the matrix
+        /// @param m     number of lines in the matrix
+        /// @param n     number of columns in the matrix
+        Matrix ( std::vector<Algorithm*> dependencies,
                  const unsigned int m,
                  const unsigned int n,
                  Context *context,
@@ -36,6 +46,7 @@ class Matrix: public ClAlgorithm {
 
         /// @return a 1D float array as the concatenation of the lines of the matrix
         cl_float* getResult() const;
+        void setResult( float* values );
 
         /// @return the value of the matrix at line i and column j
         float getResultValue( const int i, const int j );
@@ -53,13 +64,13 @@ class Matrix: public ClAlgorithm {
 
         virtual void enqueue () override;
 
-    private:
-
         bool allocateForResult () override;
 
         void deallocateForResult() override;
 
         float* m_result = 0;
+
+    private:
 
         cl::Buffer* m_buffer = 0;
 
@@ -71,6 +82,25 @@ class Matrix: public ClAlgorithm {
 
 };
 
+class MatrixLoader : public Matrix{
+
+    public:
+
+        /// creates a matrix object from a data set
+        /// @param values values of the matrix
+        /// @param m     number of lines in the matrix
+        /// @param n     number of columns in the matrix
+        MatrixLoader ( float* values,
+                 const unsigned int m,
+                 const unsigned int n,
+                 Context *context,
+                 cl::CommandQueue *queue );
+
+    protected:
+
+        void enqueue() override;
+
+};
 
 class MatrixProd : public Matrix{
 
@@ -113,25 +143,6 @@ class MatrixSum : public Matrix{
         Matrix* m_rOperand = 0;
 };
 
-
-class MatrixNorm : public Matrix{
-
-    public:
-        /// @brief Algorithm that computes product of two matrices.
-        /// @param A left operand
-        /// @param B right operand
-        MatrixNorm ( Matrix& A,
-                     Context *context,
-                     cl::CommandQueue *queue );
-
-    protected:
-
-        void enqueue() override;
-
-    private:
-
-        Matrix* m_src = 0;
-};
 
 
 /// @brief Computes t(A) * A.

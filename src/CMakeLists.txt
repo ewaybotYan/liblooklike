@@ -17,6 +17,8 @@ add_library (looklike
              ../src/clalgorithm.cpp
              ../include/matrix.h
              ../src/matrix.cpp
+             ../include/matrixnorm.hpp
+             ../src/matrixnorm.cpp
              ../kernels/matrix_mult.cl
              ../kernels/matrix_norm.cl
              ../kernels/scalar_product.cl

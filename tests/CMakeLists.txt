@@ -92,6 +92,7 @@ add_executable(
   test_matrix
   test_matrix.cpp
   ${PROJECT_SOURCE_DIR}/src/matrix.cpp
+  ${PROJECT_SOURCE_DIR}/src/matrixnorm.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
@@ -106,13 +107,9 @@ add_executable(
   test_file
   test_file.cpp
   ${PROJECT_SOURCE_DIR}/src/matrix.cpp
-  ${PROJECT_SOURCE_DIR}/include/matrix.h
   ${PROJECT_SOURCE_DIR}/src/file.cpp
-  ${PROJECT_SOURCE_DIR}/include/file.h
   ${PROJECT_SOURCE_DIR}/src/jpegfile.cpp
-  ${PROJECT_SOURCE_DIR}/include/jpegfile.h
   ${PROJECT_SOURCE_DIR}/src/image.cpp
-  ${PROJECT_SOURCE_DIR}/include/image.h
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
