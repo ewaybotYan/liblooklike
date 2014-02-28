@@ -1,12 +1,12 @@
 /**
- * @file   test_mathexpression.cpp
+ * @file   test_algorithm.cpp
  * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
- * @brief  unit tests for MathExpression class
+ * @brief  unit tests for Algorithm class
  */
 
 #include "../include/exception.h"
 #include "../include/context.h"
-#include "../include/mathexpression.h"
+#include "../include/algorithm.h"
 #include "../examples/real.h"
 
 #include<iostream>
@@ -16,7 +16,7 @@ using namespace std;
 
 void usage(){
   cerr << "Error in " << __FILE__ << " :\n"
-    << "usage :\n test_mathexpression path_to_kernel_directory" 
+    << "usage :\n test_algorithm path_to_kernel_directory" 
     << endl;
 }
 
