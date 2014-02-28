@@ -1,15 +1,20 @@
+#include<vector>
 #include "../include/matrixnorm.hpp"
 
 MatrixNorm::MatrixNorm ( Matrix& A,
                          Context *context,
                          cl::CommandQueue *queue ) :
     ClAlgorithm ( context, queue ) {
-    addChild(&A);
     m_src = &A;
-    m_normalized = new Matrix( A.getHeight(), A.getWidth(),
-                                       context, queue );
-    m_normCoeffs = new Matrix( A.getHeight(), 1,
-                                       context, queue );
+    addChild(m_src);
+    std::vector<Algorithm*> dependence;
+    dependence.push_back(this);
+    m_normalized = new Matrix( dependence,
+                               A.getHeight(), A.getWidth(),
+                               context, queue );
+    m_normCoeffs = new Matrix( dependence,
+                               A.getHeight(), 1,
+                               context, queue );
 }
 
 int MatrixNorm::getWidth() const{
@@ -80,6 +85,8 @@ void MatrixNorm::enqueue(){
                 &dependencies,
                 &getEndOfEvaluation()
                 );
+    m_normalized->setEndOfEvaluation(getEndOfEvaluation());
+    m_normCoeffs->setEndOfEvaluation(getEndOfEvaluation());
 
     if ( error != CL_SUCCESS )
         throw ( CLError ( error, "failed to enqueue kernel execution" ) );
@@ -87,14 +94,14 @@ void MatrixNorm::enqueue(){
 
 // todo : use try catch and return proper value
 bool MatrixNorm::allocateForResult(){
-    m_normalized->evaluate(); // this will only allocate memory
-    m_normCoeffs->evaluate();
+    m_normalized->allocateForResult();
+    m_normCoeffs->allocateForResult();
     return true;
 }
 
 void MatrixNorm::deallocateForResult(){
-/*    m_normalized->deallocateForResult();
-    m_normCoeffs->deallocateForResult();*/
+    m_normalized->deallocateForResult();
+    m_normCoeffs->deallocateForResult();
 }
 
 #ifndef NDEBUG

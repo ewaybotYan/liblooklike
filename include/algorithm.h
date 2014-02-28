@@ -95,6 +95,20 @@ class Algorithm {
         ///           for this expression.
         void evaluate();
 
+        /// @brief   allocate memory in which we will put the result of this
+        ///          computation
+        /// @warning do not forget to update m_state if allocation is
+        ///          successfull
+        virtual bool allocateForResult() = 0;
+
+        /// Deallocate the memory buffers
+        virtual void deallocateForResult() = 0;
+
+        /// Deallocate memory for a whole evaluation tree
+        /// @param hierarchyOffset number of levels to skip before actually
+        ///        deallocating memory.
+        void deallocateMemory( const int hierarchyOffset = 0 );
+
     protected:
 
         /// @brief constructor is private because this is an abstract class.
@@ -110,22 +124,6 @@ class Algorithm {
         bool recEvaluate( int depth );
 
         void addParent( Algorithm* parent );
-
-        /// Deallocate memory for a whole evaluation tree
-        /// @param hierarchyOffset number of levels to skip before actually
-        ///        deallocating memory.
-        void deallocateMemory( const int hierarchyOffset = 0 );
-
-        // the next two methods are protected because a class might regroup
-        // several algorithms in it and take care of the memory allocation
-        /// @brief   allocate memory in which we will put the result of this
-        ///          computation
-        /// @warning do not forget to update m_state if allocation is
-        ///          successfull
-        virtual bool allocateForResult() = 0;
-
-        /// Deallocate the memory buffers
-        virtual void deallocateForResult() = 0;
 
         // ###################
         // # protected memeber

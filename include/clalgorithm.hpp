@@ -32,6 +32,7 @@ class ClAlgorithm : public Algorithm {
         /// @note You should check that computation is enqueued with
         ///       @ref getState() before waiting for this event.
         cl::Event& getEndOfEvaluation();
+        void setEndOfEvaluation( cl::Event event );
 
         /// The context on which this algorithm will be run
         Context* m_context = 0;

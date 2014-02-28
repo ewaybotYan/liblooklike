@@ -55,6 +55,10 @@ class Matrix: public ClAlgorithm {
 
         void retrieveData () override;
 
+        bool allocateForResult () override;
+
+        void deallocateForResult() override;
+
 #ifndef NDEBUG
         /// @brief Prints matrix on standard output
         void print();
@@ -63,10 +67,6 @@ class Matrix: public ClAlgorithm {
     protected:
 
         virtual void enqueue () override;
-
-        bool allocateForResult () override;
-
-        void deallocateForResult() override;
 
         float* m_result = 0;
 

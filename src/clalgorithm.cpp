@@ -16,3 +16,7 @@ void ClAlgorithm::waitEndOfEvaluation(){
 cl::Event& ClAlgorithm::getEndOfEvaluation(){
     return m_endOfEvaluationEvent;
 }
+
+void ClAlgorithm::setEndOfEvaluation( cl::Event event ){
+    m_endOfEvaluationEvent = event;
+}
