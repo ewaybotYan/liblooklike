@@ -114,6 +114,7 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/image.cpp
   ${PROJECT_SOURCE_DIR}/include/image.h
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   ${PROJECT_SOURCE_DIR}/tests/sample_file.txt

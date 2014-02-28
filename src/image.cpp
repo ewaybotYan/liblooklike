@@ -33,9 +33,6 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
             imagefiles.push_back ( path+"/"+fileName );
         } catch ( Error const& e ) {
             // that was not a valid JPEG file, just skip it
-#ifndef NDEBUG
-            std::cout << "and I don't care\n";
-#endif
         }
     }
     closedir ( dir );
@@ -66,14 +63,11 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
         offset += avgWidth * avgHeight;
     }
 
-    Matrix m ( values, imagefiles.size(), avgWidth*avgHeight );
-
-    delete[] values;// Matrix constructor keeps a copy of the values
-
     ArrayOfImages res = {
         avgWidth,
         avgHeight,
-        m
+        imagefiles.size(),
+        std::make_shared<float*>(values)
     };
     return res;
 }
@@ -82,7 +76,7 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
 void MatrixToImage( const Matrix src, const std::string savePath ) {
 
     // scale data
-    float* it = src.getValues();
+    float* it = src.getResult();
     float minVal = *it;
     float maxVal = *it;
     float avg=0;
@@ -95,14 +89,14 @@ void MatrixToImage( const Matrix src, const std::string savePath ) {
 #ifndef NDEBUG
     std::cout << "vector rng : " << minVal << " " << avg << " " << maxVal << "\n";
 #endif
-    it = src.getValues();
+    it = src.getResult();
     for( int i= 0; i < src.getWidth()*src.getHeight(); i++){
         it[i] = (it[i] - minVal)*255/(maxVal-minVal);
     }
 
     // save it
     JPEGImageOutFile fout;
-    fout.write( src.getValues(),
+    fout.write( src.getResult(),
                 src.getWidth(),
                 src.getHeight(),
                 savePath);

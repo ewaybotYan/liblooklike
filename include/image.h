@@ -8,6 +8,7 @@
 
 #include "file.h"
 #include "matrix.h"
+#include<memory>
 
 
 // ############################
@@ -16,7 +17,8 @@
 struct ArrayOfImages{
         unsigned int avgWidth;
         unsigned int avgHeight;
-        Matrix images;
+        unsigned long nbImages;
+        std::shared_ptr<float*> pixels;
 };
 
 /// @brief Generates an array of monochomatic images from JPEG files in a
@@ -35,6 +37,7 @@ ArrayOfImages arrayOfImagesFromFiles(const std::string path);
 ///           round them to fit in range 0 to 255.
 /// @param src the matrix whoose elements are the pixels
 void MatrixToImage( const Matrix src, const std::string savePath );
+
 
 // #######################
 // # generic image classes
