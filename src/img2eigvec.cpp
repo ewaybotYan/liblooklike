@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <armadillo>
-#include "../include/image.h"
-#include "../include/matrix.h"
+#include <image.h>
+#include <matrix.h>
 
 
 void usage(){
@@ -25,9 +25,13 @@ int main(int argc, char* argv[]){
 
         Context ctx ( kernelPath );
         cl::CommandQueue queue = ctx.createQueue();
-
         ArrayOfImages array = arrayOfImagesFromFiles(imagePath);
-        Matrix images = array.images;
+
+        Matrix images( *(array.pixels.get()),
+                       array.nbImages,
+                       array.avgHeight * array.avgWidth,
+                       &ctx,
+                       &queue );
 #ifndef NDEBUG
         std::cout << "generated array of images of size"
                   << images.getWidth()
@@ -35,7 +39,7 @@ int main(int argc, char* argv[]){
                   << images.getHeight()
                   << " .\n";
 #endif
-        Matrix normalized = Matrix::normalize(images);
+        MatrixNorm normalized( images, &ctx, &queue );
 #ifndef NDEBUG
         std::cout << "normalized matrix of size"
                   << normalized.getWidth()
@@ -43,7 +47,7 @@ int main(int argc, char* argv[]){
                   << normalized.getHeight()
                   << " .\n";
 #endif
-        Matrix covMat = Matrix::covariance(normalized);
+        MatrixCovariance covMat( normalized, &ctx, &queue );
 #ifndef NDEBUG
         std::cout << "generated covariance matrix of size"
                   << covMat.getWidth()
@@ -52,26 +56,23 @@ int main(int argc, char* argv[]){
                   << " .\n";
 #endif
 
-        covMat.evaluate(ctx, queue);
-#ifndef NDEBUG
-        std::cout << "waiting end of evaluation.\n";
-#endif
-        covMat.getEndOfEvaluation().wait();
+        covMat.evaluate();
+
 #ifndef NDEBUG
         std::cout << "done.\n";
 #endif
-        covMat.retrieveData(ctx, queue);
-        normalized.retrieveData(ctx, queue);
-        images.retrieveData(ctx, queue);
+        covMat.waitEndOfEvaluation();
+        normalized.waitEndOfEvaluation();
+        images.waitEndOfEvaluation();
 
         arma::fvec eigval;
         arma::fmat eigvec;
-        arma::fmat covMat2(covMat.getValues(),
+        arma::fmat covMat2(covMat.getResult(),
                            covMat.getWidth(),
                            covMat.getHeight());
         arma::eig_sym(eigval, eigvec, covMat2);
 
-        arma::fmat X(normalized.getValues(),
+        arma::fmat X(normalized.getResult(),
                         normalized.getWidth(),
                         normalized.getHeight());
         arma::fmat vars = X * eigvec;
@@ -88,7 +89,10 @@ int main(int argc, char* argv[]){
                 previewData[i] = vars(i,eigvec.n_cols-1);
         }
         std::cout << "done computing\n";
-        Matrix preview(previewData,array.avgHeight,array.avgWidth);
+        Matrix preview( previewData,
+                        array.avgHeight,
+                        array.avgWidth,
+                        &ctx, &queue );
         MatrixToImage(preview,"/tmp/vectorPreview.jpg");
         delete previewData;
     } catch ( Error& err ) {

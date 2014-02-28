@@ -1,3 +1,5 @@
+set(LIBS ${OPENCL_LIBRARIES} ${ARMADILLO_LIBRARIES} "jpeg")
+
 add_library (looklike
              ../include/context.h
              ../src/context.cpp
@@ -20,12 +22,12 @@ add_library (looklike
              ../kernels/scalar_product.cl
              )
 
-# target_link_libraries ( looklike ${Armadillo_LIBS} )
+include_directories( looklike ${ARMADILLO_INCLUDE_DIRS} ${OPENCL_INCLUDE_DIRS} "${PROJECT_SOURCE_DIR}/include" )
+
+target_link_libraries( looklike ${ARMADILLO_LIBRARIES} )
 
 add_executable(img2eigvec
             img2eigvec.cpp
 )
 
-set(LIBS ${OPENCL_LIBRARIES} ${ARMADILLO_LIBRARIES} looklike "jpeg")
-
-target_link_libraries( img2eigvec ${LIBS} )
+target_link_libraries( img2eigvec ${LIBS} looklike )

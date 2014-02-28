@@ -273,8 +273,8 @@ MatrixCovariance::MatrixCovariance ( Matrix& A,
 
 void MatrixCovariance::enqueue(){
     // get kernel
-    cl::Kernel kernel = m_context->getKernel ( "matrix_norm",
-                                               "matrix_matrix_sum" );
+    cl::Kernel kernel = m_context->getKernel ( "matrix_mult",
+                                               "matrix_covariance" );
 
     //set arguments
     kernel.setArg ( 0, *getBuffer() );
