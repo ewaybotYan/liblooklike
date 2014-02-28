@@ -36,6 +36,7 @@ void Real::retrieveData(){
 
 void Real::enqueue() {
     cl_int error;
+    cl::Event event;
     error = m_queue->enqueueWriteBuffer (
                 *m_buffer,
                 CL_TRUE,
@@ -43,8 +44,9 @@ void Real::enqueue() {
                 sizeof ( cl_float ),
                 &m_result,
                 0,
-                &getEndOfEvaluation()
+                &event
                 );
+    setEndOfEvaluation(event);
     if ( error != CL_SUCCESS )
         throw ( CLError ( error, "failed to enqueue memory transfer" ) );
 }
@@ -92,9 +94,9 @@ void RealSum::enqueue(){
     kernel.setArg ( 2, *(m_rOperand->getValue()) );
 
     // prepare dependencies
-    std::vector<cl::Event> dependencies;
-    dependencies.push_back ( m_lOperand->getEndOfEvaluation() );
-    dependencies.push_back ( m_rOperand->getEndOfEvaluation() );
+    clearExecutionDependencies();
+    getExecutionDependencies()->push_back ( m_lOperand->getEndOfEvaluation() );
+    getExecutionDependencies()->push_back( m_rOperand->getEndOfEvaluation() );
 
     //enqueue kernel execution
     cl_int error;
@@ -103,7 +105,7 @@ void RealSum::enqueue(){
                 cl::NullRange,
                 cl::NDRange ( 1 ),
                 cl::NDRange ( 1 ),
-                &dependencies,
+                getExecutionDependencies(),
                 &getEndOfEvaluation()
                 );
     if ( error != CL_SUCCESS )

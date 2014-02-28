@@ -11,6 +11,8 @@ file(
   )
 
 set(LIBS ${OPENCL_LIBRARIES} ${Armadillo_LIBRARIES})
+message(STATUS ${OPENCL_LIBRARIES})
+message(STATUS ${OPENCL_INCLUDE})
 
 #############
 # executables

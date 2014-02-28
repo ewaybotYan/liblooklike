@@ -182,9 +182,9 @@ void MatrixProd::enqueue(){
     kernel.setArg<int> ( 4, productDepth );
 
     // prepare dependencies
-    std::vector<cl::Event> dependencies;
-    dependencies.push_back ( m_lOperand->getEndOfEvaluation() );
-    dependencies.push_back ( m_rOperand->getEndOfEvaluation() );
+    std::vector<cl::Event>* dependencies = getExecutionDependencies();
+    dependencies->push_back ( m_lOperand->getEndOfEvaluation() );
+    dependencies->push_back ( m_rOperand->getEndOfEvaluation() );
 
     //enqueue kernel execution
     cl_int error;
@@ -193,7 +193,7 @@ void MatrixProd::enqueue(){
                 cl::NullRange,
                 cl::NDRange ( getWidth(), getHeight() ),
                 cl::NDRange ( 1, 1 ),
-                &dependencies,
+                dependencies,
                 &getEndOfEvaluation()
                 );
 
@@ -230,9 +230,9 @@ void MatrixSum::enqueue(){
     kernel.setArg<int> ( 4, getWidth() );
 
     // prepare dependencies
-    std::vector<cl::Event> dependencies;
-    dependencies.push_back ( m_lOperand->getEndOfEvaluation() );
-    dependencies.push_back ( m_rOperand->getEndOfEvaluation() );
+    std::vector<cl::Event>* dependencies = getExecutionDependencies();
+    dependencies->push_back ( m_lOperand->getEndOfEvaluation() );
+    dependencies->push_back ( m_rOperand->getEndOfEvaluation() );
 
     //enqueue kernel execution
     cl_int error;
@@ -241,7 +241,7 @@ void MatrixSum::enqueue(){
                 cl::NullRange,
                 cl::NDRange ( getWidth(), getHeight() ),
                 cl::NDRange ( 1, 1 ),
-                &dependencies,
+                dependencies,
                 &getEndOfEvaluation()
                 );
 
@@ -274,8 +274,8 @@ void MatrixCovariance::enqueue(){
     kernel.setArg<int> ( 3, m_src->getHeight() );
 
     // prepare dependencies
-    std::vector<cl::Event> dependencies;
-    dependencies.push_back ( m_src->getEndOfEvaluation() );
+    std::vector<cl::Event>* dependencies = getExecutionDependencies();
+    dependencies->push_back ( m_src->getEndOfEvaluation() );
 
     //enqueue kernel execution
     cl_int error;
@@ -284,7 +284,7 @@ void MatrixCovariance::enqueue(){
                 cl::NullRange,
                 cl::NDRange ( getHeight(), getWidth() ),
                 cl::NDRange ( 1, 1 ),
-                &dependencies,
+                dependencies,
                 &getEndOfEvaluation()
                 );
 

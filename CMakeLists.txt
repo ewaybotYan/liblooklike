@@ -43,15 +43,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${warnings}")
 # EXTERNAL DEPENDENCIES PATHS AND FLAGS
 
 if(USE_POCL)
+  message(STATUS "using POCL")
   find_package(PkgConfig)
-  pkg_check_modules(OPENCL pocl)
-  pkg_search_module(OPENCL pocl)
+  pkg_check_modules(OPENCL REQUIRED pocl)
+  pkg_search_module(OPENCL REQUIRED pocl)
 else(USE_POCL)
   find_package( OpenCL REQUIRED )
   if( !OPENCL_HAS_CPP_BINDINGS )
     message(ERROR "OpenCL c++ bindings not found")
   endif( !OPENCL_HAS_CPP_BINDINGS )
 endif(USE_POCL)
+
+include_directories(${OPENCL_INCLUDE_DIRS})
+link_directories(${OPENCL_LIBRARY_DIRS})
+
 
 find_package(Armadillo REQUIRED)
 

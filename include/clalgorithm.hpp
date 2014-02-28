@@ -2,6 +2,7 @@
 #define CLALGORITHM_HPP
 
 #include"algorithm.h"
+#include<vector>
 #include<CL/cl.hpp>
 #include<context.h>
 
@@ -33,13 +34,19 @@ class ClAlgorithm : public Algorithm {
         ///       @ref getState() before waiting for this event.
         cl::Event& getEndOfEvaluation();
         void setEndOfEvaluation( cl::Event event );
+        void addExecutionDependence( cl::Event event );
+        void clearExecutionDependencies();
+        std::vector<cl::Event>* getExecutionDependencies();
 
         /// The context on which this algorithm will be run
         Context* m_context = 0;
 
         /// the queue that will recieve the commands used in the algorithm
         cl::CommandQueue* m_queue = 0;
+
     private:
+
+        std::vector<cl::Event> m_dependencies;
 
         /// The end event associated to m_endOfEvaluation
         /// Every command started in OpenCL has an associated end event

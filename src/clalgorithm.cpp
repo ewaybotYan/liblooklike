@@ -20,3 +20,15 @@ cl::Event& ClAlgorithm::getEndOfEvaluation(){
 void ClAlgorithm::setEndOfEvaluation( cl::Event event ){
     m_endOfEvaluationEvent = event;
 }
+
+void ClAlgorithm::addExecutionDependence( cl::Event event ){
+    m_dependencies.push_back(event);
+}
+
+void ClAlgorithm::clearExecutionDependencies(){
+    m_dependencies.clear();
+}
+
+std::vector<cl::Event>* ClAlgorithm::getExecutionDependencies(){
+    return &m_dependencies;
+}

@@ -72,8 +72,8 @@ void MatrixNorm::enqueue(){
     kernel.setArg<int> ( 4, getWidth() );
 
     // prepare dependencies
-    std::vector<cl::Event> dependencies;
-    dependencies.push_back ( m_src->getEndOfEvaluation() );
+    std::vector<cl::Event>* dependencies = getExecutionDependencies();
+    dependencies->push_back ( m_src->getEndOfEvaluation() );
 
     //enqueue kernel execution
     cl_int error;
@@ -82,7 +82,7 @@ void MatrixNorm::enqueue(){
                 cl::NullRange,
                 cl::NDRange ( getWidth() ),
                 cl::NDRange ( 1 ),
-                &dependencies,
+                dependencies,
                 &getEndOfEvaluation()
                 );
     m_normalized->setEndOfEvaluation(getEndOfEvaluation());
