@@ -119,25 +119,9 @@ add_executable(
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   ${PROJECT_SOURCE_DIR}/tests/sample_file.txt
   )
-  
+
 target_link_libraries(test_file "jpeg")
 target_link_libraries(test_file ${LIBS})
-
-# test_files
-
-add_executable(
-  test_files
-  test_files.cpp
-  ${PROJECT_SOURCE_DIR}/src/files.cpp
-  ${PROJECT_SOURCE_DIR}/include/files.hpp
-  ${PROJECT_SOURCE_DIR}/src/matrix.cpp
-  ${PROJECT_SOURCE_DIR}/include/matrix.h
-  ${PROJECT_SOURCE_DIR}/src/mathexpression.cpp
-  ${PROJECT_SOURCE_DIR}/src/context.cpp
-  ${PROJECT_SOURCE_DIR}/src/exception.cpp
-  )
-
-target_link_libraries(test_files ${LIBS})
 
 #######
 # tests
