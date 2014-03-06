@@ -4,7 +4,6 @@
 #include<string>
 
 #include <algorithm.h>
-#include <context.h>
 
 // This is out base object, a real number.
 class Real{

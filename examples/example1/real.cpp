@@ -1,4 +1,3 @@
-#include <exception.h>
 #include <algorithm.h>
 
 #include "real.h"

@@ -1,7 +1,5 @@
 #include<vector>
 
-#include<CL/cl.hpp>
-
 #include "../include/exception.h"
 #include "../include/algorithm.h"
 #include "../include/error.h"

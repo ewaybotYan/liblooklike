@@ -14,7 +14,6 @@
  *  @include real.cpp
  */
 
-#include <exception.h>
 #include <algorithm.h>
 #include "real.h"
 
@@ -24,8 +23,6 @@
 using namespace std;
 
 int main(){
-
-  try{
 
     // Some Mathexpression objects are directly created from values, they will
     // be terminal nodes in the evaluation tree. The enqueue() function on these
@@ -55,15 +52,11 @@ int main(){
 
     // The rest of this program is used for testing.
     if( std::abs( s - 3.0 ) < 0.0000001 ){
-      std::cout << "computed result matches with error : " << s - 3.0 << "\n";
-      return 0;
+        std::cout << "computed result matches with error : " << s - 3.0 << "\n";
+        return 0;
     }else{
-      std::cerr << "computed result matches with error : " << s - 3.0 << "\n";
-      return -1;
+        std::cerr << "computed result matches with error : " << s - 3.0 << "\n";
+        return -1;
     }
-  }catch( Error& e ){
-    e.printMsg();
-    return -1;
-  }
 }
 

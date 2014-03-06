@@ -97,7 +97,7 @@ int main(int argc, char* argv[]){
                         array.avgWidth,
                         &ctx, &queue );
         MatrixToImage(preview,"/tmp/vectorPreview.jpg");
-        delete previewData;
+        delete[] previewData;
     } catch ( Error& err ) {
         err.printMsg();
         return -1;

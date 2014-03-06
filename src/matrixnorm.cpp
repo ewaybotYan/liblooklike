@@ -47,12 +47,12 @@ void MatrixNorm::retrieveData() {
         throw ( CLError ( error, "failed to enqueue data reading" ) );
     m_normalized->setResult(normalizedData);
 
-    float* coefficients = new cl_float[getWidth()];
+    float* coefficients = new cl_float[getHeight()];
     error = m_queue->enqueueReadBuffer (
                 *m_normCoeffs->getBuffer(),
                 CL_TRUE,
                 0,
-                sizeof ( cl_float ) * getWidth(),
+                sizeof ( cl_float ) * getHeight(),
                 coefficients );
     if ( error != CL_SUCCESS )
         throw ( CLError ( error, "failed to enqueue data reading" ) );
@@ -92,11 +92,12 @@ void MatrixNorm::enqueue(){
         throw ( CLError ( error, "failed to enqueue kernel execution" ) );
 }
 
-// todo : use try catch and return proper value
 bool MatrixNorm::allocateForResult(){
-    m_normalized->allocateForResult();
-    m_normCoeffs->allocateForResult();
-    return true;
+    bool allocation = m_normalized->allocateForResult();
+    if( allocation == false )
+        return false;
+    allocation = m_normCoeffs->allocateForResult();
+    return allocation;
 }
 
 void MatrixNorm::deallocateForResult(){
