@@ -7,18 +7,24 @@ add_library (looklike
              ../src/exception.cpp
              ../include/file.h
              ../src/file.cpp
+             ../include/files.hpp
+             ../src/files.cpp
              ../include/image.h
              ../src/image.cpp
              ../include/jpegfile.h
              ../src/jpegfile.cpp
              ../include/algorithm.h
              ../src/algorithm.cpp
+             ../include/expression.hpp
+             ../src/expression.cpp
              ../include/clalgorithm.hpp
              ../src/clalgorithm.cpp
              ../include/matrix.h
              ../src/matrix.cpp
+             ../include/simplematrix.hpp
              ../include/matrixnorm.hpp
              ../src/matrixnorm.cpp
+             ../include/sort.hpp
              ../kernels/matrix_mult.cl
              ../kernels/matrix_norm.cl
              ../kernels/scalar_product.cl

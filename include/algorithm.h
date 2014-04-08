@@ -10,22 +10,12 @@
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
+class Expression;
+
+#include "expression.hpp"
+
 #include<vector>
 
-// ###################
-// # State description
-
-/// Used to explicitely define the state of a Algorithm.
-enum ExpressionState {
-    INITIAL,///< initial state
-    ALLOCATED,///< Data buffers are allocated on computation device.
-    QUEUED///< Computation is in the computation queue.
-    /* COMPUTED// computation is over, result can be taken back*/
-};
-
-
-// ###############
-// # MathExpresion
 
 /// @brief Abstract class that describes a mathematical object that needs
 ///        (or not) to be evaluated before having a value.
@@ -59,34 +49,16 @@ enum ExpressionState {
 ///       be used for special computation systems that have their own memory
 ///       like OpenCL. If the memory is the RAM, you might not want to throw the
 ///       result of your computation away.
+
+enum ExpressionState{
+  INITIAL,
+  QUEUED
+};
+
 class Algorithm {
+    friend class Expression;
 
     public:
-
-        // ##########################
-        // # constructors/destructors
-
-        ~Algorithm(){}
-
-
-        // #################
-        // # getters/setters
-
-        /// @brief Gives the general state of the Algorithm (see state
-        ///        diagram for a better understanding).
-        ExpressionState getState();
-
-
-        // #########
-        // # methods
-
-        /// @brief adds a dependency to the expression
-        /// @param child an object that needs to be evaluated before this
-        ///        object can be computed
-        /// @warning children might be identified by their order in the
-        ///          implementation of this class.
-        void addChild( Algorithm* child );
-
         virtual void waitEndOfEvaluation() = 0;
 
         /// @brief compute the value of the Expression
@@ -95,27 +67,34 @@ class Algorithm {
         ///           for this expression.
         void evaluate();
 
-        /// @brief   allocate memory in which we will put the result of this
-        ///          computation
-        /// @warning do not forget to update m_state if allocation is
-        ///          successfull
-        virtual bool allocateForResult() = 0;
-
-        /// Deallocate the memory buffers
-        virtual void deallocateForResult() = 0;
-
         /// Deallocate memory for a whole evaluation tree
         /// @param hierarchyOffset number of levels to skip before actually
         ///        deallocating memory.
         void deallocateMemory( const int hierarchyOffset = 0 );
+
+        /// Allocate memory for a whole evaluation tree
+        bool allocateForResult();
+
+        void addChild(Expression* child);
+
+        void addResult(Expression* result);
 
     protected:
 
         /// @brief constructor is private because this is an abstract class.
         Algorithm(){}
 
-        // ###################
-        // # protected methods
+        /// dependencies requiered to compute this expression
+        /// @warning Any dependency not specified here will be ignored during
+        ///          the evaluation.
+        std::vector<Expression*> m_children;
+
+        /// dependencies requiered to compute this expression
+        /// @warning Any dependency not specified here will be ignored during
+        ///          the evaluation.
+        std::vector<Expression*> m_results;
+
+  private:
 
         /// @brief launch evaluation of the object
         virtual void enqueue( ) = 0;
@@ -123,28 +102,7 @@ class Algorithm {
         /// @brief the actual recursive evaluation method
         bool recEvaluate( int depth );
 
-        void addParent( Algorithm* parent );
-
-        // ###################
-        // # protected memeber
-
-        /// dependencies requiered to compute this expression
-        /// @warning Any dependency not specified here will be ignored during
-        ///          the evaluation.
-        std::vector<Algorithm*> m_children;
-        /// dependencies requiered to compute this expression
-        /// @warning Any dependency not specified here will be ignored during
-        ///          the evaluation.
-        std::vector<Algorithm*> m_parents;
-
-    private:
-
-        // #########
-        // # members
-
-        /// describe the state of the expression
         ExpressionState m_state = INITIAL;
-
 };
 
 #endif //ALGORITHM_H

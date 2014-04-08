@@ -10,9 +10,10 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
   )
 
-set(LIBS ${OPENCL_LIBRARIES} ${Armadillo_LIBRARIES})
+set(LIBS ${OPENCL_LIBRARIES} ${Armadillo_LIBRARIES} pthread)
 message(STATUS ${OPENCL_LIBRARIES})
 message(STATUS ${OPENCL_INCLUDE})
+
 
 #############
 # executables
@@ -122,6 +123,36 @@ add_executable(
 target_link_libraries(test_file "jpeg")
 target_link_libraries(test_file ${LIBS})
 
+# test_files
+
+add_executable(
+  test_files
+  test_files.cpp
+  ${PROJECT_SOURCE_DIR}/src/files.cpp
+  ${PROJECT_SOURCE_DIR}/src/matrix.cpp
+  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+target_link_libraries(test_files ${LIBS})
+
+# test_files
+
+add_executable(
+  test_sort
+  test_sort.cpp
+  ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
+  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/expression.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  ${PROJECT_SOURCE_DIR}/include/sort.hpp
+  )
+
+target_link_libraries(test_sort ${LIBS})
+
+
 #######
 # tests
 
@@ -141,3 +172,9 @@ add_test( test_matrix ${EXECUTABLE_OUTPUT_PATH}/test_matrix "${PROJECT_SOURCE_DI
 
 # test_file
 add_test( test_file ${EXECUTABLE_OUTPUT_PATH}/test_file "${PROJECT_SOURCE_DIR}/data/photos" "${CMAKE_CURRENT_SOURCE_DIR}/sample_file.txt" )
+
+# test_files
+add_test( test_files ${EXECUTABLE_OUTPUT_PATH}/test_files )
+
+# test_sort
+add_test( test_sort ${EXECUTABLE_OUTPUT_PATH}/test_sort )
