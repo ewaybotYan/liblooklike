@@ -64,7 +64,7 @@ Sort<Scalar>::Sort( std::shared_ptr< SimpleMatrix<Scalar> > data,
                     bool appendIndex )
 {
   typedef Algorithm A;
-  unsigned int nbValues = m_sortOnColumns ?
+  unsigned int nbValues = sortOnColumns ?
                             data->getHeight() : data->getWidth();
   m_result = std::make_shared< SimpleMatrix<Scalar> >( nbValues, 1 );
   A::addResult(m_result.get());
