@@ -19,8 +19,8 @@ add_library (looklike
              ../src/expression.cpp
              ../include/clalgorithm.hpp
              ../src/clalgorithm.cpp
-             ../include/matrix.h
-             ../src/matrix.cpp
+             ../include/clexpression.hpp
+             ../src/clexpression.cpp
              ../include/simplematrix.hpp
              ../include/matrixnorm.hpp
              ../src/matrixnorm.cpp

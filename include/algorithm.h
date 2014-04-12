@@ -50,10 +50,6 @@ class Expression;
 ///       like OpenCL. If the memory is the RAM, you might not want to throw the
 ///       result of your computation away.
 
-enum ExpressionState{
-  INITIAL,
-  QUEUED
-};
 
 class Algorithm {
     friend class Expression;
@@ -61,48 +57,55 @@ class Algorithm {
     public:
         virtual void waitEndOfEvaluation() = 0;
 
-        /// @brief compute the value of the Expression
-        /// @detailed This function will allocated memory for children and
-        ///           evaluate them recursively until it enqueues the execution
-        ///           for this expression.
-        void evaluate();
-
-        /// Deallocate memory for a whole evaluation tree
-        /// @param hierarchyOffset number of levels to skip before actually
-        ///        deallocating memory.
-        void deallocateMemory( const int hierarchyOffset = 0 );
-
-        /// Allocate memory for a whole evaluation tree
-        bool allocateForResult();
-
-        void addChild(Expression* child);
-
-        void addResult(Expression* result);
+        bool isEnqueued() const;
 
     protected:
 
-        /// @brief constructor is private because this is an abstract class.
-        Algorithm(){}
+        /// allocate any temporary memory needed to perform computation
+        virtual bool allocateTmpMem() = 0;
+
+        bool allocateResMem();
+
+        /// realease any temporary memory reserved for computation
+        virtual void releaseTmpMem() = 0;
+
+        /// recursively deallocate memory for the evaluation tree
+        /// @param hierarchyOffset number of levels of the evaluation tree to
+        ///        skip before actually deallocating memory.
+        /// @note will deallocate results temporary memory, but not
+        ///       dependencies. However @ref releaseTreeMem will be called on
+        ///       the parent algorithm of dependencies if any.
+        void releaseTreeMem( const int hierarchyOffset = 0 );
+
+
+        /// specify an expression whose value is needed to compute the algorithm
+        /// @param dependency a dependency of the algorithm
+        void addDependency(Expression* dependency);
+
+        /// appends a result to the list of the algorithm's results
+        /// @note all results need to be added for memory management to work
+        void addResult(Expression* result);
 
         /// dependencies requiered to compute this expression
-        /// @warning Any dependency not specified here will be ignored during
-        ///          the evaluation.
-        std::vector<Expression*> m_children;
+        /// @warning Any dependency not specified here will be ignored by
+        ///          @ref evaluateTree()
+        std::vector<Expression*> m_dependencies;
 
         /// dependencies requiered to compute this expression
-        /// @warning Any dependency not specified here will be ignored during
+        /// @warning Any result not specified here will be ignored during
         ///          the evaluation.
         std::vector<Expression*> m_results;
 
-  private:
+
+        /// @brief evaluate the expression tree in a reverse recursive way
+        bool evaluateTree( int depth=0 );
 
         /// @brief launch evaluation of the object
         virtual void enqueue( ) = 0;
 
-        /// @brief the actual recursive evaluation method
-        bool recEvaluate( int depth );
+  private:
 
-        ExpressionState m_state = INITIAL;
+        bool m_isEnqueued = false;
 };
 
 #endif //ALGORITHM_H

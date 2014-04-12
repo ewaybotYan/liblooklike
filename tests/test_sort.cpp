@@ -18,7 +18,7 @@ using namespace std;
 
 vector<float> data = {
   9, 9, 4, 5,
-  9, 0, 9, 2,
+  9, 4, 9, 2,
   9, 4, 1, 6,
   1, 1, 2, 4,
   2, 3, 8, 7
@@ -37,21 +37,23 @@ int main ( int argc, char* argv[] ) {
     shared_ptr<Matrix> mp( new Matrix(data, 5, 4) );
     InertiaSort<float> s1(mp, 0.8, true, 0, false);
     InertiaSort<float> s2(mp, 1);
-    InertiaSort<float> s3(mp, 0.9, false, 1, true );
+    InertiaSort<float> s3(mp, 0.95, false, 1, true );
 
-    s1.getResult()->evaluate();
-    s2.getResult()->evaluate();
-    s3.getResult()->evaluate();
+    s1.getSorted()->evaluate();
+    s2.getSorted()->evaluate();
+    s3.getSorted()->evaluate();
 
-    s1.getResult()->waitEndOfEvaluation();
-    s2.getResult()->waitEndOfEvaluation();
-    s3.getResult()->waitEndOfEvaluation();
+    s1.getSorted()->waitEndOfEvaluation();
+    s2.getSorted()->waitEndOfEvaluation();
+    s3.getSorted()->waitEndOfEvaluation();
 
-    s1.getResult()->print();
+    s1.getSorted()->print();
     cout << "\n";
-    s2.getResult()->print();
+    s2.getSorted()->print();
     cout << "\n";
-    s3.getResult()->print();
+    s3.getSorted()->print();
+    cout << "\n";
+    s3.getSortIdx()->print();
 
     cout << "end of the evaluations";
   } catch ( Error& err ) {

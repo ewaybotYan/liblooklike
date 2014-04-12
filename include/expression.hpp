@@ -13,35 +13,56 @@ class Algorithm;
 
 #include<vector>
 
+enum ExpressionState{
+  INITIAL,
+  ALLOCATED,
+  ENQUEUED,
+  COMPUTED,
+};
+
 class Expression
 {
-  friend class Algorithm;
+    friend class Algorithm;
 
   public:
 
-  // says if object has to be computed or not before one can read its value.
-  bool iscomputed();
+    /// says if object has to be computed or not before one can read its value.
+    bool needsComputation();
 
-  // blocks execution until object computation is finished.
-  // should retrieve data to local memory if it is not computed locally.
-  // @warning should return immediately if object is not evaluating
-  void waitEndOfEvaluation();
+    /// blocks execution until object computation is finished.
+    /// will retrieve data to local memory if it is not computed locally.
+    void waitEndOfEvaluation();
 
-  void evaluate();
+    /// start the evaluation of the expression
+    void evaluate();
 
- private:
-    /// @brief   allocate memory in which we will put the result of this
-    ///          computation
-    /// @warning do not forget to update m_state if allocation is
-    ///          successfull
-    virtual bool allocateMemory() = 0;
+    /// @brief   request memory allocation for the expression value
+    bool allocateMem();
 
-    /// Deallocate the memory buffers
-    virtual void deallocateMemory() = 0;
+    /// release memory buffers associated to the expression
+    void releaseMem();
+
+  protected:
+
+    /// @brief  actual memory allocation for Expression implementation
+    /// @return true if allocation was sucessful
+    /// @note   might never be called directly but through allocateMem
+    virtual bool allocateMemImpl() = 0;
+
+    /// @brief implementation of the memory deallocation for the implementation
+    /// @note this is not called at object destruction, make sure to create
+    ///       a destructor in the implementation if needed.
+    virtual void releaseMemImpl() = 0;
+
+    Expression(){}
+
+  private:
 
     bool recEvaluate( int depth );
 
-    Algorithm* m_parent = nullptr;
+    Algorithm* m_computedBy = nullptr;
+
+    ExpressionState m_state = INITIAL;
 };
 
 #endif // EXPRESSION_HPP

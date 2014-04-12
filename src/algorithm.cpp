@@ -7,53 +7,67 @@
 using namespace std;
 
 
-void Algorithm::addChild(Expression* child)
+bool Algorithm::isEnqueued() const
 {
-  m_children.push_back(child);
+  return m_isEnqueued;
 }
 
-void Algorithm::addResult(Expression* result)
-{
-  m_results.push_back(result);
-  result->m_parent = this;
-}
-
-bool Algorithm::allocateForResult()
+bool Algorithm::allocateResMem()
 {
   for ( Expression* res : m_results ){
-    bool success = res->allocateMemory();
+    bool success = res->allocateMem();
     if ( !success )
       return false;
   }
   return true;
 }
 
-void Algorithm::deallocateMemory(const int hierarchyOffset)
+void Algorithm::releaseTreeMem(const int hierarchyOffset)
 {
-  for ( Expression* child : m_children ){
-    if ( hierarchyOffset <= 0 )
-      child->deallocateMemory();
-    if ( !child->iscomputed() )
-      child->m_parent->deallocateMemory(hierarchyOffset-1);
-  }
+  m_isEnqueued = false;
+
+  releaseTmpMem();
+
+  if ( hierarchyOffset <= 0 )
+    for ( Expression* result : m_results )
+        result->releaseMem();
+
+  for ( Expression* dependency : m_dependencies )
+    if( dependency->needsComputation() )
+      dependency->m_computedBy->releaseTreeMem(hierarchyOffset-1);
 }
 
-bool Algorithm::recEvaluate ( int depth ) {
+void Algorithm::addDependency(Expression* dependency)
+{
+  m_dependencies.push_back(dependency);
+}
+
+void Algorithm::addResult(Expression* result)
+{
+  m_results.push_back(result);
+  result->m_computedBy = this;
+}
+
+bool Algorithm::evaluateTree ( int depth ) {
 #ifndef NDEBUG
   cout << "evaluating" << std::endl;
 #endif
 
-  if ( m_state >= QUEUED)
+  if ( isEnqueued() )
     return true;
 
-  // evaluate children first
-  for( auto child = m_children.begin(); child != m_children.end(); child++ ){
-    bool enqueued = (*child)->recEvaluate(depth+1);
+  // evaluate dependencies first
+  for( auto dependency = m_dependencies.begin();
+       dependency != m_dependencies.end();
+       dependency++ ){
+    if( !(*dependency)->needsComputation() )
+      continue;
+    bool enqueued = (*dependency)->m_computedBy->evaluateTree(depth+1);
     if (!enqueued){ // memory allocation probably failed
-      for( auto older = m_children.begin(); older != child; older++ )
-        (*older)->waitEndOfEvaluation();// wait for grandchildren
-      deallocateMemory(1);// and free their memory
-      enqueued = (*child)->recEvaluate( depth+1 );
+      for( auto older = m_dependencies.begin(); older != dependency; older++ )
+        (*older)->waitEndOfEvaluation();// wait for grand children dependencies
+      releaseTreeMem(1);// and free their memory
+      enqueued = (*dependency)->m_computedBy->evaluateTree( depth+1 );
       if (!enqueued){ // enqueing failed anyway
         if ( depth!=0 ) { // parent expression will handle the issue
           return false;
@@ -64,13 +78,12 @@ bool Algorithm::recEvaluate ( int depth ) {
     }
   }
 
-  bool allocated = allocateForResult();
+  bool allocated = allocateResMem();
   if (!allocated){ // memory allocation failed
-    for( Expression* child : m_children ){
-      child->waitEndOfEvaluation(); // wait for children
-    }
-    deallocateMemory(1); // free memory of grandchildren
-    allocated = allocateForResult();
+    for ( Expression* dependency : m_dependencies )
+      dependency->waitEndOfEvaluation(); // wait for dependencies
+    releaseTreeMem(1); // free memory of granddependencies
+    allocated = allocateResMem();
     if (!allocated) {
       if ( depth!=0 ) { // parent expression will handle the issue
         return false;
@@ -79,7 +92,10 @@ bool Algorithm::recEvaluate ( int depth ) {
       }
     }
   }
+
   enqueue();
-  m_state = QUEUED;
+
+  m_isEnqueued = true;
+
   return true;
 }

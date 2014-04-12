@@ -170,10 +170,10 @@ Error::Error() throw(){
 }
 
 Error::Error( const char* errorMsg ) throw(){
-  this->errorMsg = std::string(errorMsg);
+  this->errorMsg = string(errorMsg);
 }
 
-Error::Error( string errorMsg ) throw(){
+Error::Error( const string& errorMsg ) throw(){
   this->errorMsg = errorMsg;
 }
 
@@ -183,22 +183,30 @@ const char* Error::what() const throw(){
 
 #ifndef NDEBUG
 void Error::printMsg(){
-  std::cerr << "ERR: " << errorMsg;
+  cerr << "ERR: " << errorMsg;
 }
 #endif
 
 // #########
 // # CLError
 
-CLError::CLError( const int clErrorNb, const std::string msg ) throw(){
-  std::string errorMsg;
-//  if( msg.compare("") == false ){
+CLError::CLError( const int clErrorNb, const string msg ) throw(){
     this->errorMsg = msg +
-      "(OpenCL error " + std::to_string(clErrorNb) + " " 
+      "(OpenCL error " + to_string(clErrorNb) + " "
       + clErrorCodeName( clErrorNb ) +")\n";
-/*  }else{
-    this->errorMsg = 
-      "OpenCL error " + std::to_string(clErrorNb) + " " 
-      + clErrorCodeName( clErrorNb )+"\n";
-  }*/
+}
+
+// ############################
+// # EvaluationProcessViolation
+
+EvaluationProcessViolation::EvaluationProcessViolation
+(const string& msg) throw():
+  Error( msg )
+{
+}
+
+EvaluationProcessViolation::EvaluationProcessViolation
+(const char *msg) throw():
+  Error( msg )
+{
 }

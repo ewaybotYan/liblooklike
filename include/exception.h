@@ -26,7 +26,7 @@ class Error: public std::exception{
     Error( const char* errorMsg ) throw();
 
     /// @param errorMsg error message that will be displayed
-    Error( std::string errorMsg ) throw();
+    Error( const std::string& errorMsg ) throw();
 
     /// @return the message associated to this exception
     const char* what() const throw() override;
@@ -54,5 +54,11 @@ class CLError : public Error{
 
 };
 
+class EvaluationProcessViolation : public Error
+{
+  public:
+    EvaluationProcessViolation(const std::string& msg) throw();
+    EvaluationProcessViolation(const char* msg) throw();
+};
 
 #endif //EXCEPTION_H

@@ -9,19 +9,26 @@
 
 #include "algorithm.h"
 #include "simplematrix.hpp"
+#include "exception.h"
 #include <memory>
 #include <vector>
 #include <thread> // separate computing thread from main execution
+
+
+// #########################################
+// # Generic sort algorithm (abstract class)
 
 template<typename Scalar>
 class Sort : public Algorithm
 {
   public:
-    std::shared_ptr< SimpleMatrix<Scalar> >& getResult();
+    std::shared_ptr< SimpleMatrix<Scalar> >& getSorted();
+    std::shared_ptr< SimpleMatrix<unsigned int> >& getSortIdx();
 
   protected:
-    std::shared_ptr< SimpleMatrix<Scalar> > m_src;
-    std::shared_ptr< SimpleMatrix<Scalar> > m_result;
+
+    std::shared_ptr< SimpleMatrix<Scalar> > m_data;
+    std::shared_ptr< SimpleMatrix<Scalar> > m_sorted;
     std::shared_ptr< SimpleMatrix<unsigned int> > m_indexes;
 
     bool m_sortOnColumns = true;
@@ -34,28 +41,39 @@ class Sort : public Algorithm
           bool appendIndex = false );
 };
 
+
+// ####################################
+// # InertiaSort algorithms declaration
+
 template<typename Scalar>
 class InertiaSort : public Sort<Scalar>
 {
   public:
     InertiaSort( std::shared_ptr< SimpleMatrix<Scalar> > data,
-                 float inertia,
+                 Scalar inertia,
                  bool sortOnColumn = true,
                  unsigned int sortRefIdx = 0,
                  bool appendIndex = false );
 
     void waitEndOfEvaluation() override;
 
+    bool allocateTmpMem() override { return true; }
+
+    void releaseTmpMem() override {}
+
     void enqueue();
 
   private:
 
     static void InertiaSortWithThreshold(InertiaSort<Scalar>* sort);
-    float m_inertia;
+    Scalar m_inertia;
     unsigned int m_nbSortedValues;
     std::thread m_t;
 };
 
+
+// #########################
+// # Sort methods definition
 
 template<typename Scalar>
 Sort<Scalar>::Sort( std::shared_ptr< SimpleMatrix<Scalar> > data,
@@ -66,28 +84,38 @@ Sort<Scalar>::Sort( std::shared_ptr< SimpleMatrix<Scalar> > data,
   typedef Algorithm A;
   unsigned int nbValues = sortOnColumns ?
                             data->getHeight() : data->getWidth();
-  m_result = std::make_shared< SimpleMatrix<Scalar> >( nbValues, 1 );
-  A::addResult(m_result.get());
+  m_sorted = std::make_shared< SimpleMatrix<Scalar> >( nbValues, 1 );
+  A::addResult(m_sorted.get());
   if (appendIndex) {
     m_indexes = std::make_shared< SimpleMatrix<unsigned int> >( nbValues, 1 );
     A::addResult(m_indexes.get());
   }
-  m_src = data;
-  A::addChild(data.get());
+  m_data = data;
+  A::addDependency(data.get());
   m_sortOnColumns = sortOnColumns;
   m_sortRefIdx = sortRefIdx;
   m_appendIdx = appendIndex;
 }
 
 template<typename Scalar>
-std::shared_ptr< SimpleMatrix<Scalar> >& Sort<Scalar>::getResult()
+std::shared_ptr< SimpleMatrix<Scalar> >& Sort<Scalar>::getSorted()
 {
-  return m_result;
+  return m_sorted;
 }
 
 template<typename Scalar>
+std::shared_ptr< SimpleMatrix<unsigned int> >& Sort<Scalar>::getSortIdx()
+{
+  return m_indexes;
+}
+
+
+// ################################
+// # InertiaSort methods definition
+
+template<typename Scalar>
 InertiaSort<Scalar>::InertiaSort( std::shared_ptr< SimpleMatrix<Scalar> > data,
-                                  float inertia,
+                                  Scalar inertia,
                                   bool sortOnColumn,
                                   unsigned int sortRefIdx,
                                   bool appendIndex ) :
@@ -97,51 +125,61 @@ InertiaSort<Scalar>::InertiaSort( std::shared_ptr< SimpleMatrix<Scalar> > data,
 }
 
 template<typename Scalar>
-void InertiaSort<Scalar>::waitEndOfEvaluation(){
-  m_t.join();
+void InertiaSort<Scalar>::waitEndOfEvaluation()
+{
+  if ( !Algorithm::isEnqueued() ) {
+    throw EvaluationProcessViolation(
+        "Cannot wait for evaluation as it is not enqued.");
+  } else {
+    m_t.join();
+  }
 }
 
 template<typename Scalar>
 void InertiaSort<Scalar>::InertiaSortWithThreshold( InertiaSort<Scalar>* s )
 {
-  //InertiaSort& s = *sort;
-  // how to find the values in the source SimpleMatrix<Scalar>
+  // simplify method to find the values in the source SimpleMatrix<Scalar>
   unsigned int start = s->m_sortOnColumns ?
                          s->m_sortRefIdx :
-                         s->m_sortRefIdx * s->m_src->getWidth();
-  unsigned int step = s->m_sortOnColumns ? s->m_src->getWidth() : 1;
+                         s->m_sortRefIdx * s->m_data->getWidth();
+  unsigned int step = s->m_sortOnColumns ? s->m_data->getWidth() : 1;
 
   // copy values and compute total inertia
-  float* values = s->m_src->getValues();
-  float* result = s->m_result->getValues();
-  float totInertia = 0;
-  for ( int i = 0;
-        i < (s->m_sortOnColumns ? s->m_src->getHeight() : s->m_src->getWidth());
-        ++i ) {
+  Scalar* values = s->m_data->getValues();
+  Scalar* result = s->m_sorted->getValues();
+  unsigned int* indexes = s->m_appendIdx ? s->m_indexes.get()->getValues() : nullptr;
+  Scalar totInertia = 0;
+  unsigned int nbValues = s->m_sortOnColumns ? s->m_data->getHeight() :
+               s->m_data->getWidth();
+  for (unsigned int i = 0; i < nbValues; ++i) {
     result[i] = values[start+i*step];
     totInertia += values[start+i*step];
   }
+  if (s->m_appendIdx)
+    for( unsigned int i=0; i<nbValues; i++ )
+      indexes[i] = i;
 
   // extract values
-  float inertia = 0;
+  Scalar inertia = 0;
   unsigned int i = 0;
   while (inertia < s->m_inertia * totInertia) {
     unsigned int idxMax = i;
-    float max = result[idxMax];
-    for ( int j = i;
-          j < (s->m_sortOnColumns ? s->m_src->getHeight() : s->m_src->getWidth() );
-          j++ ) {
+    Scalar max = result[idxMax];
+    for ( unsigned int j = i; j < nbValues; j++ ) {
       if (result[j] > max) {
         idxMax = j;
         max = result[j];
       }
     }
-    float tmp = result[idxMax];
+    Scalar tmp = result[idxMax];
     inertia += tmp;
     result[idxMax] = result[i];
     result[i] = tmp;
-    if (s->m_appendIdx)
-      s->m_indexes.get()->getValues()[i] = idxMax;
+    if (s->m_appendIdx) {
+      unsigned int tmpIdx = indexes[i];
+      indexes[i] = indexes[idxMax];
+      indexes[idxMax] = tmpIdx;
+    }
     ++i;
   }
   s->m_nbSortedValues = i;
@@ -151,12 +189,11 @@ template<typename Scalar>
 void InertiaSort<Scalar>::enqueue()
 {
   typedef Sort<Scalar> S;
-  for (auto child : S::m_children) {
+  for (auto child : S::m_dependencies) {
     child->waitEndOfEvaluation();
   }
 
   m_t = std::thread( InertiaSort<Scalar>::InertiaSortWithThreshold, this );
-  //InertiaSort<Scalar>::InertiaSortWithThreshold(this);
 }
 
 
