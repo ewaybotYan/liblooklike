@@ -30,6 +30,9 @@ class ClAlgorithm : public Algorithm {
 
     ClAlgorithm( Context* context, cl::CommandQueue* queue );
 
+    /// list of the dependencies ends of evaluations
+    std::vector<cl::Event> m_dependenciesEvents;
+
   private:
 
     /// The end event associated to m_endOfEvaluation
@@ -44,6 +47,7 @@ class ClAlgorithm : public Algorithm {
 
     /// the queue that will recieve the commands used in the algorithm
     cl::CommandQueue* m_queue = 0;
+
 };
 
 #endif // CLALGORITHM_HPP

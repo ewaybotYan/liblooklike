@@ -14,6 +14,8 @@ add_library (looklike
              ../include/simplematrix.hpp
              ../include/clmatrix.hpp
              ../src/clmatrix.cpp
+             ../include/clmatrixoperations.hpp
+             ../src/clmatrixoperations.cpp
              ../include/matrixnorm.hpp
              ../src/matrixnorm.cpp
              ../include/sort.hpp

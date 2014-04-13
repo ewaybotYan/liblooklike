@@ -90,6 +90,7 @@ void CLMatrixLoader::enqueue()
 {
   m_src->waitEndOfEvaluation();
 
+  //enqueue transfer execution
   cl_int error;
   error = getCommandQueue()->enqueueWriteBuffer (
             *(m_result->getValues()),
@@ -100,6 +101,7 @@ void CLMatrixLoader::enqueue()
             0,
             &(getEndOfEvaluation())
             );
+
   if ( error != CL_SUCCESS )
     throw ( CLError ( error, "failed to enqueue memory transfer" ) );
 }
@@ -134,9 +136,11 @@ std::shared_ptr< SimpleMatrix<cl_float> > CLMatrixUnloader::getResult()
 
 void CLMatrixUnloader::enqueue()
 {
-  std::vector<cl::Event> dependencies;
+  // prepare dependencies
   ClAlgorithm* dependency = (ClAlgorithm*)(m_src->getParentAlgorithm());
-  dependencies.push_back(dependency->getEndOfEvaluation());
+  m_dependenciesEvents.push_back(dependency->getEndOfEvaluation());
+
+  //enqueue transfer execution
   cl_int error;
   error = getCommandQueue()->enqueueReadBuffer(
             *(m_src->getValues().get()),
@@ -144,8 +148,9 @@ void CLMatrixUnloader::enqueue()
             0,
             sizeof ( cl_float ) * m_src->getWidth() * m_src->getHeight(),
             m_result->getValues(),
-            &dependencies,
-            &getEndOfEvaluation());
+            &m_dependenciesEvents,
+            &(getEndOfEvaluation())
+            );
   if ( error != CL_SUCCESS )
     throw ( CLError ( error, "failed to enqueue memory transfer" ) );
 }

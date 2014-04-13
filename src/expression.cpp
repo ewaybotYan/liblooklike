@@ -53,18 +53,3 @@ void Expression::releaseMem()
     releaseMemImpl();
   m_state = INITIAL;
 }
-
-/*
-bool Expression::evaluateTree(int depth)
-{
-  if( m_computedBy && m_state < ENQUEUED ){
-    bool evaluationSucess;
-    evaluationSucess = m_computedBy->evaluateTree( depth );
-    if( evaluationSucess )
-      m_state = ENQUEUED;
-    return evaluationSucess;
-  }else{
-    return true;
-  }
-}
-*/
