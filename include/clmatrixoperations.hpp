@@ -9,9 +9,9 @@
 
 #include<CL/cl.hpp>
 #include<memory>
-#include "expression.hpp"
-#include "clalgorithm.hpp"
-#include "clmatrix.hpp"
+#include"expression.hpp"
+#include"clalgorithm.hpp"
+#include"clmatrix.hpp"
 
 
 class CLMatrixProduct : public ClAlgorithm
@@ -41,5 +41,30 @@ class CLMatrixProduct : public ClAlgorithm
     std::shared_ptr<CLMatrix> m_result;
 };
 
+
+class CLMatrixCovariance : public ClAlgorithm
+{
+  public:
+
+    CLMatrixCovariance(std::shared_ptr<CLMatrix> m,
+                    Context *context,
+                    cl::CommandQueue *queue );
+
+    void waitEndOfEvaluation() override;
+
+    std::shared_ptr<CLMatrix> getResult();
+
+  protected:
+
+    bool allocateTmpMem() {return true;}
+    void releaseTmpMem() {}
+
+    void enqueue();
+
+  private:
+
+    std::shared_ptr<CLMatrix> m_src;
+    std::shared_ptr<CLMatrix> m_result;
+};
 
 #endif // CLMATRIXOPERATIONS_HPP

@@ -95,7 +95,7 @@ add_executable(
   test_matrix
   test_matrix.cpp
   ${PROJECT_SOURCE_DIR}/src/matrix.cpp
-  ${PROJECT_SOURCE_DIR}/src/matrixnorm.cpp
+  ${PROJECT_SOURCE_DIR}/src/clmatrixnorm.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
@@ -141,7 +141,25 @@ add_executable(
 
 target_link_libraries(test_clmatrixoperations ${LIBS})
 
+# test_clmatrixnorm
 
+include_directories(
+  ${OPENCL_INCLUDE_DIRS}
+  )
+
+add_executable(
+  test_clmatrixnorm
+  test_clmatrixnorm.cpp
+  ${PROJECT_SOURCE_DIR}/src/clmatrix.cpp
+  ${PROJECT_SOURCE_DIR}/src/clmatrixnorm.cpp
+  ${PROJECT_SOURCE_DIR}/src/context.cpp
+  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/expression.cpp
+  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+target_link_libraries(test_clmatrixnorm ${LIBS})
 
 # test_file
 
@@ -214,6 +232,9 @@ add_test( test_clmatrix ${EXECUTABLE_OUTPUT_PATH}/test_clmatrix )
 
 # test_clmatrixoperations
 add_test( test_clmatrixoperations ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixoperations )
+
+# test_clmatrixnorm
+add_test( test_clmatrixnorm ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixnorm )
 
 # test_file
 add_test( test_file ${EXECUTABLE_OUTPUT_PATH}/test_file "${PROJECT_SOURCE_DIR}/data/photos" "${CMAKE_CURRENT_SOURCE_DIR}/sample_file.txt" )

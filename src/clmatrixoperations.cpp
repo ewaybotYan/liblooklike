@@ -4,8 +4,10 @@
  * @date   13/04/2014
  */
 
+
 #include "../include/exception.h"
 #include "../include/clmatrixoperations.hpp"
+
 
 CLMatrixProduct::CLMatrixProduct(std::shared_ptr<CLMatrix> lop,
                                  std::shared_ptr<CLMatrix> rop,
@@ -58,14 +60,74 @@ void CLMatrixProduct::enqueue()
   //enqueue kernel execution
   cl_int error;
   error = getCommandQueue()->enqueueNDRangeKernel (
-              kernel,
-              cl::NullRange,
-              cl::NDRange ( m_result->getWidth(), m_result->getHeight() ),
-              cl::NDRange ( 1, 1 ),
-              &m_dependenciesEvents,
-              &(getEndOfEvaluation())
-              );
+            kernel,
+            cl::NullRange,
+            cl::NDRange ( m_result->getWidth(), m_result->getHeight() ),
+            cl::NDRange ( 1, 1 ),
+            &m_dependenciesEvents,
+            &(getEndOfEvaluation())
+            );
 
   if ( error != CL_SUCCESS )
-      throw ( CLError ( error, "failed to enqueue kernel execution" ) );
+    throw ( CLError ( error, "failed to enqueue kernel execution" ) );
+}
+
+
+// ####################
+// # CLMatrixCovariance
+
+CLMatrixCovariance::CLMatrixCovariance(std::shared_ptr<CLMatrix> m,
+                                       Context *context, cl::CommandQueue *queue)
+  : ClAlgorithm ( context, queue )
+{
+  m_src = lop;
+  addDependency(lop.get());
+  m_result = std::make_shared<CLMatrix>( lop->getHeight(), rop->getWidth() );
+  addResult(m_result.get());
+}
+
+void CLMatrixCovariance::waitEndOfEvaluation()
+{
+  if ( !isEnqueued() ) {
+    throw EvaluationProcessViolation(
+          "Cannot wait for evaluation as it is not enqued.");
+  } else {
+    getEndOfEvaluation().wait();
+  }
+}
+
+std::shared_ptr< CLMatrix > CLMatrixCovariance::getResult()
+{
+  return m_result;
+}
+
+void CLMatrixCovariance::enqueue()
+{
+  // get kernel
+  cl::Kernel kernel = getContext()->getKernel("matrix_mult",
+                                              "matrix_covariance" );
+
+  // set arguments
+  kernel.setArg ( 0, *(m_result->getValues().get()) );
+  kernel.setArg ( 1, *(m_src->getValues().get()) );
+  kernel.setArg<int> ( 2, m_result->getWidth() );
+  kernel.setArg<int> ( 3, m_result->getHeight() );
+
+  // prepare dependencies
+  m_dependenciesEvents.push_back(
+        ((ClAlgorithm*)m_src->getParentAlgorithm())->getEndOfEvaluation() );
+
+  //enqueue kernel execution
+  cl_int error;
+  error = getCommandQueue()->enqueueNDRangeKernel (
+            kernel,
+            cl::NullRange,
+            cl::NDRange ( m_result->getWidth(), m_result->getHeight() ),
+            cl::NDRange ( 1, 1 ),
+            &m_dependenciesEvents,
+            &(getEndOfEvaluation())
+            );
+
+  if ( error != CL_SUCCESS )
+    throw ( CLError ( error, "failed to enqueue kernel execution" ) );
 }
