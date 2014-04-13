@@ -25,6 +25,11 @@ void Expression::waitEndOfEvaluation()
   }
 }
 
+Algorithm* Expression::getParentAlgorithm() const
+{
+  return m_computedBy;
+}
+
 void Expression::evaluate()
 {
     if( needsComputation() )

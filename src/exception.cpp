@@ -12,6 +12,8 @@ using namespace std;
 // #######################
 // # local helper function
 
+string clErrorCodeName( const int errorCode );
+
 string clErrorCodeName( const int errorCode ){
   string errorCodeName;
   switch( errorCode ){

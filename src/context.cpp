@@ -13,7 +13,12 @@
 // #################
 // # local functions
 
-void printPlatforms( std::vector<cl::Platform> platformList ){
+void printPlatforms( std::vector<cl::Platform> platformList );
+
+void printDevices( std::vector<cl::Device> devices );
+
+void printPlatforms( std::vector<cl::Platform> platformList )
+{
     std::cout << platformList.size() << " platform(s) found:\n";
     for(  auto plf : platformList ){
         std::string platformVendor;

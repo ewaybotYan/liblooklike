@@ -28,6 +28,7 @@ class Expression
 
     /// says if object has to be computed or not before one can read its value.
     bool needsComputation();
+    Algorithm* getParentAlgorithm() const;
 
     /// blocks execution until object computation is finished.
     /// will retrieve data to local memory if it is not computed locally.
@@ -56,11 +57,11 @@ class Expression
 
     Expression(){}
 
+    Algorithm* m_computedBy = nullptr;
+
   private:
 
     bool recEvaluate( int depth );
-
-    Algorithm* m_computedBy = nullptr;
 
     ExpressionState m_state = INITIAL;
 };

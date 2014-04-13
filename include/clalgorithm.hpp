@@ -1,3 +1,9 @@
+/**
+ * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
+ * @file   clexpression.cpp
+ * @date   12/04/2014
+ */
+
 #ifndef CLALGORITHM_HPP
 #define CLALGORITHM_HPP
 
@@ -9,52 +15,35 @@
 
 class ClAlgorithm : public Algorithm {
 
-    public:
+  public:
 
-        ClAlgorithm(){}
+    /// Gives the OpenCL event associated to the end of the computation.
+    /// @note You should check that computation is enqueued with
+    ///       @ref getState() before waiting for this event.
+    cl::Event& getEndOfEvaluation();
 
-        /// @param context the context to be used by OpenCL functions of this
-        ///                object
-        /// @param queue   a queue that will be used to put the OpenCL commands
-        ClAlgorithm( Context* context, cl::CommandQueue* queue );
+    Context* getContext() const;
 
-        /// The default behaviour is to wait for the end event defined in
-        /// @ref m_endOfEvaluationEvent and then retrieve the data from the
-        /// OpenCL environment with @ref retrieveData() .
-        virtual void waitEndOfEvaluation() override;
+    cl::CommandQueue* getCommandQueue() const;
 
-        /// @brief   Bring back the result of the OpenCL computation in computer
-        ///          memory.
-        /// @warning Calling retrieveData before computation has an undefined
-        ///          behaviour.
-        virtual void retrieveData() = 0;
+  protected:
 
-        /// Gives the OpenCL event associated to the end of the computation.
-        /// @note You should check that computation is enqueued with
-        ///       @ref getState() before waiting for this event.
-        cl::Event& getEndOfEvaluation();
-        void setEndOfEvaluation( cl::Event event );
-        void addExecutionDependence( cl::Event event );
-        void clearExecutionDependencies();
-        std::vector<cl::Event>* getExecutionDependencies();
+    ClAlgorithm( Context* context, cl::CommandQueue* queue );
 
-        /// The context on which this algorithm will be run
-        Context* m_context = 0;
+  private:
 
-        /// the queue that will recieve the commands used in the algorithm
-        cl::CommandQueue* m_queue = 0;
+    /// The end event associated to m_endOfEvaluation
+    /// Every command started in OpenCL has an associated end event
+    /// @note    This variable is most likely to be set by @ref enqueue
+    /// @warning do not foget to set this value when you define
+    ///          @ref enqueue()
+    cl::Event m_endOfEvaluationEvent;
 
-    private:
+    /// The context on which this algorithm will be run
+    Context* m_context = 0;
 
-        std::vector<cl::Event> m_dependencies;
-
-        /// The end event associated to m_endOfEvaluation
-        /// Every command started in OpenCL has an associated end event
-        /// @note    This variable is most likely to be set by @ref enqueue
-        /// @warning do not foget to set this value when you define
-        ///          @ref enqueue()
-        cl::Event m_endOfEvaluationEvent;
-
+    /// the queue that will recieve the commands used in the algorithm
+    cl::CommandQueue* m_queue = 0;
 };
 
 #endif // CLALGORITHM_HPP
