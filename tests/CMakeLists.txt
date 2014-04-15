@@ -10,10 +10,7 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
   )
 
-set(LIBS ${OPENCL_LIBRARIES} ${Armadillo_LIBRARIES} pthread)
-message(STATUS ${OPENCL_LIBRARIES})
-message(STATUS ${OPENCL_INCLUDE})
-
+set(LIBS ${OPENCL_LIBRARIES} ${ARMADILLO_LIBRARIES} pthread)
 
 #############
 # executables
@@ -94,7 +91,7 @@ include_directories(
 add_executable(
   test_matrix
   test_matrix.cpp
-  ${PROJECT_SOURCE_DIR}/src/matrix.cpp
+  ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
   ${PROJECT_SOURCE_DIR}/src/clmatrixnorm.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
@@ -161,17 +158,34 @@ add_executable(
 
 target_link_libraries(test_clmatrixnorm ${LIBS})
 
+# test_eigenpair
+
+include_directories(
+  ${OPENCL_INCLUDE_DIRS}
+  )
+
+add_executable(
+  test_eigenpair
+  test_eigenpair.cpp
+  ${PROJECT_SOURCE_DIR}/src/eigenpair.cpp
+  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/expression.cpp
+  ${PROJECT_SOURCE_DIR}/src/exception.cpp
+  )
+
+target_link_libraries(test_eigenpair ${LIBS})
+
 # test_file
 
 add_executable(
   test_file
   test_file.cpp
-  ${PROJECT_SOURCE_DIR}/src/matrix.cpp
+  ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
   ${PROJECT_SOURCE_DIR}/src/file.cpp
   ${PROJECT_SOURCE_DIR}/src/jpegfile.cpp
   ${PROJECT_SOURCE_DIR}/src/image.cpp
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
+  ${PROJECT_SOURCE_DIR}/src/expression.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/exception.cpp
   ${PROJECT_SOURCE_DIR}/tests/sample_file.txt
@@ -186,7 +200,7 @@ add_executable(
   test_files
   test_files.cpp
   ${PROJECT_SOURCE_DIR}/src/files.cpp
-  ${PROJECT_SOURCE_DIR}/src/matrix.cpp
+  ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
@@ -218,23 +232,17 @@ enable_testing()
 # test_context
 add_test( test_context ${EXECUTABLE_OUTPUT_PATH}/test_context "${CMAKE_CURRENT_SOURCE_DIR}" )
 
-# test_algorithm
-add_test( test_algorithm1 ${EXECUTABLE_OUTPUT_PATH}/test_algorithm1 "${CMAKE_CURRENT_SOURCE_DIR}" )
-
-# test_algorithm2
-add_test( test_algorithm2 ${EXECUTABLE_OUTPUT_PATH}/test_algorithm2 "${CMAKE_CURRENT_SOURCE_DIR}" )
-
-# test_matrix
-add_test( test_matrix ${EXECUTABLE_OUTPUT_PATH}/test_matrix "${PROJECT_SOURCE_DIR}/kernels" )
-
 # test_clmatrix
 add_test( test_clmatrix ${EXECUTABLE_OUTPUT_PATH}/test_clmatrix )
 
+# test_clmatrix
+add_test( test_eigenpair ${EXECUTABLE_OUTPUT_PATH}/test_eigenpair )
+
 # test_clmatrixoperations
-add_test( test_clmatrixoperations ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixoperations )
+add_test( test_clmatrixoperations ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixoperations "${PROJECT_SOURCE_DIR}/kernels" )
 
 # test_clmatrixnorm
-add_test( test_clmatrixnorm ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixnorm )
+add_test( test_clmatrixnorm ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixnorm "${PROJECT_SOURCE_DIR}/kernels" )
 
 # test_file
 add_test( test_file ${EXECUTABLE_OUTPUT_PATH}/test_file "${PROJECT_SOURCE_DIR}/data/photos" "${CMAKE_CURRENT_SOURCE_DIR}/sample_file.txt" )

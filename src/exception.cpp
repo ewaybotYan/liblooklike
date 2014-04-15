@@ -212,3 +212,19 @@ EvaluationProcessViolation::EvaluationProcessViolation
   Error( msg )
 {
 }
+
+
+// ############################
+// # EvaluationProcessViolation
+
+InvalidAlgorithmParameter::InvalidAlgorithmParameter
+(const string& msg) throw():
+  Error( msg )
+{
+}
+
+InvalidAlgorithmParameter::InvalidAlgorithmParameter
+(const char *msg) throw():
+  Error( msg )
+{
+}

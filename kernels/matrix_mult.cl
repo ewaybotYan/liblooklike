@@ -10,15 +10,15 @@ __kernel void
 matrix_matrix_multiplication ( __global float* C,
                                __global float* A,
                                __global float* B,
-                               int w, int depth )
+                               int h, int depth )
 {
     float tmp = 0;
     const int j = get_global_id(0);
     const int i = get_global_id(1);
     for( int k=0; k < depth; k++ ){
-        tmp += A[i*depth+k] * B[k*w+j];
+        tmp += A[i+k*h] * B[k+h*j];
     }
-    C[i*w+j]=tmp;
+    C[i+h*j] = tmp;
 }
 
 
@@ -31,13 +31,13 @@ matrix_covariance ( __global float* C,
     float tmp = 0;
     const int i = get_global_id(0);
     const int j = get_global_id(1);
-    for( int k=0; k < h; k++ ){
-        tmp += T[i*w+k] * T[j*w+k];
+    for( int k=0; k < w; k++ ){
+        tmp += T[i*h+k] * T[j*h+k];
     }
-    C[i*h+j] = tmp;
+    C[i+h*j] = tmp;
 }
 
-
+/*
 __kernel void
 matrix_vector_multiplication ( __global float* C,
                                __global float* A,
@@ -51,3 +51,4 @@ matrix_vector_multiplication ( __global float* C,
     }
     C[i] = tmp;
 }
+*/

@@ -61,4 +61,11 @@ class EvaluationProcessViolation : public Error
     EvaluationProcessViolation(const char* msg) throw();
 };
 
+class InvalidAlgorithmParameter : public Error
+{
+  public:
+    InvalidAlgorithmParameter(const std::string& msg) throw();
+    InvalidAlgorithmParameter(const char* msg) throw();
+};
+
 #endif //EXCEPTION_H

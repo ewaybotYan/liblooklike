@@ -7,7 +7,9 @@
 */
 
 #include "file.h"
-#include "matrix.h"
+#include "simplematrix.hpp"
+#include<CL/cl.hpp>
+#include<vector>
 #include<memory>
 
 
@@ -18,7 +20,7 @@ struct ArrayOfImages{
         unsigned int avgWidth;
         unsigned int avgHeight;
         unsigned long nbImages;
-        std::shared_ptr<float*> pixels;
+        std::shared_ptr< std::vector<cl_float> > pixels;
 };
 
 /// @brief Generates an array of monochomatic images from JPEG files in a
@@ -36,7 +38,10 @@ ArrayOfImages arrayOfImagesFromFiles(const std::string path);
 /// @detailed This function takes the float values of the matrix, scale and
 ///           round them to fit in range 0 to 255.
 /// @param src the matrix whoose elements are the pixels
-void MatrixToImage( const Matrix src, const std::string savePath );
+void MatrixToImage(SimpleMatrix<cl_float>& src,
+                   unsigned int h, unsigned int w,
+                   unsigned int column, bool onCols,
+                   const std::string savePath );
 
 
 // #######################
@@ -64,14 +69,16 @@ class ImageInFile{
         unsigned int getHeight() const;
 
         /// @brief Read the header of a source file.
-        /// After a call to this function, getWidth and getHeight must return
-        /// appropriate values after.
+        ///        After a call to this function, getWidth and getHeight must
+        ///        return appropriate values after.
         /// @warning see implementations of this class for exception catching
         virtual void setSourceFile(std::string filePath) = 0;
 
         /// load the monochromatic image in memory
         /// @param width desired target image width,
         ///        the image will be scaled or cropped if necessary
+        /// @param step distance to jump between two consecutive pixels
+        ///        (usually 1)
         /// @param height desired target image height,
         ///        the image will be scaled or cropped if necessary
         /// @param mem a pointer to an allocated array

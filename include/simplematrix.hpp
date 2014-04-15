@@ -27,6 +27,11 @@ class SimpleMatrix : public Expression
     SimpleMatrix ( const unsigned int m,
                    const unsigned int n );
 
+    SimpleMatrix(
+        std::shared_ptr< std::vector<Scalar> > values,
+        const unsigned int m,
+        const unsigned int n );
+
     /// creates a SimpleMatrix object without value but with dependencies
     /// @param dependencies of the SimpleMatrix
     /// @param m     number of lines in the SimpleMatrix
@@ -46,6 +51,8 @@ class SimpleMatrix : public Expression
 
     /// @return the value of the SimpleMatrix at line i and column j
     Scalar& at( const int i, const int j );
+
+    void resizeWidth( const int h );
 
 #ifndef NDEBUG
     /// @brief Prints SimpleMatrix on standard output
@@ -79,11 +86,23 @@ SimpleMatrix<Scalar>::SimpleMatrix( const unsigned int m, const unsigned int n )
 }
 
 template<typename Scalar>
+SimpleMatrix<Scalar>::SimpleMatrix(
+    std::shared_ptr< std::vector<Scalar> > values,
+    const unsigned int m,
+    const unsigned int n )
+{
+  m_values = values;
+  m_m = m;
+  m_n = n;
+}
+
+template<typename Scalar>
 SimpleMatrix<Scalar>::SimpleMatrix( const std::vector<Scalar>& values,
                                     const unsigned int m,
                                     const unsigned int n )
 {
-  m_values = std::shared_ptr< std::vector<Scalar> >(new std::vector<Scalar>(values));
+  m_values =
+      std::shared_ptr< std::vector<Scalar> >(new std::vector<Scalar>(values));
   m_m = m;
   m_n = n;
 }
@@ -109,7 +128,14 @@ Scalar* SimpleMatrix<Scalar>::getValues() const
 template<typename Scalar>
 Scalar& SimpleMatrix<Scalar>::at( const int i, const int j )
 {
-  return m_values.get()[i*m_n+j];
+  return m_values.get()->at(i+m_m*j);
+}
+
+template<typename Scalar>
+void SimpleMatrix<Scalar>::resizeWidth( const int w )
+{
+  m_n = w;
+  m_values->resize(w*m_m);
 }
 
 #ifndef NDEBUG
@@ -121,7 +147,7 @@ void SimpleMatrix<Scalar>::print()
   std::cout << std::scientific;
   for( int i=0;i<m_m;i++ ){
     for( int j=0;j<m_n;j++ )
-      std::cout << m_values.get()->at(i*m_n+j) << " ";
+      std::cout << m_values.get()->at(i+j*m_m) << " ";
     std::cout << "\n";
   }
 }

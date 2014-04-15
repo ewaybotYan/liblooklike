@@ -57,8 +57,8 @@ endif(USE_POCL)
 include_directories(${OPENCL_INCLUDE_DIRS})
 link_directories(${OPENCL_LIBRARY_DIRS})
 
-
 find_package(Armadillo REQUIRED)
+find_package(LAPACK REQUIRED)
 
 #############
 # SUBPROJECTS

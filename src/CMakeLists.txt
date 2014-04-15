@@ -1,4 +1,4 @@
-set(LIBS ${OPENCL_LIBRARIES} ${ARMADILLO_LIBRARIES} "jpeg")
+set(LIBS ${OPENCL_LIBRARIES} ${ARMADILLO_LIBRARIES} jpeg pthread)
 
 add_library (looklike
              ../include/exception.h
@@ -12,6 +12,8 @@ add_library (looklike
              ../src/expression.cpp
 
              ../include/simplematrix.hpp
+             ../include/eigenpair.hpp
+             ../src/eigenpair.cpp
              ../include/clmatrix.hpp
              ../src/clmatrix.cpp
              ../include/clmatrixoperations.hpp
@@ -29,8 +31,6 @@ add_library (looklike
 
              ../include/file.h
              ../src/file.cpp
-             ../include/files.hpp
-             ../src/files.cpp
              ../include/image.h
              ../src/image.cpp
              ../include/jpegfile.h

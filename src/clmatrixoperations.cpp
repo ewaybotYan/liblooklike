@@ -47,7 +47,7 @@ void CLMatrixProduct::enqueue()
   kernel.setArg ( 0, *(m_result->getValues().get()) );
   kernel.setArg ( 1, *(m_lop->getValues().get()) );
   kernel.setArg ( 2, *(m_rop->getValues().get()) );
-  kernel.setArg<int> ( 3, m_result->getWidth() );
+  kernel.setArg<int> ( 3, m_result->getHeight() );
   int productDepth = m_lop->getWidth();
   kernel.setArg<int> ( 4, productDepth );
 
@@ -80,9 +80,9 @@ CLMatrixCovariance::CLMatrixCovariance(std::shared_ptr<CLMatrix> m,
                                        Context *context, cl::CommandQueue *queue)
   : ClAlgorithm ( context, queue )
 {
-  m_src = lop;
-  addDependency(lop.get());
-  m_result = std::make_shared<CLMatrix>( lop->getHeight(), rop->getWidth() );
+  m_src = m;
+  addDependency(m.get());
+  m_result = std::make_shared<CLMatrix>( m->getWidth(), m->getWidth() );
   addResult(m_result.get());
 }
 

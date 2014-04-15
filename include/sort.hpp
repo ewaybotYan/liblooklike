@@ -63,6 +63,8 @@ class InertiaSort : public Sort<Scalar>
 
     void enqueue();
 
+    unsigned int getNbSortedValues() const;
+
   private:
 
     static void InertiaSortWithThreshold(InertiaSort<Scalar>* sort);
@@ -131,8 +133,15 @@ void InertiaSort<Scalar>::waitEndOfEvaluation()
     throw EvaluationProcessViolation(
         "Cannot wait for evaluation as it is not enqued.");
   } else {
-    m_t.join();
+    if(m_t.joinable())
+      m_t.join();
   }
+}
+
+template<typename Scalar>
+unsigned int InertiaSort<Scalar>::getNbSortedValues() const
+{
+  return m_nbSortedValues;
 }
 
 template<typename Scalar>
@@ -140,9 +149,9 @@ void InertiaSort<Scalar>::InertiaSortWithThreshold( InertiaSort<Scalar>* s )
 {
   // simplify method to find the values in the source SimpleMatrix<Scalar>
   unsigned int start = s->m_sortOnColumns ?
-                         s->m_sortRefIdx :
-                         s->m_sortRefIdx * s->m_data->getWidth();
-  unsigned int step = s->m_sortOnColumns ? s->m_data->getWidth() : 1;
+                         s->m_sortRefIdx * s->m_data->getHeight() :
+                         s->m_sortRefIdx;
+  unsigned int step = s->m_sortOnColumns ? 1 : s->m_data->getHeight();
 
   // copy values and compute total inertia
   Scalar* values = s->m_data->getValues();
@@ -153,7 +162,7 @@ void InertiaSort<Scalar>::InertiaSortWithThreshold( InertiaSort<Scalar>* s )
                s->m_data->getWidth();
   for (unsigned int i = 0; i < nbValues; ++i) {
     result[i] = values[start+i*step];
-    totInertia += values[start+i*step];
+    totInertia += std::abs(values[start+i*step]);
   }
   if (s->m_appendIdx)
     for( unsigned int i=0; i<nbValues; i++ )
@@ -166,13 +175,13 @@ void InertiaSort<Scalar>::InertiaSortWithThreshold( InertiaSort<Scalar>* s )
     unsigned int idxMax = i;
     Scalar max = result[idxMax];
     for ( unsigned int j = i; j < nbValues; j++ ) {
-      if (result[j] > max) {
+      if (std::abs(result[j]) > max) {
         idxMax = j;
-        max = result[j];
+        max = std::abs(result[j]);
       }
     }
     Scalar tmp = result[idxMax];
-    inertia += tmp;
+    inertia += std::abs(tmp);
     result[idxMax] = result[i];
     result[i] = tmp;
     if (s->m_appendIdx) {

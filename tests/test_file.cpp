@@ -44,10 +44,8 @@ int main ( const int argc, const char* argv[] ) {
         JPEGImageInFile fin(filePath);
         JPEGImageOutFile fout;
         float* ImageData = new float[fin.getHeight()*fin.getWidth()];
-        fin.load(ImageData,fin.getWidth(),fin.getHeight());
-        fout.write(ImageData,
-                             fin.getWidth(),fin.getHeight(),
-                             "test.jpg");
+        fin.load(ImageData, fin.getWidth(),fin.getHeight());
+        fout.write(ImageData, fin.getWidth(),fin.getHeight(), "test.jpg");
         delete[] ImageData;
         std::cout << "testing array of files load\n";
         ArrayOfImages m = arrayOfImagesFromFiles( std::string(argv[argc-2]) );

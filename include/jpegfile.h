@@ -26,7 +26,8 @@ class JPEGImageInFile : public ImageInFile {
         ~JPEGImageInFile(){}
 
         void setSourceFile(std::string filePath) override;
-        void load ( float *mem, unsigned int width, unsigned int height ) override;
+        void load ( float *mem,
+                    unsigned int width, unsigned int height ) override;
 
     private:
 

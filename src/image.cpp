@@ -9,105 +9,124 @@
 #include <memory>
 
 #include "../include/jpegfile.h"
-#include "../include/matrix.h"
+#include "../include/simplematrix.hpp"
 #include "../include/exception.h"
 #include "../include/image.h"
+
+using namespace std;
+
 
 // #######################
 // # Functions declaration
 
 ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
-    DIR *dir;
-    struct dirent *ent;
-    std::deque<JPEGImageInFile> imagefiles;
+  DIR *dir;
+  struct dirent *ent;
+  std::deque<JPEGImageInFile> imagefiles;
 
-    // first, get all jpeg files fro path
-    if ( ( dir = opendir ( path.c_str() ) ) == NULL )
-        throw Error ( "could not open specified directory" );
+  // first, get all jpeg files fro path
+  if ( ( dir = opendir ( path.c_str() ) ) == NULL )
+    throw Error ( "could not open specified directory" );
 
-    while ( ( ent = readdir ( dir ) ) != NULL ) {
-        std::string fileName ( ent->d_name );
-        if ( ent->d_type != DT_REG )
-            continue;
-        try {
-            imagefiles.push_back ( path+"/"+fileName );
-        } catch ( Error const& e ) {
-            // that was not a valid JPEG file, just skip it
-        }
+  while ( ( ent = readdir ( dir ) ) != NULL ) {
+    std::string fileName ( ent->d_name );
+    if ( ent->d_type != DT_REG )
+      continue;
+    try {
+      imagefiles.push_back ( path+"/"+fileName );
+    } catch ( Error const& e ) {
+      // that was not a valid JPEG file, just skip it
     }
-    closedir ( dir );
+  }
+  closedir ( dir );
 
-    // then get the average size
-    unsigned int avgWidth = 0;
-    unsigned int avgHeight = 0;
-    for ( JPEGImageInFile f : imagefiles ) {
-        avgWidth += f.getWidth();
-        avgHeight += f.getHeight();
-    }
-    avgWidth /= imagefiles.size();
-    avgHeight /= imagefiles.size();
+  // then get the average size
+  unsigned int avgWidth = 0;
+  unsigned int avgHeight = 0;
+  for ( JPEGImageInFile f : imagefiles ) {
+    avgWidth += f.getWidth();
+    avgHeight += f.getHeight();
+  }
+  avgWidth /= imagefiles.size();
+  avgHeight /= imagefiles.size();
 #ifndef NDEBUG
-    std::cout << "chosen image size is : " << avgWidth << "x" << avgHeight << "\n";
+  std::cout << "chosen image size is : " << avgWidth << "x" << avgHeight << "\n";
 #endif
 
-    // create result object
-    float* values = new float[avgWidth*avgHeight*imagefiles.size()];
+  // create result object
+  shared_ptr< vector<cl_float> > values =
+      make_shared< vector<cl_float> >( avgWidth*avgHeight*imagefiles.size() );
 
-    //then load the pixels from these files
-    float* offset = values;
-    for ( JPEGImageInFile f : imagefiles ) {
+  //then load the pixels from these files
+  int offset = 0;
+  cl_float* data = values->data();
+  for ( JPEGImageInFile f : imagefiles ) {
 #ifndef NDEBUG
     std::cout << "loading pixels\n" ;
 #endif
-        f.load( offset, avgWidth, avgHeight );
-        offset += avgWidth * avgHeight;
-    }
+    f.load( data + offset, avgWidth, avgHeight );
+    offset+= avgHeight * avgWidth;
+  }
 
-    ArrayOfImages res = {
-        avgWidth,
-        avgHeight,
-        imagefiles.size(),
-        std::make_shared<float*>(values)
-    };
-    return res;
+  ArrayOfImages res = {
+    avgWidth,
+    avgHeight,
+    imagefiles.size(),
+    values
+  };
+  return res;
 }
 
 
-void MatrixToImage( const Matrix src, const std::string savePath ) {
+void MatrixToImage( SimpleMatrix<cl_float>& src,
+                    unsigned int h,
+                    unsigned int w,
+                    unsigned int column,
+                    bool onCols,
+                    const std::string savePath ) {
 
-    // scale data
-    float* it = src.getResult();
-    float minVal = *it;
-    float maxVal = *it;
-    float avg=0;
-    for( int i= 0; i < src.getWidth()*src.getHeight(); i++){
-        minVal = std::min(minVal, it[i]);
-        maxVal = std::max(maxVal, it[i]);
-        avg += it[i];
+  // scale data
+  float minVal = src.at(0,column);
+  float maxVal = src.at(0,column);
+  float avg=0;
+  for( unsigned int i= 0; i < w*h; i++){
+    if( onCols ){
+      minVal = std::min(minVal, src.at(i,column));
+      maxVal = std::max(maxVal, src.at(i,column));
+      avg += src.at(i,column);
+    }else{
+      minVal = std::min(minVal, src.at(column,i));
+      maxVal = std::max(maxVal, src.at(column,i));
+      avg += src.at(i,column);
     }
-    avg/=src.getWidth()*src.getHeight();
+  }
+  avg/=w*h;
 #ifndef NDEBUG
-    std::cout << "vector rng : " << minVal << " " << avg << " " << maxVal << "\n";
+  std::cout << "vector rng : " << minVal << " " << avg << " " << maxVal << "\n";
 #endif
-    it = src.getResult();
-    for( int i= 0; i < src.getWidth()*src.getHeight(); i++){
-        it[i] = (it[i] - minVal)*255/(maxVal-minVal);
-    }
+  vector<cl_float> scaled(w*h);
+  if( onCols ){
+  for( unsigned int i= 0; i < w*h; i++)
+    scaled[i] = (src.at(i,column) - minVal)*255/(maxVal-minVal);
+  }else{
+    for( unsigned int i= 0; i < w*h; i++)
+      scaled[i] = (src.at(column,i) - minVal)*255/(maxVal-minVal);
+  }
 
-    // save it
-    JPEGImageOutFile fout;
-    fout.write( src.getResult(),
-                src.getWidth(),
-                src.getHeight(),
-                savePath);
+  // save it
+  JPEGImageOutFile fout;
+  fout.write( scaled.data(),
+              w,
+              h,
+              savePath);
 }
 
 
 unsigned int ImageInFile::getWidth() const {
-    return m_width;
+  return m_width;
 }
 
 
 unsigned int ImageInFile::getHeight() const {
-    return m_height;
+  return m_height;
 }

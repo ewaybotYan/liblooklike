@@ -2,106 +2,117 @@
 #include <string>
 #include <armadillo>
 #include <image.h>
-#include <matrix.h>
-#include <matrixnorm.hpp>
+#include <simplematrix.hpp>
+#include <clmatrixoperations.hpp>
+#include <clmatrixnorm.hpp>
+#include <eigenpair.hpp>
+#include <sort.hpp>
+
+using namespace std;
+
+typedef SimpleMatrix<cl_float> Matrix;
 
 
+/// @todo support the options
 void usage(){
-    std::cout << "Usage:\n";
-    std::cout << "img2eigvec [-o output_file] [-i database_id] path_to_kernels path_to_pictures\n";
+  cout << "Usage:\n";
+  cout << "img2eigvec path_to_kernels path_to_pictures\n";
 }
 
 
 int main(int argc, char* argv[]){
-    if(argc < 2){
-        usage();
-        return -1;
-    }
-    std::string imagePath(argv[argc-1]);
-    std::string kernelPath(argv[argc-2]);
+  if(argc < 2){
+    usage();
+    return -1;
+  }
+  string imagePath(argv[argc-1]);
+  string kernelPath(argv[argc-2]);
 
-    //bool verboseLog = true;
+  try {
+    // create OpenCL objects
+    Context ctx ( kernelPath );
+    cl::CommandQueue queue = ctx.createQueue();
 
-    try {
-
-        Context ctx ( kernelPath );
-        cl::CommandQueue queue = ctx.createQueue();
-        ArrayOfImages array = arrayOfImagesFromFiles(imagePath);
-
-        MatrixLoader images( *(array.pixels.get()),
-                       array.nbImages,
-                       array.avgHeight * array.avgWidth,
-                       &ctx,
-                       &queue );
+    // load images
+    ArrayOfImages array = arrayOfImagesFromFiles(imagePath);
+    shared_ptr<Matrix> images = make_shared<Matrix>( array.pixels,
+                                                     array.avgHeight * array.avgWidth,
+                                                     array.nbImages );
+    CLMatrixLoader imagesInCL( images, &ctx, &queue );
 #ifndef NDEBUG
-        std::cout << "generated array of images of size"
-                  << images.getWidth()
-                  << "x"
-                  << images.getHeight()
-                  << " .\n";
+    cout << "imagesInCL " << imagesInCL.getResult()->getHeight()
+         << "x" << imagesInCL.getResult()->getWidth() << endl;
 #endif
-        MatrixNorm normalized( images, &ctx, &queue );
+    // normalize images values
+    CLMatrixNorm normalized1( imagesInCL.getResult(),
+                              &ctx, &queue,
+                              false );// on each image
+    CLMatrixNorm normalized2( normalized1.getNormalizedMatrix(),
+                              &ctx, &queue,
+                              true );// normalize pixels values across images
 #ifndef NDEBUG
-        std::cout << "normalized matrix of size"
-                  << normalized.getWidth()
-                  << "x"
-                  << normalized.getHeight()
-                  << " .\n";
+    cout << "normalized2 " << normalized2.getNormalizedMatrix()->getHeight()
+         << "x" << normalized2.getNormalizedMatrix()->getWidth() << endl;
+    CLMatrixUnloader bug1( normalized2.getNormalizedMatrix(), &ctx, &queue );
+    bug1.getResult()->evaluate();
+    bug1.getResult()->waitEndOfEvaluation();
+    MatrixToImage(*bug1.getResult(),
+                  array.avgHeight,
+                  array.avgWidth,
+                  1,
+                  true,
+                  "/tmp/previewNormalized.jpg");
 #endif
-
-        MatrixCovariance covMat( *(normalized.getNormalizedMatrix() ),
-                                 &ctx, &queue );
+    CLMatrixCovariance covMat( normalized2.getNormalizedMatrix(),
+                               &ctx, &queue );
 #ifndef NDEBUG
-        std::cout << "generated covariance matrix of size"
-                  << covMat.getWidth()
-                  << "x"
-                  << covMat.getHeight()
-                  << " .\n";
+    cout << "covMat " << covMat.getResult()->getHeight()
+         << "x" << covMat.getResult()->getWidth() << endl;
 #endif
-
-        covMat.evaluate();
-
+    CLMatrixUnloader localCovMat( covMat.getResult(), &ctx, &queue );
+    EigenPair eigenpair(localCovMat.getResult());
 #ifndef NDEBUG
-        std::cout << "done.\n";
+    cout << "eigenpair " << eigenpair.getVectors()->getHeight()
+         << "x" << eigenpair.getVectors()->getWidth() << endl;
 #endif
-        covMat.waitEndOfEvaluation();
-        normalized.waitEndOfEvaluation();
-        images.waitEndOfEvaluation();
-
-        arma::fvec eigval;
-        arma::fmat eigvec;
-        arma::fmat covMat2(covMat.getResult(),
-                           covMat.getWidth(),
-                           covMat.getHeight());
-        arma::eig_sym(eigval, eigvec, covMat2);
-
-        arma::fmat X(normalized.getNormalizedMatrix()->getResult(),
-                        normalized.getWidth(),
-                        normalized.getHeight());
-        arma::fmat vars = X * eigvec;
-        //images.print();
-
-        int previewW = array.avgWidth;
-        int previewH = array.avgHeight;
+    CLMatrixLoader eigenVectors(eigenpair.getVectors(), &ctx, &queue);
+    CLMatrixProduct eigenVectorsOnValues( normalized2.getNormalizedMatrix(),
+                                          eigenVectors.getResult(),
+                                          &ctx, &queue );
+    CLMatrixUnloader localEigenVectorsOnVars( eigenVectorsOnValues.getResult(),
+                                              &ctx, &queue );
 #ifndef NDEBUG
-        std::cout << "found " << eigvec.n_cols << " eigen vectors  of size " << eigvec.n_cols << " .\n";
-        std::cout << "preparing preview of size : " << previewW << "x" << previewH << " .\n";
+    cout << "localEigenVectorsOnVars " << localEigenVectorsOnVars.getResult()->getHeight()
+         << "x" << localEigenVectorsOnVars.getResult()->getWidth() << endl;
 #endif
-        float* previewData = new float[previewW*previewH];
-        for(int i=0; i < previewW * previewH; i++){
-                previewData[i] = vars(i,eigvec.n_cols-1);
-        }
-        std::cout << "done computing\n";
-        MatrixLoader preview( previewData,
-                        array.avgHeight,
-                        array.avgWidth,
-                        &ctx, &queue );
-        MatrixToImage(preview,"/tmp/vectorPreview.jpg");
-        delete[] previewData;
-    } catch ( Error& err ) {
-        err.printMsg();
-        return -1;
+    InertiaSort<cl_float> sort( eigenpair.getValues(), 0.9, true, 0, true );
+    localEigenVectorsOnVars.getResult()->evaluate();
+    localEigenVectorsOnVars.getResult()->waitEndOfEvaluation();
+    sort.getSorted()->evaluate();
+    sort.getSorted()->waitEndOfEvaluation();
+    sort.getSorted()->print();
+    sort.getSortIdx()->print();
+    cout << "\n" << sort.getNbSortedValues() << "\n";
+
+    Matrix* vectors = localEigenVectorsOnVars.getResult().get();
+
+    int nbVectors = sort.getNbSortedValues();
+    for ( int i = 0; i < nbVectors; i++) {
+      std::stringstream ss;
+      ss << "/tmp/vectorPreview" << i << ".jpg";
+      cout << "saving: " << ss.str() << endl;
+      MatrixToImage(*vectors,
+                    array.avgHeight,
+                    array.avgWidth,
+                    sort.getSortIdx()->at(i,0),
+                    true,
+                    ss.str());
     }
 
-    return 0;
+  } catch ( Error& err ) {
+    err.printMsg();
+    return -1;
+  }
+
+  return 0;
 }
