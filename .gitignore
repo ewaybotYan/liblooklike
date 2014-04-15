@@ -5,3 +5,5 @@ draft/
 build/
 *.kdev4
 *.user
+data/photos/*
+doc/external_papers/*
