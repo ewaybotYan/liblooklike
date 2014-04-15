@@ -18,8 +18,10 @@ set(LIBS ${OPENCL_LIBRARIES} ${ARMADILLO_LIBRARIES} pthread)
 # test_context
 
 include_directories(
-  "${PROJECT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIRS}"
+  ${PROJECT_SOURCE_DIR}/include ${OPENCL_INCLUDE_DIRS}
 )
+
+message( STATUS "${PROJECT_SOURCE_DIR}/include/ ${OPENCL_INCLUDE_DIRS}" )
 
 add_executable(
   test_context
@@ -32,82 +34,62 @@ target_link_libraries(test_context ${LIBS})
 
 # test_algorithm
 
-add_executable(
-  test_algorithm1
-  ../examples/example1/test_algorithm.cpp
-  ../examples/example1/real.cpp
-  ../examples/example1/real.h
-  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/exception.cpp
-  )
-
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-)
-
-# test_algorithm2
-
-add_executable(
-  test_algorithm2
-  ../examples/example2/test_algorithm.cpp
-  ../examples/example2/real.cpp
-  ../examples/example2/real.h
-  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/exception.cpp
-  )
-
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-)
-
-target_link_libraries(test_algorithm2 "pthread")
-
-# test_algorithm3
-
-add_executable(
-  test_algorithm3
-  ../examples/example3/test_algorithm.cpp
-  ../examples/example3/real.cpp
-  ../examples/example3/real.h
-  ../examples/example3/real.cl
-  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/context.cpp
-  ${PROJECT_SOURCE_DIR}/src/exception.cpp
-  )
-
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-)
-
-target_link_libraries(test_algorithm3 ${LIBS})
-
-# test_matrix
-
-include_directories(
-  ${OPENCL_INCLUDE_DIRS}
-  )
-
-add_executable(
-  test_matrix
-  test_matrix.cpp
-  ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
-  ${PROJECT_SOURCE_DIR}/src/clmatrixnorm.cpp
-  ${PROJECT_SOURCE_DIR}/src/context.cpp
-  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/exception.cpp
-  )
+# add_executable(
+#   test_algorithm1
+#   ../examples/example1/test_algorithm.cpp
+#   ../examples/example1/real.cpp
+#   ../examples/example1/real.h
+#   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+#   ${PROJECT_SOURCE_DIR}/src/exception.cpp
+#   )
+# 
+# include_directories(
+#   "${PROJECT_SOURCE_DIR}/include"
+# )
+# 
+# # test_algorithm2
+# 
+# add_executable(
+#   test_algorithm2
+#   ../examples/example2/test_algorithm.cpp
+#   ../examples/example2/real.cpp
+#   ../examples/example2/real.h
+#   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+#   ${PROJECT_SOURCE_DIR}/src/exception.cpp
+#   )
+# 
+# include_directories(
+#   "${PROJECT_SOURCE_DIR}/include"
+# )
+# 
+# target_link_libraries(test_algorithm2 "pthread")
+# 
+# # test_algorithm3
+# 
+# add_executable(
+#   test_algorithm3
+#   ../examples/example3/test_algorithm.cpp
+#   ../examples/example3/real.cpp
+#   ../examples/example3/real.h
+#   ../examples/example3/real.cl
+#   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+#   ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
+#   ${PROJECT_SOURCE_DIR}/src/context.cpp
+#   ${PROJECT_SOURCE_DIR}/src/exception.cpp
+#   )
+# 
+# include_directories(
+#   "${PROJECT_SOURCE_DIR}/include"
+# )
+# 
+# target_link_libraries(test_algorithm3 ${LIBS})
 
 # test_clmatrix
-
-include_directories(
-  ${OPENCL_INCLUDE_DIRS}
-  )
 
 add_executable(
   test_clmatrix
   test_clmatrix.cpp
+  ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
   ${PROJECT_SOURCE_DIR}/src/clmatrix.cpp
   ${PROJECT_SOURCE_DIR}/src/context.cpp
   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
@@ -119,10 +101,6 @@ add_executable(
 target_link_libraries(test_clmatrix ${LIBS})
 
 # test_clmatrixoperations
-
-include_directories(
-  ${OPENCL_INCLUDE_DIRS}
-  )
 
 add_executable(
   test_clmatrixoperations
@@ -140,10 +118,6 @@ target_link_libraries(test_clmatrixoperations ${LIBS})
 
 # test_clmatrixnorm
 
-include_directories(
-  ${OPENCL_INCLUDE_DIRS}
-  )
-
 add_executable(
   test_clmatrixnorm
   test_clmatrixnorm.cpp
@@ -159,10 +133,6 @@ add_executable(
 target_link_libraries(test_clmatrixnorm ${LIBS})
 
 # test_eigenpair
-
-include_directories(
-  ${OPENCL_INCLUDE_DIRS}
-  )
 
 add_executable(
   test_eigenpair
@@ -196,20 +166,20 @@ target_link_libraries(test_file ${LIBS})
 
 # test_files
 
-add_executable(
-  test_files
-  test_files.cpp
-  ${PROJECT_SOURCE_DIR}/src/files.cpp
-  ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
-  ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
-  ${PROJECT_SOURCE_DIR}/src/context.cpp
-  ${PROJECT_SOURCE_DIR}/src/exception.cpp
-  )
+# add_executable(
+#   test_files
+#   test_files.cpp
+#   ${PROJECT_SOURCE_DIR}/src/files.cpp
+#   ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
+#   ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
+#   ${PROJECT_SOURCE_DIR}/src/clalgorithm.cpp
+#   ${PROJECT_SOURCE_DIR}/src/context.cpp
+#   ${PROJECT_SOURCE_DIR}/src/exception.cpp
+#   )
+# 
+# target_link_libraries(test_files ${LIBS})
 
-target_link_libraries(test_files ${LIBS})
-
-# test_files
+# test_sort
 
 add_executable(
   test_sort
@@ -248,7 +218,7 @@ add_test( test_clmatrixnorm ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixnorm "${PROJE
 add_test( test_file ${EXECUTABLE_OUTPUT_PATH}/test_file "${PROJECT_SOURCE_DIR}/data/photos" "${CMAKE_CURRENT_SOURCE_DIR}/sample_file.txt" )
 
 # test_files
-add_test( test_files ${EXECUTABLE_OUTPUT_PATH}/test_files )
+# add_test( test_files ${EXECUTABLE_OUTPUT_PATH}/test_files )
 
 # test_sort
 add_test( test_sort ${EXECUTABLE_OUTPUT_PATH}/test_sort )

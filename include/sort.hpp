@@ -10,6 +10,7 @@
 #include "algorithm.h"
 #include "simplematrix.hpp"
 #include "exception.h"
+#include <cmath>
 #include <memory>
 #include <vector>
 #include <thread> // separate computing thread from main execution

@@ -8,8 +8,8 @@
 #include<vector>
 #include<memory>
 #include<CL/cl.hpp>
-#include<context.h>
 #include<simplematrix.hpp>
+#include<context.h>
 #include<clmatrix.hpp>
 
 using namespace std;
