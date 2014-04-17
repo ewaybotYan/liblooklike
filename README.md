@@ -89,11 +89,11 @@ BUILDING
 
 In order to build the project, you need to create a build directory:
 
- mkdir build && cd build
+    mkdir build && cd build
 
 generate makefiles with cmake:
 
-  cmake (path to the project root dir)
+    cmake (path to the project root dir)
 
 if you use a build directory at the root of the project and use POCL
 statically (without icd loader support), you may type:
