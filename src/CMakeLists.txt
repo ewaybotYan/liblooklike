@@ -39,10 +39,17 @@ add_library (looklike
 
 include_directories( looklike ${ARMADILLO_INCLUDE_DIRS} ${OPENCL_INCLUDE_DIRS} "${PROJECT_SOURCE_DIR}/include" )
 
-target_link_libraries( looklike ${ARMADILLO_LIBRARIES} )
+target_link_libraries( looklike ${LIBS} )
 
 add_executable(img2eigvec
             img2eigvec.cpp
 )
 
-target_link_libraries( img2eigvec ${LIBS} looklike )
+target_link_libraries( img2eigvec looklike )
+
+
+add_executable(imgProjection
+            imgprojection.cpp
+)
+
+target_link_libraries( imgProjection ${LIBS} looklike )
