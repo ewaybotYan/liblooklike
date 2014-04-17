@@ -8,4 +8,4 @@ build/
 data/
 doc/external_papers/
 .Rhistory
-.Rdata
+.RData
