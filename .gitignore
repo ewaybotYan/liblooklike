@@ -9,3 +9,4 @@ data/
 doc/external_papers/
 .Rhistory
 .RData
+cmake/*.jar
