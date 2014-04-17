@@ -9,10 +9,9 @@ REQUIREMENTS
 The following packages are required in order to build and use the
 project files:
 
-* cmakei and pkg-config (if you choose POCL as OpenCL implementation)
+* cmake and pkg-config (if you choose POCL as OpenCL implementation)
 * an opencl sdk an opencl library an icd loader (might be included in
-* the opencl library)
-
+  the opencl library)
 There are several providers for this triplet, nvidia, amd and
 optionnaly intel.
 * Nvidia opencl library only support Nvidia hardware. It is likely to
@@ -28,10 +27,14 @@ optionnaly intel.
 dependencies installation for debian
 ------------------------------------
 
-For debian with pocl implementation, run this
+The tools used to build the project can be obtained with:
+    
+    sudo apt-get install build-essential libtool autoconf pkg-config \
+        git cmake 
 
-    sudo apt-get install build-essential libtool autoconf pkg-config
-    git cmake sudo apt-get install ocl-icd-dev llvm clang hwloc \
+For debian with pocl implementation, run this:
+
+    apt-get install ocl-icd-dev llvm clang hwloc \
         libhwloc-dev libarmadillo4 libarmadillo-dev mesa-common-dev \
         libjepeg-dev
 
@@ -45,7 +48,7 @@ following command:
 
     llvm-as < /dev/null -o - | llc -mcpu=help
 
-For this example we suppose the cpu is from the intel core-i* family,
+For this example we suppose the cpu is from the intel core-i\* family,
 so we choose the cpu option corei7.
 
     export LLC_HOST_CPU=corei7 
@@ -58,17 +61,17 @@ TEST ENVIRONMENT
 Sample images 
 -------------
 
-This software was mostly developped using the image set from this
+This software was developped using essentialy the image set from this
 webiste: http://fei.edu.br/~cet/facedatabase.html
 
-to run the tests, you can use the centered portraits.  In the project
+To run the tests, you can use the centered portraits.  In the project
 directory, run:
 
     cd data 
     wget http://fei.edu.br/~cet/frontalimages_manuallyaligned_part1.zip 
     unzip frontalimages_manuallyaligned_part1.zip
 
-to keep only the neutral faces:
+To keep only the neutral faces:
 
     rm *b.jpg
 
@@ -99,7 +102,6 @@ if you use a build directory at the root of the project and use POCL
 statically (without icd loader support), you may type:
 
     cmake path/to/liblooklike 
-  
     cmake ../ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug \
         -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wunreachable-code"
 
