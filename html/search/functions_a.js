@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['releasemem',['releaseMem',['../classExpression.html#a7e3b5ae4b10453a4c634ee4705db5336',1,'Expression']]],
+  ['releasememimpl',['releaseMemImpl',['../classCLMatrix.html#a2621aa6a35ee6e1e4cef6d63a81d8369',1,'CLMatrix::releaseMemImpl()'],['../classExpression.html#ad245712a2eced76d85b4411f1c88f271',1,'Expression::releaseMemImpl()'],['../classSimpleMatrix.html#a81203fa6943d0f10e4ecd4c7eac648dc',1,'SimpleMatrix::releaseMemImpl()']]],
+  ['releasetmpmem',['releaseTmpMem',['../classAlgorithm.html#afd4ae35eb666f27902fa265c1afcfda2',1,'Algorithm::releaseTmpMem()'],['../classCLMatrixLoader.html#a269cb8ad2827ed80e0c01fca9a1be0e5',1,'CLMatrixLoader::releaseTmpMem()'],['../classCLMatrixUnloader.html#a677c5cadf996edc9971dfdfc1c4bd47a',1,'CLMatrixUnloader::releaseTmpMem()'],['../classCLMatrixNorm.html#a2d82cd51c0c977e18a37f12387e90aa6',1,'CLMatrixNorm::releaseTmpMem()'],['../classCLMatrixProduct.html#a98ab8d7dac37ce1a49cc19f7e4870044',1,'CLMatrixProduct::releaseTmpMem()'],['../classCLMatrixCovariance.html#a1891a8c03a24548dff55b843c31ea81d',1,'CLMatrixCovariance::releaseTmpMem()'],['../classEigenPair.html#a35ef50103dc3ca1066671e1b772abe69',1,'EigenPair::releaseTmpMem()'],['../classInertiaSort.html#a22e56caf969b565f2b9d5a1fcbd14834',1,'InertiaSort::releaseTmpMem()']]],
+  ['releasetreemem',['releaseTreeMem',['../classAlgorithm.html#a6ea2554fec4a012ddc0addea9f3a8bda',1,'Algorithm']]]
+];

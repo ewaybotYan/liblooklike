@@ -1,0 +1,12 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classAlgorithm.html" title="Abstract class that describes a mathematical object that needs (or not) to be evaluated before having..." alt="" coords="5,171,83,197"/>
+<area shape="rect" id="node2" href="$classClAlgorithm.html" title="ClAlgorithm" alt="" coords="139,113,229,140"/>
+<area shape="rect" id="node8" href="$classEigenPair.html" title="EigenPair" alt="" coords="145,171,223,197"/>
+<area shape="rect" id="node9" href="$classSort.html" title="Sort\&lt; Scalar \&gt;" alt="" coords="131,233,237,260"/>
+<area shape="rect" id="node3" href="$classCLMatrixCovariance.html" title="CLMatrixCovariance" alt="" coords="287,5,428,32"/>
+<area shape="rect" id="node4" href="$classCLMatrixLoader.html" title="CLMatrixLoader" alt="" coords="300,56,415,83"/>
+<area shape="rect" id="node5" href="$classCLMatrixNorm.html" title="CLMatrixNorm" alt="" coords="304,107,411,133"/>
+<area shape="rect" id="node6" href="$classCLMatrixProduct.html" title="CLMatrixProduct" alt="" coords="297,157,417,184"/>
+<area shape="rect" id="node7" href="$classCLMatrixUnloader.html" title="CLMatrixUnloader" alt="" coords="294,208,421,235"/>
+<area shape="rect" id="node10" href="$classInertiaSort.html" title="InertiaSort\&lt; Scalar \&gt;" alt="" coords="286,259,429,285"/>
+</map>

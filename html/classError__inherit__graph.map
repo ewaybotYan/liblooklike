@@ -1,0 +1,6 @@
+<map id="Error" name="Error">
+<area shape="rect" id="node3" href="$classCLError.html" title="exception that prints a human readable message for OpenCL error " alt="" coords="5,155,72,181"/>
+<area shape="rect" id="node4" href="$classEvaluationProcessViolation.html" title="EvaluationProcessViolation" alt="" coords="96,155,277,181"/>
+<area shape="rect" id="node5" href="$classInvalidAlgorithmParameter.html" title="InvalidAlgorithmParameter" alt="" coords="302,155,476,181"/>
+<area shape="rect" id="node2" title="STL class. " alt="" coords="135,5,239,32"/>
+</map>
