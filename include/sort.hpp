@@ -66,11 +66,14 @@ class InertiaSort : public Sort<Scalar>
 
     unsigned int getNbSortedValues() const;
 
+    Scalar getTotalInertia() const;
+
   private:
 
     static void InertiaSortWithThreshold(InertiaSort<Scalar>* sort);
     Scalar m_inertia;
     unsigned int m_nbSortedValues;
+    Scalar m_totalInertia;
     std::thread m_t;
 };
 
@@ -146,6 +149,12 @@ unsigned int InertiaSort<Scalar>::getNbSortedValues() const
 }
 
 template<typename Scalar>
+Scalar InertiaSort<Scalar>::getTotalInertia() const
+{
+  return m_totalInertia;
+}
+
+template<typename Scalar>
 void InertiaSort<Scalar>::InertiaSortWithThreshold( InertiaSort<Scalar>* s )
 {
   // simplify method to find the values in the source SimpleMatrix<Scalar>
@@ -165,6 +174,7 @@ void InertiaSort<Scalar>::InertiaSortWithThreshold( InertiaSort<Scalar>* s )
     result[i] = values[start+i*step];
     totInertia += std::abs(values[start+i*step]);
   }
+  s->m_totalInertia = totInertia;
   if (s->m_appendIdx)
     for( unsigned int i=0; i<nbValues; i++ )
       indexes[i] = i;

@@ -92,8 +92,8 @@ int main(int argc, char* argv[]){
     sort.getSorted()->waitEndOfEvaluation();
     sort.getSorted()->print();
     sort.getSortIdx()->print();
-    cout << "\n" << sort.getNbSortedValues() << "\n";
-
+    cout << "\nNumber of important vectors: " << sort.getNbSortedValues() << "\n";
+    cout << "total inertia: " << sort.getTotalInertia() << "\n";
     Matrix* vectors = localEigenVectorsOnVars.getResult().get();
 
     int nbVectors = sort.getNbSortedValues();
