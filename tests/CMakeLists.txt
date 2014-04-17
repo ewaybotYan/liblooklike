@@ -215,7 +215,7 @@ add_test( test_clmatrixoperations ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixoperati
 add_test( test_clmatrixnorm ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixnorm "${PROJECT_SOURCE_DIR}/kernels" )
 
 # test_file
-add_test( test_file ${EXECUTABLE_OUTPUT_PATH}/test_file "${PROJECT_SOURCE_DIR}/data/photos" "${CMAKE_CURRENT_SOURCE_DIR}/sample_file.txt" )
+add_test( test_file ${EXECUTABLE_OUTPUT_PATH}/test_file "${IMAGES_SAMPLE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/sample_file.txt" )
 
 # test_files
 # add_test( test_files ${EXECUTABLE_OUTPUT_PATH}/test_files )

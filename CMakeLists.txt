@@ -60,9 +60,12 @@ link_directories(${OPENCL_LIBRARY_DIRS})
 find_package(Armadillo REQUIRED)
 find_package(LAPACK REQUIRED)
 
+set(IMAGES_SAMPLE_DIR ${CMAKE_SOURCE_DIR}/data/ CACHE STRING "Path the the sample images used for tests")
+
 #############
 # SUBPROJECTS
 
 add_subdirectory(tests)
 add_subdirectory(doc)
 add_subdirectory(src)
+
