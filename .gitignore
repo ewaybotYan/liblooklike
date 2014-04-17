@@ -5,5 +5,7 @@ draft/
 build/
 *.kdev4
 *.user
-data/photos/*
-doc/external_papers/*
+data/
+doc/external_papers/
+.Rhistory
+.Rdata
