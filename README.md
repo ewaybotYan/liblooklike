@@ -98,15 +98,15 @@ generate makefiles with cmake:
 if you use a build directory at the root of the project and use POCL
 statically (without icd loader support), you may type:
 
-cmake path/to/liblooklike 
+    cmake path/to/liblooklike 
   
-cmake ../ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug \
-    -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wunreachable-code"
+    cmake ../ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug \
+        -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wunreachable-code"
 
 then build everything:
 
-  make 
+    make 
 
 Optionnaly, run the tests:
 
-  make test
+    make test
