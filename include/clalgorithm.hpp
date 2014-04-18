@@ -1,6 +1,6 @@
 /**
  * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
- * @file   clexpression.cpp
+ * @file   clalgorithm.hpp
  * @date   12/04/2014
  */
 
@@ -12,34 +12,37 @@
 #include<CL/cl.hpp>
 #include<context.h>
 
-
+/// OpenCL aware specialization of @ref Algorithm
 class ClAlgorithm : public Algorithm {
 
   public:
 
-    /// Gives the OpenCL event associated to the end of the computation.
-    /// @note You should check that computation is enqueued with
-    ///       @ref getState() before waiting for this event.
+    /// @return the OpenCL event associated to the end of the computation.
+    /// @note this event is undefined unless algorithm is enqueued
+    ///       ( @ref isEnqueued() ).
     cl::Event& getEndOfEvaluation();
 
+    /// @return context associated to the algorithm
     Context* getContext() const;
 
+    /// @return command queue assigned to the algorithm
     cl::CommandQueue* getCommandQueue() const;
 
   protected:
 
+    /// @param context the context that will be used for OpenCL operations
+    /// @param the command queue that will hold OpenCL operations
     ClAlgorithm( Context* context, cl::CommandQueue* queue );
 
-    /// list of the dependencies ends of evaluations
+    /// list of the dependencies end of evaluation events
+    /// will probably be filled by @ref enqueue() and used in cl::enqueue*
+    /// functions
     std::vector<cl::Event> m_dependenciesEvents;
 
   private:
 
-    /// The end event associated to m_endOfEvaluation
-    /// Every command started in OpenCL has an associated end event
-    /// @note    This variable is most likely to be set by @ref enqueue
-    /// @warning do not foget to set this value when you define
-    ///          @ref enqueue()
+    /// The cl::event associated to the end of the evaluation of this algorithm
+    /// @warning This value must be set by @ref enqueue() implementations.
     cl::Event m_endOfEvaluationEvent;
 
     /// The context on which this algorithm will be run

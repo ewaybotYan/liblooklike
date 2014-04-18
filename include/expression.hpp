@@ -9,15 +9,17 @@
 
 class Algorithm;
 
+#include<vector>
 #include "algorithm.h"
 
-#include<vector>
 
+/// describe the state of an expression (only meaningful if it is a computed
+/// expression)
 enum ExpressionState{
-  INITIAL,
-  ALLOCATED,
-  ENQUEUED,
-  COMPUTED,
+  INITIAL, ///< initial state
+  ALLOCATED, ///< memory is allocated to store the value of the expression
+  ENQUEUED, ///< the algorithm that compute the value is running
+  COMPUTED, ///< the value computation is done, the value can be read
 };
 
 class Expression
@@ -26,21 +28,27 @@ class Expression
 
   public:
 
-    /// says if object has to be computed or not before one can read its value.
+    /// says if object has to be computed before the value can be read
     bool needsComputation();
+
+    /// @return the algorithm that computes the expression if ther is one, null
+    ///         otherwise
     Algorithm* getParentAlgorithm() const;
 
-    /// blocks execution until object computation is finished.
-    /// will retrieve data to local memory if it is not computed locally.
+    /// blocks execution until object computation is finished
+    /// @note  calls @ref Algorithm::waitEndOfEvaluation() of the parent
+    ///        algorithm if any, returns immediately otherwise
+    /// @throw EvaluationProcessViolation thrown if parent algorithm is not yet
+    ///        enqueued
     void waitEndOfEvaluation();
 
-    /// start the evaluation of the expression
+    /// start the evaluation of the expression if it has to be computed
     void evaluate();
 
-    /// @brief   request memory allocation for the expression value
+    /// allocate memory so that the expression value can be stored
     bool allocateMem();
 
-    /// release memory buffers associated to the expression
+    /// release memory buffers allocated by @ref allocateMem()
     void releaseMem();
 
   protected:

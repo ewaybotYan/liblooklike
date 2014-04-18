@@ -21,32 +21,38 @@ class SimpleMatrix : public Expression
   public:
 
     /// creates an empty SimpleMatrix object
-    /// @param dependencies of the SimpleMatrix
     /// @param m     number of lines in the SimpleMatrix
     /// @param n     number of columns in the SimpleMatrix
     SimpleMatrix ( const unsigned int m,
                    const unsigned int n );
 
+    /// creates an empty SimpleMatrix object
+    /// @param values array of the values of the matrix (see
+    ///        @ref matrix_mem_representation )
+    /// @param m     number of lines in the SimpleMatrix
+    /// @param n     number of columns in the SimpleMatrix
     SimpleMatrix(
         std::shared_ptr< std::vector<Scalar> > values,
         const unsigned int m,
         const unsigned int n );
 
     /// creates a SimpleMatrix object without value but with dependencies
-    /// @param dependencies of the SimpleMatrix
+    /// @param values array of the values of the matrix (see
+    ///        @ref matrix_mem_representation )
     /// @param m     number of lines in the SimpleMatrix
     /// @param n     number of columns in the SimpleMatrix
     SimpleMatrix ( const std::vector<Scalar>& values,
                    const unsigned int m,
-                   const unsigned int n);
+                   const unsigned int n );
 
-    /// @return SimpleMatrix width
+    /// @return matrix width
     int getWidth() const;
 
-    /// @return SimpleMatrix height
+    /// @return matrix height
     int getHeight() const;
 
-    /// @return a 1D float array as the concatenation of the lines of the SimpleMatrix
+    /// @return the elements of the matrix in an array ( see
+    ///         @ref matrix_mem_representation )
     Scalar* getValues() const;
 
     /// @return the value of the SimpleMatrix at line i and column j
@@ -55,7 +61,7 @@ class SimpleMatrix : public Expression
     void resizeWidth( const int h );
 
 #ifndef NDEBUG
-    /// @brief Prints SimpleMatrix on standard output
+    /// @brief Print matrix on the standard output
     void print();
 #endif
 
@@ -63,10 +69,10 @@ class SimpleMatrix : public Expression
 
     std::shared_ptr< std::vector<Scalar> > m_values;
 
-    /// Matrix height
+    /// matrix height
     int m_m;
 
-    /// Matrix width
+    /// matrix width
     int m_n;
 
     bool allocateMemImpl() override;
