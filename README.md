@@ -87,8 +87,25 @@ directory run:
     make test
 
 
-BUILDING 
+BUILDING
 ========
+
+Retrieve project
+----------------
+
+To download the lastest version of the project, use the git repository.
+
+    git clone https://github.com/pixelou/liblooklike.git
+
+For the rest rest of this file, we assume the project directory is in the
+variable ${LLL_ROOT} .
+
+You can set this variable just after cloning the repo by issuing:
+
+    export LLL_ROOT=`pwd`/liblooklike
+
+Preparation
+-----------
 
 In order to build the project, you need to create a build directory:
 
@@ -96,19 +113,43 @@ In order to build the project, you need to create a build directory:
 
 generate makefiles with cmake:
 
-    cmake (path to the project root dir)
+    cmake ${LLL_ROOT}
 
-if you use a build directory at the root of the project and use POCL
-statically (without icd loader support), you may type:
+If you prefer to use use POCL and skip documentation generation:
 
-    cmake path/to/liblooklike 
-    cmake ../ -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug \
-        -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wunreachable-code"
+    cmake ${LLL_ROOT} -DUSE_POCL=TRUE -DBUILD_DOCUMENTATION=FALSE
 
-then build everything:
+Building
+--------
 
-    make 
+You can build everything with:
+
+    make
 
 Optionnaly, run the tests:
 
     make test
+
+Tagets
+------
+
+* binary files will be generated in output/bin
+* tests in tests/bin
+* documentation in output/doc
+* libraries in output/lib
+
+
+USAGE
+=====
+
+img2eigenvec
+------------
+
+img2eigenvec generates the eigenvectors from a set of images.
+Supposing the pictures are in ${LLL_ROOT}/data, you can run:
+
+    img2eigenvec ${LLL_ROOT}/kernels ${LLL_ROOT}/data
+
+It will generate previews of the eigen vectors as jpeg files in /tmp
+
+
