@@ -24,12 +24,12 @@ optionnaly intel.
 * Intel sdk for OpenCL not available on linux.
 
 
-dependencies installation for debian
+Dependencies installation for debian
 ------------------------------------
 
 The tools used to build the project can be obtained with:
     
-    sudo apt-get install build-essential libtool autoconf pkg-config \
+    apt-get install build-essential libtool autoconf pkg-config \
         git cmake 
 
 For debian with pocl implementation, run this:
@@ -52,7 +52,9 @@ For this example we suppose the cpu is from the intel core-i\* family,
 so we choose the cpu option corei7.
 
     export LLC_HOST_CPU=corei7 
-    ./configure make sudo make install
+    ./configure
+    make
+    sudo make install
 
 
 TEST ENVIRONMENT 
@@ -130,8 +132,8 @@ Optionnaly, run the tests:
 
     make test
 
-Tagets
-------
+Targets
+-------
 
 * binary files will be generated in output/bin
 * tests in tests/bin
