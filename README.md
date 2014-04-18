@@ -40,7 +40,9 @@ For debian with pocl implementation, run this:
 
 then you need to install opencl manually:
 
-    git clone https://github.com/pocl/pocl.git cd pocl sh autogen.sh
+    git clone https://github.com/pocl/pocl.git
+    cd pocl
+    sh autogen.sh
 
 At this step, you need to know what sort of cpu is installed on your
 computer. You should select the closest match in the list given by the
