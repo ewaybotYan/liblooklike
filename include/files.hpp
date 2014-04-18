@@ -1,30 +1,51 @@
 /**
  * @file files.hpp
- * @brief Saving armadillo matrices of type Mat<float> in text files and loading matrices in text files into liblooklike matrices of type Matrix
- * @author Gabriel de Longeaux <gabriel.de_longeaux@telecom-sudparis.eu>
+ * @author Gabriel de Longeaux
+ * @brief Saving and loading matrices to and from text files.
  */
 
 #ifndef FILES_HPP
 #define FILES_HPP
 
-#include <armadillo>
-#include "../include/matrix.h"
+#include "simplematrix.hpp"
 
 /**
- * @brief Save a matrix in a text file : all the values on the same row are separated with one space and the rows are separated by a newline.
- * @param mat Mat<float> (matrix of floats) of the library Armadillo
- * @param filepath Filepath with the name of the file where the program will save the matrix and its extension if wanted (the file will be anyway a text file)
- * @return 0 will be returned if there was no problem to save the matrix and -1 if the program was unable to create the file
+ * @page mat_import_export Matrix importation and exportation
+ *
+ * The matrices are saved following the csv format.
+ * It means that consecutive values are comma separated and end of lines
+ * separate the series of values of a *column* in the matrix.
+ *
+ * The matrix values are stored internally as a the concatenation of their
+ * columns (from left to right) in an array. However, the .csv file is read line
+ * by line. To simplify matrix<->file conversion, what is actually written in
+ * the file is the transposed matrix.
+ *
+ *     Example:
+ *     { {1, 2, 4},
+ *       {9, 2, 0} }
+ *     is stored as:
+ *     1,9
+ *     2,2
+ *     4,0
  */
-int save(arma::fmat mat, std::string filepath);
 
-/**
- * @brief Load the values of a text file into a Matrix : all the values must be separated with spaces and these values will be load in the Matrix row by row.
- * @brief The file must end by the last value of the matrix, or by space(s) or newline(s).
- * @brief Number of rows and columns of the matrix must be indicated at the beginning of the file in a specific way (cf. files.cpp).
- * @param filepath Filepath with the full name of the text file where the values must be taken to be loaded in a Matrix
- * @return Matrix with the loaded value if there was no problem and throw an error (MissingDataInTheFile or MatrixLoadingIncomplete) if there was
- */
-Matrix load(std::string filepath);
+/// @brief Save a matrix in a text file
+/// @param mat a matrix
+/// @param filepath path to the saved file (you might want to use the .csv
+///       extension)
+/// @return -1 if an error occured, 0 otherwise.
+template<typename Scalar>
+int save( SimpleMatrix<Scalar>mat, std::string filepath);
+
+
+/// @brief Load the values of a text file into a Matrix
+/// @param filepath Filepath to a matrix file (see: @ref mat_import_export).
+/// @return A matrix with the loaded value
+/// @throw CorruptedMatrixFile thrown if not all lines have the same number of
+///        values, or if any value cannot be read/casted properly.
+/// @todo create the exception
+template<typename Scalar>
+SimpleMatrix<Scalar> load(std::string filepath);
 
 #endif
