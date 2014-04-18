@@ -36,7 +36,7 @@ For debian with pocl implementation, run this:
 
     apt-get install ocl-icd-dev llvm clang hwloc \
         libhwloc-dev libarmadillo4 libarmadillo-dev mesa-common-dev \
-        libjepeg-dev
+        libjpeg-dev
 
 then you need to install opencl manually:
 
