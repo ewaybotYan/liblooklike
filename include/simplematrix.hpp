@@ -13,6 +13,7 @@
 #include<memory>
 #include<vector>
 #include"expression.hpp"
+#include"exception.h"
 
 
 template<typename Scalar>
@@ -58,7 +59,10 @@ class SimpleMatrix : public Expression
     /// @return the value of the SimpleMatrix at line i and column j
     Scalar& at( const int i, const int j );
 
-    void resizeWidth( const int h );
+    void resizeWidth( const int w );
+
+    void resizeVecHeight( const int h );
+
 
 #ifndef NDEBUG
     /// @brief Print matrix on the standard output
@@ -142,6 +146,15 @@ void SimpleMatrix<Scalar>::resizeWidth( const int w )
 {
   m_n = w;
   m_values->resize(w*m_m);
+}
+
+template<typename Scalar>
+void SimpleMatrix<Scalar>::resizeVecHeight( const int h )
+{
+  if( m_n != 1 )
+    throw Error("resizing height is only supported for vectors.");
+  m_m = h;
+  m_values->resize(h);
 }
 
 #ifndef NDEBUG
