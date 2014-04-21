@@ -19,33 +19,63 @@
 // #########################################
 // # Generic sort algorithm (abstract class)
 
+/// abstract class for sort algorithms on SimpleMatrix objects
+/// @note sort algorithms take a matrix as input but only sort a line or a
+///       column of the matrix unless a different behaviour is specified
 template<typename Scalar>
 class Sort : public Algorithm
 {
   public:
+
+    /// @return the values sorted with the implemented sort
     std::shared_ptr< SimpleMatrix<Scalar> >& getSorted();
+
+    /// @return the indexes of the sorted elements in the original unsorted
+    ///         object
+    /// @note   index computation must be enabled in 
     std::shared_ptr< SimpleMatrix<unsigned int> >& getSortIdx();
 
   protected:
 
-    std::shared_ptr< SimpleMatrix<Scalar> > m_data;
-    std::shared_ptr< SimpleMatrix<Scalar> > m_sorted;
-    std::shared_ptr< SimpleMatrix<unsigned int> > m_indexes;
-
-    bool m_sortOnColumns = true;
-    unsigned int m_sortRefIdx = 0;
-    bool m_appendIdx = 0;
-
+    /// @param data the data on which sort is applied
+    /// @param sortOnColumns indicated if the data to sort is in line or column
+    /// @param sortRefIdx indicates the index of the line or column to sort in
+    ///        a matrix of values.
+    /// @param appendIndex wether the indexes of the sorted elements in the
+    ///        original unsorted object should be computed
     Sort( std::shared_ptr< SimpleMatrix<Scalar> > data,
           bool sortOnColumns = true,
           unsigned int sortRefIdx = 0,
           bool appendIndex = false );
+
+    /// the unsorted values
+    std::shared_ptr< SimpleMatrix<Scalar> > m_data;
+
+    /// the sorted result
+    std::shared_ptr< SimpleMatrix<Scalar> > m_sorted;
+
+    /// the indexes of the sorted elements in the m_data
+    std::shared_ptr< SimpleMatrix<unsigned int> > m_indexes;
+
+    /// wether sort is done horizontaly or vertiacally
+    bool m_sortOnColumns = true;
+
+    /// if sort happens on a column or a line of the matrix, this indicates
+    /// the index of this column or line.
+    unsigned int m_sortRefIdx = 0;
+
+    /// wether indexes of the sorted elements should be generated too
+    bool m_appendIdx = 0;
 };
 
 
 // ####################################
 // # InertiaSort algorithms declaration
 
+/// Performs inertia sort on value.
+/// The sum of the absolute values is the total inertia
+/// The values are sorted in descending order, regardless of the sign until 
+/// a target proportion of the total inertia is reached
 template<typename Scalar>
 class InertiaSort : public Sort<Scalar>
 {
@@ -64,6 +94,7 @@ class InertiaSort : public Sort<Scalar>
 
     void enqueue();
 
+    /// number of values sorted before reaching target inertia
     unsigned int getNbSortedValues() const;
 
     Scalar getTotalInertia() const;
@@ -202,6 +233,11 @@ void InertiaSort<Scalar>::InertiaSortWithThreshold( InertiaSort<Scalar>* s )
     }
     ++i;
   }
+
+  // resize indexes and sort array to the number of sorted values
+  s->getSortIdx()->resizeVecHeight(i);
+  s->getSorted()->resizeVecHeight(i);
+
   s->m_nbSortedValues = i;
 }
 
