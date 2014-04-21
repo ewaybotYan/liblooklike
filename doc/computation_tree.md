@@ -1,19 +1,12 @@
 Computation tree    {#computation_tree}
 ================
 
+This programs manipulates mathematical values and performs computation on them.
+Everything that has a value, either a known value or the result of a
+computation will be called an expression. An expression can be a matrix, a
+scalar value... The operations that perform computations are reprouped in a
+generic object that we call an algorithm. An addition is an algorithms that
+takes two expressions in input and yeld one result which is also an expression.
 
 
-    Example:
-    in a = b + c <br/>
-    a, b and c are all algorithms. It can also be
-    represented as a tree where a is the root node,
-    and has two children b and c.
-    In order to compute a, we will execute evaluate().
-    And then retrieve data from the computation device with
-    retrieveData()
-
-As shown in the example above, the expression is represented as
-a tree. The terminal nodes are basically values known by the
-program on the computer side, whereas the other nodes are values
-obtained by computation on their children nodes.
 
