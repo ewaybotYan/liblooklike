@@ -40,30 +40,50 @@ int main(int argc, char* argv[]){
                                   array.pixels,
                                   array.avgHeight * array.avgWidth,
                                   array.nbImages );
-    CLMatrixLoader imagesInCL( images, &ctx, &queue );
 
     // normalize images values
+#ifdef PREPROCESSING
+    CLMatrixLoader imagesInCL( images, &ctx, &queue );
+    CLMatrixNorm normalized( imagesInCL.getResult(),
+                              &ctx, &queue,
+                              true ); // on each image
+#elif NORMALIZE_PXL
+    CLMatrixLoader imagesInCL( images, &ctx, &queue );
     CLMatrixNorm normalized1( imagesInCL.getResult(),
                               &ctx, &queue,
                               true ); // on each image
-    CLMatrixNorm normalized2( normalized1.getNormalizedMatrix(),
+    CLMatrixNorm normalized( normalized1.getNormalizedMatrix(),
                               &ctx, &queue,
                               false ); // normalize pixels values across images
-    CLMatrixCovariance covMat( normalized2.getNormalizedMatrix(),
+#endif
+
+    // compute covariance matrix
+#if defined(NORMALIZE_PXL) || defined(PREPROCESSING)
+    CLMatrixCovariance covMat( normalized.getNormalizedMatrix(),
                                &ctx, &queue );
+#else
+    CLMatrixCovariance covMat( imagesInCL.getResult(),
+                               &ctx, &queue );
+#endif
     CLMatrixUnloader localCovMat( covMat.getResult(), &ctx, &queue );
 
     // compute eigen values and get the eigenvectors on variables
     EigenPair eigenpair(localCovMat.getResult());
     CLMatrixLoader eigenVectors(eigenpair.getVectors(), &ctx, &queue);
-    CLMatrixProduct eigenVectorsOnValues( normalized2.getNormalizedMatrix(),
+#if defined(NORMALIZE_PXL) || defined(PREPROCESSING)
+    CLMatrixProduct eigenVectorsOnValues( normalized.getNormalizedMatrix(),
                                           eigenVectors.getResult(),
                                           &ctx, &queue );
+#else
+    CLMatrixProduct eigenVectorsOnValues( imagesInCL.getResult(),
+                                          eigenVectors.getResult(),
+                                          &ctx, &queue );
+#endif
     CLMatrixUnloader localEigenVectorsOnVars( eigenVectorsOnValues.getResult(),
                                               &ctx, &queue );
 
     // get biggest eigen values
-    InertiaSort<cl_float> sort( eigenpair.getValues(), 0.95, true, 0, true );
+    InertiaSort<cl_float> sort( eigenpair.getValues(), 0.90, true, 0, true );
     localEigenVectorsOnVars.getResult()->evaluate();
     localEigenVectorsOnVars.getResult()->waitEndOfEvaluation();
     sort.getSorted()->evaluate();
@@ -77,6 +97,24 @@ int main(int argc, char* argv[]){
     Matrix* vectors = localEigenVectorsOnVars.getResult().get();
 
     int nbVectors = sort.getNbSortedValues();
+
+    // export sample of the normalization
+#ifndef NDEBUG
+#if defined(NORMALIZE_PXL) || defined(PREPROCESSING)
+    CLMatrixUnloader localNormalized(normalized.getNormalizedMatrix(),
+                                     &ctx, &queue);
+    localNormalized.getResult()->evaluate();
+    localNormalized.getResult()->waitEndOfEvaluation();
+    for( int i=0; i<10;i++ ){
+      MatrixToImage(*localNormalized.getResult().get(),
+                    array.avgHeight,
+                    array.avgWidth,
+                    i,
+                    true,
+                    "/tmp/sampleNormalized"+to_string(i)+".jpg");
+    }
+#endif
+#endif
 
     // export pictures of the eigen vectors
 #ifndef NDEBUG
@@ -94,10 +132,12 @@ int main(int argc, char* argv[]){
 #endif
 
     // save normalization coefficients
+#ifdef NORMALIZE_PXL
     CLMatrixUnloader coeffs(normalized2.getNormCoeffs(), &ctx, &queue );
     coeffs.getResult()->evaluate();
     coeffs.getResult()->waitEndOfEvaluation();
     save(*coeffs.getResult(), "/tmp/coeffs.csv" );
+#endif
 
     // save eigen vectors
     save(*vectors, "/tmp/vectors.csv", *sort.getSortIdx().get());

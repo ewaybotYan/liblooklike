@@ -48,12 +48,14 @@ int main( int argc, char* argv[] )
     CLMatrixLoader imagesInCL( images, &ctx, &queue );
 
     // and normalize contrasts
+#ifdef PREPROCESSING
     CLMatrixNorm imagesInCLStdContrast( imagesInCL.getResult(), &ctx, &queue );
-
+#endif
     // load vectors
     shared_ptr<Matrix> vectors( load( vectorsAndCoefsPath+"/vectors.csv" ) );
     CLMatrixLoader vectorsInCL( vectors, &ctx, &queue );
 
+#ifdef NORMALIZE_PXL
     // load normalization coefficients
     shared_ptr<Matrix> coeffs( load( vectorsAndCoefsPath+"/coeffs.csv" ) );
     CLMatrixLoader coeffsInCL( coeffs, &ctx, &queue );
@@ -62,12 +64,25 @@ int main( int argc, char* argv[] )
     CLMatrixScale normalizedImages( imagesInCLStdContrast.getNormalizedMatrix(),
                                     coeffsInCL.getResult(),
                                     &ctx, &queue );
+#endif
 
     // make projections
+#ifdef NORMALIZE_PXL
     CLMatrixProduct projections( vectorsInCL.getResult(),
                                  normalizedImages.getResult(),
                                  &ctx, &queue,
                                  true );
+#elif PREPROCESSING
+    CLMatrixProduct projections( vectorsInCL.getResult(),
+                                 imagesInCLStdContrast.getNormalizedMatrix(),
+                                 &ctx, &queue,
+                                 true );
+#else
+    CLMatrixProduct projections( vectorsInCL.getResult(),
+                                 imagesInCl.getResult(),
+                                 &ctx, &queue,
+                                 true );
+#endif
 
     // retrieve
     CLMatrixUnloader results( projections.getResult(), &ctx, &queue );
@@ -78,26 +93,28 @@ int main( int argc, char* argv[] )
 
     // make preview of the image reconstituted from the projections
 #ifndef NDEBUG
-     CLMatrixProduct reconstituted( vectorsInCL.getResult(),
-                                    projections.getResult(),
-                                    &ctx, &queue );
-     CLMatrixUnloader localReconstituted( reconstituted.getResult(),
-                                          &ctx, &queue );
-     localReconstituted.getResult()->evaluate();
-     localReconstituted.getResult()->waitEndOfEvaluation();
-     MatrixToImage( *localReconstituted.getResult().get(),
-                    360, 260,
-                    0, true,
-                    "/tmp/reconstituted.jpg" );
-
-     CLMatrixUnloader normalizedSamples( normalizedImages.getResult(),
+    CLMatrixProduct reconstituted( vectorsInCL.getResult(),
+                                   projections.getResult(),
+                                   &ctx, &queue );
+    CLMatrixUnloader localReconstituted( reconstituted.getResult(),
                                          &ctx, &queue );
-     normalizedSamples.getResult()->evaluate();
-     normalizedSamples.getResult()->waitEndOfEvaluation();
-     MatrixToImage( *normalizedSamples.getResult().get(),
-                    360, 260,
-                    0, true,
-                    "/tmp/normalized.jpg" );
+    localReconstituted.getResult()->evaluate();
+    localReconstituted.getResult()->waitEndOfEvaluation();
+    MatrixToImage( *localReconstituted.getResult().get(),
+                   360, 260,
+                   0, true,
+                   "/tmp/reconstituted.jpg" );
+
+#ifdef NORMALIZE_PXL
+    CLMatrixUnloader normalizedSamples( normalizedImages.getResult(),
+                                        &ctx, &queue );
+    normalizedSamples.getResult()->evaluate();
+    normalizedSamples.getResult()->waitEndOfEvaluation();
+    MatrixToImage( *normalizedSamples.getResult().get(),
+                   360, 260,
+                   0, true,
+                   "/tmp/normalized.jpg" );
+#endif
 
 #endif
 
@@ -105,7 +122,6 @@ int main( int argc, char* argv[] )
     err.printMsg();
     return -1;
   }
-
 
   return 0;
 }

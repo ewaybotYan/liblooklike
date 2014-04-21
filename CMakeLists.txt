@@ -37,7 +37,7 @@ CMAKE_DEPENDENT_OPTION(USE_PLANTUML
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
 set(warnings "-Wall -Wextra -Werror -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${warnings}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${warnings} -DPREPROCESSING")
 
 #######################################
 # EXTERNAL DEPENDENCIES PATHS AND FLAGS

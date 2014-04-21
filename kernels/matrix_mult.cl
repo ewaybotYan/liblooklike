@@ -54,7 +54,7 @@ matrix_matrix_scale ( __global float* C,
 {
     const int j = get_global_id(0);
     const int i = get_global_id(1);
-    C[i+h*j] = A[i+h*j]*V[i];
+    C[i+h*j] = A[i+h*j]/V[i];
 }
 
 
