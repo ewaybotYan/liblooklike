@@ -31,6 +31,8 @@ add_library (looklike
 
              ../include/file.h
              ../src/file.cpp
+             ../include/files.hpp
+             ../src/files.cpp
              ../include/image.h
              ../src/image.cpp
              ../include/jpegfile.h
@@ -52,4 +54,4 @@ add_executable(imgProjection
             imgprojection.cpp
 )
 
-target_link_libraries( imgProjection ${LIBS} looklike )
+target_link_libraries( imgProjection looklike )

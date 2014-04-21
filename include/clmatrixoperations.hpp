@@ -25,7 +25,8 @@ class CLMatrixProduct : public ClAlgorithm
     CLMatrixProduct(std::shared_ptr<CLMatrix> lop,
                     std::shared_ptr<CLMatrix> rop,
                     Context *context,
-                    cl::CommandQueue *queue );
+                    cl::CommandQueue *queue,
+                    bool transposeLop = false );
 
     void waitEndOfEvaluation() override;
 
@@ -44,6 +45,7 @@ class CLMatrixProduct : public ClAlgorithm
     std::shared_ptr<CLMatrix> m_lop;
     std::shared_ptr<CLMatrix> m_rop;
     std::shared_ptr<CLMatrix> m_result;
+    bool m_transposeLop;
 };
 
 
@@ -75,6 +77,42 @@ class CLMatrixCovariance : public ClAlgorithm
   private:
 
     std::shared_ptr<CLMatrix> m_src;
+    std::shared_ptr<CLMatrix> m_result;
+};
+
+
+/// For a given matrix A of height h w and a vector V of size h, multiply each
+/// line of A by the corresponding coefficient in V.
+class CLMatrixScale : public ClAlgorithm
+{
+  public:
+
+    /// @param  m the input matrix
+    /// @param  context The OpenCL context that will hold the matrix
+    /// @param  queue a cl::CommandQueue in wich memory transfer will be
+    ///         launched
+    /// @throws InvalidAlgorithmParameter if dimensions do not match
+    CLMatrixScale( std::shared_ptr<CLMatrix> m,
+                   std::shared_ptr<CLMatrix> v,
+                   Context *context,
+                   cl::CommandQueue *queue );
+
+    void waitEndOfEvaluation() override;
+
+    /// @return t(m) * m with m the input matrix given to the constructor
+    std::shared_ptr<CLMatrix> getResult();
+
+  protected:
+
+    bool allocateTmpMem() {return true;}
+    void releaseTmpMem() {}
+
+    void enqueue();
+
+  private:
+
+    std::shared_ptr<CLMatrix> m_src;
+    std::shared_ptr<CLMatrix> m_coeffs;
     std::shared_ptr<CLMatrix> m_result;
 };
 
