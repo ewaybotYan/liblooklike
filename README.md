@@ -1,9 +1,9 @@
-=========== 
-LIBLOOKLIKE 
+===========
+LIBLOOKLIKE
 ===========
 
 
-REQUIREMENTS 
+REQUIREMENTS
 ============
 
 The following packages are required in order to build and use the
@@ -17,10 +17,10 @@ optionnaly intel.
 * Nvidia opencl library only support Nvidia hardware. It is likely to
   be package for your distribution because the licence permits it.
 * AMD's has support for both AMD graphic cards and any sse3 compatible
-  processor. You should choose this if you don't have an Nvidia 
+  processor. You should choose this if you don't have an Nvidia
   graphic card. Note that AMD license prevents most linux distribution
   to package it in the repositories.
-* POCL is simpler, *ideal for developpement and testing*. 
+* POCL is simpler, *ideal for developpement and testing*.
 * Intel sdk for OpenCL not available on linux.
 
 
@@ -29,16 +29,18 @@ Dependencies installation for debian
 
 The tools used to build the project can be obtained with:
     
-    apt-get install build-essential libtool autoconf pkg-config \
-        git cmake 
+    sudo apt-get install build-essential libtool autoconf pkg-config \
+        git cmake
 
-For debian with pocl implementation, run this:
+For debian with pocl implementation, the dependencies for the projects
+can be installed by running:
 
-    apt-get install ocl-icd-dev llvm clang hwloc \
+    sudo apt-get install ocl-icd-dev llvm clang hwloc \
         libhwloc-dev libarmadillo4 libarmadillo-dev mesa-common-dev \
         libjpeg-dev
 
-then you need to install opencl manually:
+Unfortunately, pocl is not available in debian repositories, so we need
+to install opencl manually:
 
     git clone https://github.com/pocl/pocl.git
     cd pocl
@@ -53,39 +55,56 @@ following command:
 For this example we suppose the cpu is from the intel core-i\* family,
 so we choose the cpu option corei7.
 
-    export LLC_HOST_CPU=corei7 
+    export LLC_HOST_CPU=corei7
     ./configure
     make
     sudo make install
 
 
-TEST ENVIRONMENT 
+OBTAINING THE PROJECT
+=====================
+
+retrieving the project can be done using git:
+
+    git clone https://github.com/pixelou/liblooklike.git
+
+For the rest rest of this file, we assume the project directory is in the
+variable ${LLL_ROOT} .
+
+You can set this variable just after cloning the repo by issuing:
+
+    export LLL_ROOT=`pwd`/liblooklike
+
+
+TEST ENVIRONMENT
 ================
 
-Sample images 
+Sample images
 -------------
 
 This software was developped using essentialy the image set from this
 webiste: http://fei.edu.br/~cet/facedatabase.html
 
-To run the tests, you can use the centered portraits.  In the project
+To run the tests, you can use the centered portraits. In the project
 directory, run:
 
-    cd data 
-    wget http://fei.edu.br/~cet/frontalimages_manuallyaligned_part1.zip 
+    cd ${LLL_ROOT}
+    mkdir data
+    cd data
+    wget http://fei.edu.br/~cet/frontalimages_manuallyaligned_part1.zip
     unzip frontalimages_manuallyaligned_part1.zip
 
 To keep only the neutral faces:
 
     rm *b.jpg
 
-Tests 
+Tests
 -----
 
 Tests programs are available in tests/ .  
-They are a good entry point to the project and can be read as 
-examples. Tests are build along the rest if the project. To run the 
-tests, execute the build steps detailed below and then in the build 
+They are a good entry point to the project and can be read as
+examples. Tests are build along the rest if the project. To run the
+tests, execute the build steps detailed below and then in the build
 directory run:
 
     make test
@@ -100,13 +119,6 @@ Retrieve project
 To download the lastest version of the project, use the git repository.
 
     git clone https://github.com/pixelou/liblooklike.git
-
-For the rest rest of this file, we assume the project directory is in the
-variable ${LLL_ROOT} .
-
-You can set this variable just after cloning the repo by issuing:
-
-    export LLL_ROOT=`pwd`/liblooklike
 
 Preparation
 -----------
@@ -155,5 +167,3 @@ Supposing the pictures are in ${LLL_ROOT}/data, you can run:
     img2eigenvec ${LLL_ROOT}/kernels ${LLL_ROOT}/data
 
 It will generate previews of the eigen vectors as jpeg files in /tmp
-
-
