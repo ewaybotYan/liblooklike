@@ -81,3 +81,31 @@ matrix_normalize_rows( __global float* R,
         R[k*h+ty] = (A[k*h+ty] - mu) / stdDev;
     }
 }
+
+
+// #######################
+// # inter-column distance
+
+// computes the euclidian distance between columns of a matrix
+
+__kernel void
+matrix_distances( __global float* R,
+                  __global float* A,
+                  int h, int w){
+    // Thread index
+    int tx = get_global_id(0);
+    int ty = get_global_id(1);
+    // skip upper triangle of the matrix since matrix is symmetrical
+    if( tx > ty ){
+        R[tx*w+ty] = 0;
+        return;
+    }
+
+    // thread variables
+    float distance = 0;
+
+    for( int k = 0; k<h; k++ )
+        distance += pown( A[tx*h+k] - A[ty*h+k], 2 );
+
+    R[tx*w+ty] = distance;
+}
