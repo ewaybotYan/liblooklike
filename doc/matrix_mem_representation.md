@@ -6,5 +6,4 @@ columns from left to right.
 
 If we replace the elements of a 2x2 matrix with their index in the
 buffer, we would have:
-    {1, 3}<br/>
-    {2, 4}
+\f$\begin{bmatrix} 1 & 3 \\ 2 & 4 \end{bmatrix}\f$

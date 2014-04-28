@@ -22,6 +22,11 @@ class CLMatrixProduct : public ClAlgorithm
 
     /// @param lop left operand of the dot product
     /// @param rop right operand of the dot product
+    /// @param context context on which execution will happen
+    /// @param queue the queue on which computation wil be enqueued
+    /// @param transposeLop wehter the left operand shoud be transposed in wich
+    ///        case the result will be t(lop) * rop with t the transpose
+    ///        function and * the matrix dot product
     CLMatrixProduct(std::shared_ptr<CLMatrix> lop,
                     std::shared_ptr<CLMatrix> rop,
                     Context *context,
@@ -56,7 +61,7 @@ class CLMatrixCovariance : public ClAlgorithm
   public:
 
     /// @param m the input matrix
-    /// @param context The OpenCL context that will hold the matrix
+    /// @param context The OpenCL context that will hold the resultin matrix
     /// @param queue a cl::CommandQueue in wich memory transfer will be launched
     CLMatrixCovariance(std::shared_ptr<CLMatrix> m,
                     Context *context,
@@ -81,13 +86,14 @@ class CLMatrixCovariance : public ClAlgorithm
 };
 
 
-/// For a given matrix A of height h w and a vector V of size h, multiply each
+/// For a given matrix A of height h and a vector V of size h, *divide* each
 /// line of A by the corresponding coefficient in V.
 class CLMatrixScale : public ClAlgorithm
 {
   public:
 
     /// @param  m the input matrix
+    /// @param  v the coefficient vector (matrix of width 1)
     /// @param  context The OpenCL context that will hold the matrix
     /// @param  queue a cl::CommandQueue in wich memory transfer will be
     ///         launched
@@ -99,7 +105,7 @@ class CLMatrixScale : public ClAlgorithm
 
     void waitEndOfEvaluation() override;
 
-    /// @return t(m) * m with m the input matrix given to the constructor
+    /// @return the matrix with scaled lines
     std::shared_ptr<CLMatrix> getResult();
 
   protected:

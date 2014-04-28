@@ -18,7 +18,7 @@ class ClAlgorithm : public Algorithm {
   public:
 
     /// @return the OpenCL event associated to the end of the computation.
-    /// @note this event is undefined unless algorithm is enqueued
+    /// @note this event is undefined unless the algorithm is enqueued
     ///       ( @ref isEnqueued() ).
     cl::Event& getEndOfEvaluation();
 
@@ -31,12 +31,12 @@ class ClAlgorithm : public Algorithm {
   protected:
 
     /// @param context the context that will be used for OpenCL operations
-    /// @param the command queue that will hold OpenCL operations
+    /// @param queue the command queue that will hold OpenCL operations
     ClAlgorithm( Context* context, cl::CommandQueue* queue );
 
     /// list of the dependencies end of evaluation events
-    /// will probably be filled by @ref enqueue() and used in cl::enqueue*
-    /// functions
+    /// @details can be filled by @ref enqueue() and used in cl::enqueue*
+    ///          functions
     std::vector<cl::Event> m_dependenciesEvents;
 
   private:

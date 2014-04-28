@@ -1,7 +1,7 @@
 /**
  * @file   algorithm.h
  * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
- * @brief  Define a gneric algorithm representation
+ * @brief  Define a generic algorithm representation
  */
 
 #ifndef ALGORITHM_H
@@ -14,20 +14,15 @@ class Expression;
 #include<vector>
 
 
-/**
- * Algorithms offers a generic framework to write algorithms. It allows the
- * automation of memory managment, computation dependencies and queues in a
- * transparent manner.
- */
+/// Algorithms offers a generic framework to create . It allows the automation
+/// of memory managment and dependencies management.
 class Algorithm {
     friend class Expression;
 
     public:
-        /// @brief blocking fonction that returns when evaluation of the
-        ///        algorithm is finished
-        /// @note This function can assume the algorithm is at least enqueued.
-        ///       However, it might be called on a finished algorithm in which
-        ///       case it should return immediately
+        /// @brief blocking function that returns when computation is finished.
+        /// @note This function might be called on a finished algorithm in which
+        ///       case it should return immediately.
         virtual void waitEndOfEvaluation() = 0;
 
         /// Indicates the state of the algorithm
@@ -46,9 +41,11 @@ class Algorithm {
         /// @param dependency a dependency of the algorithm
         void addDependency(Expression* dependency);
 
-        /// appends a result to the list of the algorithm's results
+        /// Specifiy a result expression of the algorithm.
+        /// This is usually caled by the constructors when they create the
+        /// results expressions.
         /// @note all results of an algorithm need to be added for memory
-        ///       management and queueing to work
+        ///       management and queueing to work properly.
         void addResult(Expression* result);
 
 
@@ -65,29 +62,29 @@ class Algorithm {
 
         /// @brief launch evaluation of the object
         /// This function can assumes memory was allocated for all results and
-        /// htat dependencies are *enqueued* (not necessarily computed).
+        /// that dependencies are *enqueued* (not necessarily computed).
         /// @note  enqueue should not be blocking execution. Instead, it should
         ///        start computation in a separate thread. Synchronisation
-        ///        is acheived by using waitEndOfEvaluation() instead.
+        ///        can be achieved with waitEndOfEvaluation() or implementation
+        ///        specific systems.
         virtual void enqueue( ) = 0;
 
-        /// @brief evaluate the expression tree in a recursive way
-        /// @note  for a clear understanding of its behavour, see
-        ///        @computation_tree and @tree_evaluation
-        /// @param depth depth in the recursion, used in order to identify the
-        ///        root.
-        /// @return true if all the elements were enqueued, and especially the
-        ///         results of the algorithm, false otherwise.
+        /// @brief  recursively evaluate the expression tree
+        /// @note   for a clear understanding of its behavour, see
+        ///         @computation_tree and @tree_evaluation
+        /// @param  depth depth in the recursion (0 is the root of the tree)
+        /// @return true if computation of the algorithm has started, false
+        ///         otherwise
         bool evaluateTree( int depth=0 );
 
   private:
         /// allocate memory for the elements of m_results
         bool allocateResMem();
 
-        /// recursively deallocate memory for the evaluation tree
+        /// recursively deallocate memory in the evaluation tree
         /// @param hierarchyOffset number of levels of the evaluation tree to
         ///        skip before actually deallocating memory.
-        /// @note will deallocate results temporary memory, but not
+        /// @note will deallocate results and temporary memory, but not
         ///       dependencies. However @ref releaseTreeMem will be called on
         ///       the parent algorithm of dependencies if any.
         void releaseTreeMem( const int hierarchyOffset = 0 );

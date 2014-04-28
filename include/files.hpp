@@ -22,13 +22,10 @@
  * by line. To simplify matrix<->file conversion, what is actually written in
  * the file is the transposed matrix.
  *
- *     Example:
- *     { {1, 2, 4},
- *       {9, 2, 0} }
+ * Example:
+ * \f$\begin{bmatrix} 1 & 2 & 4 \\ 9 & 2 & 0 \end{bmatrix}\f$
  *     is stored as:
- *     1,9
- *     2,2
- *     4,0
+ * \f$\begin{bmatrix} 1 & 9 \\ 2 & 2 \\ 4 & 0 \end{bmatrix}\f$
  */
 
 /// @brief Save a matrix in a text file
