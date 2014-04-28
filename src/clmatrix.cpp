@@ -11,10 +11,10 @@
 // ##################
 // # CLMatrix methods
 
-CLMatrix::CLMatrix( const unsigned int m, const unsigned int n )
+CLMatrix::CLMatrix(const unsigned int h, const unsigned int w )
 {
-  m_m = m;
-  m_n = n;
+  m_m = h;
+  m_n = w;
 }
 
 int CLMatrix::getWidth() const

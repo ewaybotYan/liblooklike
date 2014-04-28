@@ -48,7 +48,7 @@ int main( int argc, char* argv[] )
     CLMatrixLoader imagesInCL( images, &ctx, &queue );
 
     // and normalize contrasts
-#ifdef PREPROCESSING
+#if defined(PREPROCESSING)||defined(NORMALIZE_PXL)
     CLMatrixNorm imagesInCLStdContrast( imagesInCL.getResult(), &ctx, &queue );
 #endif
     // load vectors
@@ -91,6 +91,17 @@ int main( int argc, char* argv[] )
 
     save( *results.getResult().get(), "/tmp/projections.csv" );
 
+    // make the interdistance matrix between the projections
+#ifndef NDEBUG
+    // build inter image distance matrix
+    CLInterDistance interDistances( projections.getResult(), &ctx, &queue );
+    CLMatrixUnloader localDistances( interDistances.getDistances(), &ctx, &queue);
+    localDistances.getResult()->evaluate();
+    localDistances.getResult()->waitEndOfEvaluation();
+    save( *localDistances.getResult().get(), "/tmp/distances.csv");
+#endif
+
+
     // make preview of the image reconstituted from the projections
 #ifndef NDEBUG
     CLMatrixProduct reconstituted( vectorsInCL.getResult(),
@@ -105,8 +116,8 @@ int main( int argc, char* argv[] )
                    0, true,
                    "/tmp/reconstituted.jpg" );
 
-#ifdef NORMALIZE_PXL
-    CLMatrixUnloader normalizedSamples( normalizedImages.getResult(),
+#ifdef PREPROCESSING
+    CLMatrixUnloader normalizedSamples( imagesInCLStdContrast.getNormalizedMatrix(),
                                         &ctx, &queue );
     normalizedSamples.getResult()->evaluate();
     normalizedSamples.getResult()->waitEndOfEvaluation();

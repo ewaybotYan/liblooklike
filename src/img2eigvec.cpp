@@ -78,9 +78,13 @@ int main(int argc, char* argv[]){
     CLMatrixProduct eigenVectorsOnValues( imagesInCL.getResult(),
                                           eigenVectors.getResult(),
                                           &ctx, &queue );
+
 #endif
-    CLMatrixUnloader localEigenVectorsOnVars( eigenVectorsOnValues.getResult(),
-                                              &ctx, &queue );
+    CLMatrixNorm eigenVecOnValsNorm( eigenVectorsOnValues.getResult(),
+                                     &ctx, &queue );
+    CLMatrixUnloader localEigenVectorsOnVars(
+          eigenVecOnValsNorm.getNormalizedMatrix(),
+          &ctx, &queue );
 
     // get biggest eigen values
     InertiaSort<cl_float> sort( eigenpair.getValues(), 0.90, true, 0, true );
@@ -90,6 +94,8 @@ int main(int argc, char* argv[]){
     sort.getSorted()->waitEndOfEvaluation();
 
 #ifndef NDEBUG
+    cout << "values: \n";
+    eigenpair.getValues()->print();
     cout << "Total inertia: " << sort.getTotalInertia() << "\n";
     cout << "biggest values: " << endl;
     sort.getSorted()->print();
@@ -105,7 +111,7 @@ int main(int argc, char* argv[]){
                                      &ctx, &queue);
     localNormalized.getResult()->evaluate();
     localNormalized.getResult()->waitEndOfEvaluation();
-    for( int i=0; i<10;i++ ){
+    for( int i=0; i<1;i++ ){
       MatrixToImage(*localNormalized.getResult().get(),
                     array.avgHeight,
                     array.avgWidth,
@@ -133,7 +139,7 @@ int main(int argc, char* argv[]){
 
     // save normalization coefficients
 #ifdef NORMALIZE_PXL
-    CLMatrixUnloader coeffs(normalized2.getNormCoeffs(), &ctx, &queue );
+    CLMatrixUnloader coeffs(normalized.getNormCoeffs(), &ctx, &queue );
     coeffs.getResult()->evaluate();
     coeffs.getResult()->waitEndOfEvaluation();
     save(*coeffs.getResult(), "/tmp/coeffs.csv" );
