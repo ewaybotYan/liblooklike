@@ -77,7 +77,7 @@ int main ( int argc, char* argv[] ) {
         for( int k = 0; k < m*n; k++ ){
             error = max( error, abs( res2[k] - b[k] ) );
         }
-        if ( error < 0.0001 ) {
+        if ( error < 0.000001 ) {
             std::cerr << "computed without noticeable error\n";
         } else {
             std::cout << "computed result matches with error!: " << error << "\n";
