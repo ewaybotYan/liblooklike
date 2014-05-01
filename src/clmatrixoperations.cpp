@@ -7,6 +7,11 @@
 
 #include "../include/exception.h"
 #include "../include/clmatrixoperations.hpp"
+#ifndef NDEBUG
+ #include <iostream>
+
+#endif
+using namespace std;
 
 
 // #################
@@ -127,8 +132,8 @@ void CLMatrixCovariance::enqueue()
   // set arguments
   kernel.setArg ( 0, *(m_result->getValues().get()) );
   kernel.setArg ( 1, *(m_src->getValues().get()) );
-  kernel.setArg<int> ( 2, m_result->getWidth() );
-  kernel.setArg<int> ( 3, m_result->getHeight() );
+  kernel.setArg<int> ( 2, m_src->getWidth() );
+  kernel.setArg<int> ( 3, m_src->getHeight() );
 
   // prepare dependencies
   m_dependenciesEvents.push_back(
@@ -139,7 +144,7 @@ void CLMatrixCovariance::enqueue()
   error = getCommandQueue()->enqueueNDRangeKernel (
             kernel,
             cl::NullRange,
-            cl::NDRange ( m_result->getWidth(), m_result->getHeight() ),
+            cl::NDRange ( m_result->getHeight(), m_result->getWidth() ),
             cl::NDRange ( 1, 1 ),
             &m_dependenciesEvents,
             &(getEndOfEvaluation())

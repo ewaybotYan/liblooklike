@@ -52,9 +52,9 @@ int main(int argc, char* argv[]){
     CLMatrixNorm normalized1( imagesInCL.getResult(),
                               &ctx, &queue,
                               true ); // on each image
-    CLMatrixNorm normalized( normalized1.getNormalizedMatrix(),
+    CLMatrixNorm normalized( imagesInCL.getResult(),
                               &ctx, &queue,
-                              false ); // normalize pixels values across images
+                              true ); // normalize pixels values across images
 #endif
 
     // compute covariance matrix
@@ -66,10 +66,10 @@ int main(int argc, char* argv[]){
                                &ctx, &queue );
 #endif
     CLMatrixUnloader localCovMat( covMat.getResult(), &ctx, &queue );
-
     // compute eigen values and get the eigenvectors on variables
     EigenPair eigenpair(localCovMat.getResult());
     CLMatrixLoader eigenVectors(eigenpair.getVectors(), &ctx, &queue);
+
 #if defined(NORMALIZE_PXL) || defined(PREPROCESSING)
     CLMatrixProduct eigenVectorsOnValues( normalized.getNormalizedMatrix(),
                                           eigenVectors.getResult(),
@@ -87,13 +87,18 @@ int main(int argc, char* argv[]){
           &ctx, &queue );
 
     // get biggest eigen values
-    InertiaSort<cl_float> sort( eigenpair.getValues(), 0.90, true, 0, true );
+    InertiaSort<cl_float> sort( eigenpair.getValues(), 0.9, true, 0, true );
     localEigenVectorsOnVars.getResult()->evaluate();
     localEigenVectorsOnVars.getResult()->waitEndOfEvaluation();
     sort.getSorted()->evaluate();
     sort.getSorted()->waitEndOfEvaluation();
 
 #ifndef NDEBUG
+    cout << "# images" << endl;
+    images->print();
+    save(*images,"/tmp/images.csv");
+    cout << "# covariance matrix" << endl;
+    localCovMat.getResult()->print();
     cout << "values: \n";
     eigenpair.getValues()->print();
     cout << "Total inertia: " << sort.getTotalInertia() << "\n";
@@ -111,6 +116,8 @@ int main(int argc, char* argv[]){
                                      &ctx, &queue);
     localNormalized.getResult()->evaluate();
     localNormalized.getResult()->waitEndOfEvaluation();
+    cout << "# normalized" << endl;
+    localNormalized.getResult()->print();
     for( int i=0; i<1;i++ ){
       MatrixToImage(*localNormalized.getResult().get(),
                     array.avgHeight,
