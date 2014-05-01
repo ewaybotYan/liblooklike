@@ -35,7 +35,7 @@ The tools used to build the project can be obtained with:
 For debian with pocl implementation, the dependencies for the projects
 can be installed by running:
 
-    sudo apt-get install ocl-icd-dev llvm clang hwloc \
+    sudo apt-get install ocl-icd-dev llvm clang libclang-dev hwloc \
         libhwloc-dev libarmadillo4 libarmadillo-dev mesa-common-dev \
         libjpeg-dev
 
