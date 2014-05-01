@@ -9,6 +9,7 @@
 
 #ifndef NDEBUG
 #include<iostream>
+#include<algorithm>
 #endif
 #include<memory>
 #include<vector>
@@ -164,8 +165,8 @@ void SimpleMatrix<Scalar>::print()
 {
   std::cout.precision(5);
   std::cout << std::scientific;
-  for( int i=0;i<m_m;i++ ){
-    for( int j=0;j<m_n;j++ )
+  for( int i=0;i<std::min(m_m,100);i++ ){
+    for( int j=0;j<std::min(m_n,7);j++ )
       std::cout << m_values.get()->at(i+j*m_m) << " ";
     std::cout << "\n";
   }
