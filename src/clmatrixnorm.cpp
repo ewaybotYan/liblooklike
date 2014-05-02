@@ -79,3 +79,61 @@ void CLMatrixNorm::enqueue(){
   if ( error != CL_SUCCESS )
     throw ( CLError ( error, "failed to enqueue kernel execution" ) );
 }
+
+
+CLInterDistance::CLInterDistance(std::shared_ptr<CLMatrix> A,
+                                Context *context,
+                                cl::CommandQueue *queue ) :
+  ClAlgorithm ( context, queue )
+{
+  // set child expression as usual
+  m_src = A;
+  addDependency(m_src.get());
+  m_distances = std::make_shared<CLMatrix>( A->getWidth(), A->getWidth() );
+  addResult(m_distances.get());
+}
+
+void CLInterDistance::waitEndOfEvaluation()
+{
+  if ( !isEnqueued() ) {
+    throw EvaluationProcessViolation(
+          "Cannot wait for evaluation as it is not enqued.");
+  } else {
+    getEndOfEvaluation().wait();
+  }
+}
+
+std::shared_ptr< CLMatrix > CLInterDistance::getDistances()
+{
+  return m_distances;
+}
+
+void CLInterDistance::enqueue(){
+  // get kernel
+  cl::Kernel kernel = getContext()->getKernel ( "matrix_norm",
+                                                "matrix_distances" );
+
+  // set arguments
+  kernel.setArg ( 0, *(m_distances->getValues().get()) );
+  kernel.setArg ( 1, *(m_src->getValues().get()) );
+  kernel.setArg<int> ( 2, m_src->getHeight() );
+  kernel.setArg<int> ( 3, m_src->getWidth() );
+
+  // prepare dependencies
+  m_dependenciesEvents.push_back(
+        ((ClAlgorithm*)m_src->getParentAlgorithm())->getEndOfEvaluation() );
+
+  //enqueue kernel execution
+  cl_int error;
+  error = getCommandQueue()->enqueueNDRangeKernel (
+            kernel,
+            cl::NullRange,
+            cl::NDRange ( m_src->getWidth(), m_src->getWidth() ),
+            cl::NDRange ( 1,1 ),
+            &m_dependenciesEvents,
+            &(getEndOfEvaluation())
+            );
+
+  if ( error != CL_SUCCESS )
+    throw ( CLError ( error, "failed to enqueue kernel execution" ) );
+}

@@ -47,18 +47,11 @@ void JPEGImageInFile::setSourceFile(std::string filePath){
   jpeg_read_header(&m_info, TRUE);
   m_width = m_info.image_width;
   m_height = m_info.image_height;
-#ifndef NDEBUG
-  std::cout << "new Jpeg image of size " << m_width << "x" << m_height << "\n";
-#endif
 }
 
 void JPEGImageInFile::load ( cl_float* mem,
                              unsigned int width,
                              unsigned int height ) {
-#ifndef NDEBUG
-  std::cout << "loading JPEG image of size "
-            << width << "x" << height << "\n";
-#endif
   // set output options such as color depth and scale
   m_info.output_height = height;
   m_info.output_width = width;

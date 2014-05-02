@@ -9,10 +9,12 @@
 
 #ifndef NDEBUG
 #include<iostream>
+#include<algorithm>
 #endif
 #include<memory>
 #include<vector>
 #include"expression.hpp"
+#include"exception.h"
 
 
 template<typename Scalar>
@@ -21,41 +23,50 @@ class SimpleMatrix : public Expression
   public:
 
     /// creates an empty SimpleMatrix object
-    /// @param dependencies of the SimpleMatrix
     /// @param m     number of lines in the SimpleMatrix
     /// @param n     number of columns in the SimpleMatrix
     SimpleMatrix ( const unsigned int m,
                    const unsigned int n );
 
+    /// creates an empty SimpleMatrix object
+    /// @param values array of the values of the matrix (see
+    ///        @ref matrix_mem_representation )
+    /// @param m     number of lines in the SimpleMatrix
+    /// @param n     number of columns in the SimpleMatrix
     SimpleMatrix(
         std::shared_ptr< std::vector<Scalar> > values,
         const unsigned int m,
         const unsigned int n );
 
     /// creates a SimpleMatrix object without value but with dependencies
-    /// @param dependencies of the SimpleMatrix
+    /// @param values array of the values of the matrix (see
+    ///        @ref matrix_mem_representation )
     /// @param m     number of lines in the SimpleMatrix
     /// @param n     number of columns in the SimpleMatrix
     SimpleMatrix ( const std::vector<Scalar>& values,
                    const unsigned int m,
-                   const unsigned int n);
+                   const unsigned int n );
 
-    /// @return SimpleMatrix width
+    /// @return matrix width
     int getWidth() const;
 
-    /// @return SimpleMatrix height
+    /// @return matrix height
     int getHeight() const;
 
-    /// @return a 1D float array as the concatenation of the lines of the SimpleMatrix
+    /// @return the elements of the matrix in an array ( see
+    ///         @ref matrix_mem_representation )
     Scalar* getValues() const;
 
     /// @return the value of the SimpleMatrix at line i and column j
     Scalar& at( const int i, const int j );
 
-    void resizeWidth( const int h );
+    void resizeWidth( const int w );
+
+    void resizeVecHeight( const int h );
+
 
 #ifndef NDEBUG
-    /// @brief Prints SimpleMatrix on standard output
+    /// @brief Print matrix on the standard output
     void print();
 #endif
 
@@ -63,10 +74,10 @@ class SimpleMatrix : public Expression
 
     std::shared_ptr< std::vector<Scalar> > m_values;
 
-    /// Matrix height
+    /// matrix height
     int m_m;
 
-    /// Matrix width
+    /// matrix width
     int m_n;
 
     bool allocateMemImpl() override;
@@ -138,6 +149,15 @@ void SimpleMatrix<Scalar>::resizeWidth( const int w )
   m_values->resize(w*m_m);
 }
 
+template<typename Scalar>
+void SimpleMatrix<Scalar>::resizeVecHeight( const int h )
+{
+  if( m_n != 1 )
+    throw Error("resizing height is only supported for vectors.");
+  m_m = h;
+  m_values->resize(h);
+}
+
 #ifndef NDEBUG
 /// @brief Prints SimpleMatrix on standard output
 template<typename Scalar>
@@ -145,8 +165,8 @@ void SimpleMatrix<Scalar>::print()
 {
   std::cout.precision(5);
   std::cout << std::scientific;
-  for( int i=0;i<m_m;i++ ){
-    for( int j=0;j<m_n;j++ )
+  for( int i=0;i<std::min(m_m,100);i++ ){
+    for( int j=0;j<std::min(m_n,7);j++ )
       std::cout << m_values.get()->at(i+j*m_m) << " ";
     std::cout << "\n";
   }

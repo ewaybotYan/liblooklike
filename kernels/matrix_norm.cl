@@ -23,20 +23,26 @@ matrix_normalize_cols( __global float* R,
     float n_var = 0.0f; // total square distance to the average
 
     // Compute the column average;
+    float err = 0.0f;
     for (int k = 0; k < h; ++k) {
-        // Calculation of the column average
-        mu += A[k+ty*h];
+        float val = A[k+ty*h] - err;
+        float t = mu + val;
+        err = t - mu - val;
+        mu = t;
     }
-
-    mu = mu / (float)h;
+    mu /= (float)h;
 
     // Compute the column variance
+    err = 0;
     for (int k = 0; k < h; ++k) {
-        n_var += pown( A[k+ty*h] - mu, 2 );
+        float d = pown( A[k+ty*h] - mu, 2 ) - err;
+        float t = n_var + d;
+        err = t - n_var - d;
+        n_var = t;
     }
+    n_var /= (float)(h-1);
 
     // Normalize the matrix
-    n_var = n_var / (float)(h-1);
     float stdDev = sqrt(n_var);
     C[ty] = stdDev;
     for (int k = 0; k < h; ++k) {
@@ -80,4 +86,32 @@ matrix_normalize_rows( __global float* R,
     for ( int k = 0; k < w; ++k ) {
         R[k*h+ty] = (A[k*h+ty] - mu) / stdDev;
     }
+}
+
+
+// #######################
+// # inter-column distance
+
+// computes the euclidian distance between columns of a matrix
+
+__kernel void
+matrix_distances( __global float* R,
+                  __global float* A,
+                  int h, int w){
+    // Thread index
+    int tx = get_global_id(0);
+    int ty = get_global_id(1);
+    // skip upper triangle of the matrix since matrix is symmetrical
+    if( tx > ty ){
+        R[tx*w+ty] = 0;
+        return;
+    }
+
+    // thread variables
+    float distance = 0;
+
+    for( int k = 0; k<h; k++ )
+        distance += pown( A[tx*h+k] - A[ty*h+k], 2 );
+
+    R[tx*w+ty] = distance;
 }

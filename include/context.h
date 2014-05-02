@@ -2,7 +2,8 @@
  *  @file   context.h
  *  @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
  *  @brief  Defines a Context class that has pretty much the same role as the
- *          standard OpenCL Context. Context also takes care of loading programs 
+ *          standard OpenCL Context.
+ *  @details Context also takes care of loading programs
  *          and kernels. Device management has also been merged inside Context.
  */
 

@@ -52,7 +52,10 @@ if(BUILD_DOCUMENTATION)
         set( image_dir "${CMAKE_CURRENT_BINARY_DIR}/uml_images")
         file(MAKE_DIRECTORY ${image_dir})
         ADD_CUSTOM_TARGET( plantuml
-        COMMAND ${Java_JAVA_EXECUTABLE} -jar ${PLANTUML_PATH} -o "${image_dir}" "${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h"
+        COMMAND ${Java_JAVA_EXECUTABLE} -Djava.awt.headless=true
+                                        -jar ${PLANTUML_PATH}
+                                        -o "${image_dir}"
+                                        "\"${PROJECT_SOURCE_DIR}/**.(h|md)\""
         COMMENT "Generating UML diagrams for documentation")
         add_dependencies( doc plantuml)
     endif()

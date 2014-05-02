@@ -16,13 +16,59 @@ matrix_matrix_multiplication ( __global float* C,
     const int j = get_global_id(0);
     const int i = get_global_id(1);
     for( int k=0; k < depth; k++ ){
-        tmp += A[i+k*h] * B[k+h*j];
+        tmp += A[i+k*h] * B[k+depth*j];
     }
     C[i+h*j] = tmp;
 }
 
 
+__kernel void
+matrix_transpose_matrix_multiplication ( __global float* C,
+                               __global float* A,
+                               __global float* B,
+                               int h, int depth )
+{
+    float tmp = 0;
+    const int j = get_global_id(0);
+    const int i = get_global_id(1);
+    float err = 0;
+    for( int k=0; k < depth; k++ ){
+            float y =  A[k+i*depth] * B[k+depth*j] - err;
+            float t = tmp + y;
+            err = t - tmp - y;
+            tmp = t;
+        }
+    C[i+h*j] = tmp;
+}
+
+
+//////////////////
+/// Matrix scaling
+
+/// Mulitply lines of a matrix by corresponding
+/// coefficients taken from a vector
+/// @param C result
+/// @param A input matrix
+/// @param V coefficients
+__kernel void
+matrix_matrix_scale ( __global float* C,
+                      __global float* A,
+                      __global float* V,
+                      int h)
+{
+    const int j = get_global_id(0);
+    const int i = get_global_id(1);
+    C[i+h*j] = A[i+h*j]/V[i];
+}
+
+
+//////////////////
 // computes T*t(T)
+
+/// @param C result
+/// @param T input matrix
+/// @param w T width
+/// @param h T height
 __kernel void
 matrix_covariance ( __global float* C,
                     __global float* T,
@@ -31,24 +77,12 @@ matrix_covariance ( __global float* C,
     float tmp = 0;
     const int i = get_global_id(0);
     const int j = get_global_id(1);
-    for( int k=0; k < w; k++ ){
-        tmp += T[i*h+k] * T[j*h+k];
+    float err = 0;
+    for( int k=0; k < h; k++ ){
+        float y =  T[i*h+k] * T[j*h+k] - err;
+        float t = tmp + y;
+        err = t - tmp - y;
+        tmp = t;
     }
-    C[i+h*j] = tmp;
+    C[i+w*j] = tmp / w;
 }
-
-/*
-__kernel void
-matrix_vector_multiplication ( __global float* C,
-                               __global float* A,
-                               __global float* B,
-                               int depth )
-{
-    float tmp = 0;
-    const int i = get_global_id(1);
-    for( int k = 0; k < depth; k++ ){
-        tmp += A[i*depth+k] * B[k];
-    }
-    C[i] = tmp;
-}
-*/

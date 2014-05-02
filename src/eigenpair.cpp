@@ -67,7 +67,7 @@ void EigenPair::computeEigenPairs(EigenPair* a)
                      false, true );
 
   // perform eigen pairs computation
-  arma::eig_sym(eigval, eigvec, src );
+  arma::eig_sym(eigval, eigvec, src, "dc");
 
   a->getValues()->resizeWidth(1);
 }

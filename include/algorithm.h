@@ -1,10 +1,7 @@
 /**
  * @file   algorithm.h
  * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
- * @brief  The evaluation of a whole expression is handled by an Expression
- *         object. It makes it easier to understand the process.
- * @note   All objects should inheritate from Expression so that computation can
- *         be done with them.
+ * @brief  Define a generic algorithm representation
  */
 
 #ifndef ALGORITHM_H
@@ -16,47 +13,42 @@ class Expression;
 
 #include<vector>
 
+/// @page algorithm Algorithm
+/// @brief Description of the Algorithm class
+///
+/// This library automates the memory allocations, dependencies and execution
+/// for the computation of expressions automatically. This is achieved by using
+/// a standardized interface on the operations which is called Algorithm.
+///
+/// An algorithm takes expressions in and yields results which are expressions
+/// themselves.
+/// The input can also be considered as dependencies of the algorithm.
+///
+/// The method @ref evaluateTree is used to start the computation in the
+/// algorithm. If the input values are not yet enqueued, it will automatically
+/// start their evaluation.
+///
+/// Then the actual computation performed by the algorithm will start with
+/// a call to @ref enqueue.
+///
+/// @warning When @ref enqueue is called, the dependencies are only enqueued,
+///          not computed, @ref enqueue should use synchronisation mechanism if
+///          necessary.
+///
+/// For details on the Algorithm class and its methods, see @ref algorithm.h.
 
-/// @brief Abstract class that describes a mathematical object that needs
-///        (or not) to be evaluated before having a value.
-/// @detailed The principle of Mathexpression is to hold the elements that can
-///            be computed in a mathematical expression.
-///
-///            Example:
-///                 in a = b + c <br/>
-///                 a, b and c are all algorithms. It can also be
-///                 represented as a tree where a is the root node,
-///                 and has two children b and c.
-///                 In order to compute a, we will execute evaluate().
-///                 And then retrieve data from the computation device with
-///                 retrieveData()
-///
-///            As shown in the example above, the expression is represented as
-///            a tree. The terminal nodes are basically values known by the
-///            program on the computer side, whereas the other nodes are values
-///            obtained by computation on their children nodes.
-///
-///            The behaviour of @ref evaluate() is fixed however: recursively
-///            evaluate children expressions then the value of the current
-///            expression. However, it relies on two virtual functions:
-///                - @ref allocateMemoryForResult()
-///                - @ref enqueue()
-///            It is highly recommanded to read the description of these
-///            methods and the @ref test_algorithm example in /examples
-///            before trying to implement them.
-///
-/// @note @ref allocateForResult() and @ref deallocateForResult() are meant to
-///       be used for special computation systems that have their own memory
-///       like OpenCL. If the memory is the RAM, you might not want to throw the
-///       result of your computation away.
-
-
+/// Algorithms class as described in @ref algorithm
 class Algorithm {
     friend class Expression;
 
     public:
+        /// @brief blocking function that returns when computation is finished.
+        /// @note This function might be called on a finished algorithm in which
+        ///       case it should return immediately.
         virtual void waitEndOfEvaluation() = 0;
 
+        /// Indicates the state of the algorithm
+        /// @return true if algorithm is enqueued (or evaluated)
         bool isEnqueued() const;
 
     protected:
@@ -64,47 +56,62 @@ class Algorithm {
         /// allocate any temporary memory needed to perform computation
         virtual bool allocateTmpMem() = 0;
 
-        bool allocateResMem();
-
         /// realease any temporary memory reserved for computation
         virtual void releaseTmpMem() = 0;
-
-        /// recursively deallocate memory for the evaluation tree
-        /// @param hierarchyOffset number of levels of the evaluation tree to
-        ///        skip before actually deallocating memory.
-        /// @note will deallocate results temporary memory, but not
-        ///       dependencies. However @ref releaseTreeMem will be called on
-        ///       the parent algorithm of dependencies if any.
-        void releaseTreeMem( const int hierarchyOffset = 0 );
-
 
         /// specify an expression whose value is needed to compute the algorithm
         /// @param dependency a dependency of the algorithm
         void addDependency(Expression* dependency);
 
-        /// appends a result to the list of the algorithm's results
-        /// @note all results need to be added for memory management to work
+        /// Specifiy a result expression of the algorithm.
+        /// This is usually caled by the constructors when they create the
+        /// results expressions.
+        /// @note all results of an algorithm need to be added for memory
+        ///       management and queueing to work properly.
         void addResult(Expression* result);
+
 
         /// dependencies requiered to compute this expression
         /// @warning Any dependency not specified here will be ignored by
         ///          @ref evaluateTree()
         std::vector<Expression*> m_dependencies;
 
-        /// dependencies requiered to compute this expression
+        /// results produced by the algorithm
         /// @warning Any result not specified here will be ignored during
         ///          the evaluation.
         std::vector<Expression*> m_results;
 
 
-        /// @brief evaluate the expression tree in a reverse recursive way
-        bool evaluateTree( int depth=0 );
-
         /// @brief launch evaluation of the object
+        /// This function can assumes memory was allocated for all results and
+        /// that dependencies are *enqueued* (not necessarily computed).
+        /// @note  enqueue should not be blocking execution. Instead, it should
+        ///        start computation in a separate thread. Synchronisation
+        ///        can be achieved with waitEndOfEvaluation() or implementation
+        ///        specific systems.
         virtual void enqueue( ) = 0;
 
-  private:
+        /// @brief  recursively evaluate the expression tree
+        /// @note   for a clear understanding of its behavour, see
+        ///         @computation_tree and @tree_evaluation
+        /// @param  depth depth in the recursion (0 is the root of the tree)
+        /// @return true if computation of the algorithm has started, false
+        ///         otherwise
+        bool evaluateTree( int depth=0 );
 
+  private:
+        /// allocate memory for the elements of m_results
+        bool allocateResMem();
+
+        /// recursively deallocate memory in the evaluation tree
+        /// @param hierarchyOffset number of levels of the evaluation tree to
+        ///        skip before actually deallocating memory.
+        /// @note will deallocate results and temporary memory, but not
+        ///       dependencies. However @ref releaseTreeMem will be called on
+        ///       the parent algorithm of dependencies if any.
+        void releaseTreeMem( const int hierarchyOffset = 0 );
+
+        /// true if algorithm is enqueued or evaluated
         bool m_isEnqueued = false;
 };
 

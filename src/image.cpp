@@ -61,9 +61,6 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
   int offset = 0;
   cl_float* data = values->data();
   for ( JPEGImageInFile f : imagefiles ) {
-#ifndef NDEBUG
-    std::cout << "loading pixels\n" ;
-#endif
     f.load( data + offset, avgWidth, avgHeight );
     offset+= avgHeight * avgWidth;
   }
@@ -74,6 +71,10 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
     imagefiles.size(),
     values
   };
+#ifndef NDEBUG
+  cout << imagefiles.size() << " images of size "
+       << avgHeight << "x" << avgWidth << endl;
+#endif
   return res;
 }
 

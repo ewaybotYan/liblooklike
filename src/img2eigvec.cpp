@@ -1,12 +1,13 @@
 #include <iostream>
 #include <string>
-#include <armadillo>
+#include <sstream>
 #include <image.h>
 #include <simplematrix.hpp>
 #include <clmatrixoperations.hpp>
 #include <clmatrixnorm.hpp>
 #include <eigenpair.hpp>
 #include <sort.hpp>
+#include <files.hpp>
 
 using namespace std;
 
@@ -35,68 +36,101 @@ int main(int argc, char* argv[]){
 
     // load images
     ArrayOfImages array = arrayOfImagesFromFiles(imagePath);
-    shared_ptr<Matrix> images = make_shared<Matrix>( array.pixels,
-                                                     array.avgHeight * array.avgWidth,
-                                                     array.nbImages );
-    CLMatrixLoader imagesInCL( images, &ctx, &queue );
-#ifndef NDEBUG
-    cout << "imagesInCL " << imagesInCL.getResult()->getHeight()
-         << "x" << imagesInCL.getResult()->getWidth() << endl;
-#endif
+    shared_ptr<Matrix> images = make_shared<Matrix>(
+                                  array.pixels,
+                                  array.avgHeight * array.avgWidth,
+                                  array.nbImages );
+
     // normalize images values
+#ifdef PREPROCESSING
+    CLMatrixLoader imagesInCL( images, &ctx, &queue );
+    CLMatrixNorm normalized( imagesInCL.getResult(),
+                              &ctx, &queue,
+                              true ); // on each image
+#elif NORMALIZE_PXL
+    CLMatrixLoader imagesInCL( images, &ctx, &queue );
     CLMatrixNorm normalized1( imagesInCL.getResult(),
                               &ctx, &queue,
-                              false );// on each image
-    CLMatrixNorm normalized2( normalized1.getNormalizedMatrix(),
+                              true ); // on each image
+    CLMatrixNorm normalized( imagesInCL.getResult(),
                               &ctx, &queue,
-                              true );// normalize pixels values across images
-#ifndef NDEBUG
-    cout << "normalized2 " << normalized2.getNormalizedMatrix()->getHeight()
-         << "x" << normalized2.getNormalizedMatrix()->getWidth() << endl;
-    CLMatrixUnloader bug1( normalized2.getNormalizedMatrix(), &ctx, &queue );
-    bug1.getResult()->evaluate();
-    bug1.getResult()->waitEndOfEvaluation();
-    MatrixToImage(*bug1.getResult(),
-                  array.avgHeight,
-                  array.avgWidth,
-                  1,
-                  true,
-                  "/tmp/previewNormalized.jpg");
+                              true ); // normalize pixels values across images
 #endif
-    CLMatrixCovariance covMat( normalized2.getNormalizedMatrix(),
+
+    // compute covariance matrix
+#if defined(NORMALIZE_PXL) || defined(PREPROCESSING)
+    CLMatrixCovariance covMat( normalized.getNormalizedMatrix(),
                                &ctx, &queue );
-#ifndef NDEBUG
-    cout << "covMat " << covMat.getResult()->getHeight()
-         << "x" << covMat.getResult()->getWidth() << endl;
+#else
+    CLMatrixCovariance covMat( imagesInCL.getResult(),
+                               &ctx, &queue );
 #endif
     CLMatrixUnloader localCovMat( covMat.getResult(), &ctx, &queue );
+    // compute eigen values and get the eigenvectors on variables
     EigenPair eigenpair(localCovMat.getResult());
-#ifndef NDEBUG
-    cout << "eigenpair " << eigenpair.getVectors()->getHeight()
-         << "x" << eigenpair.getVectors()->getWidth() << endl;
-#endif
     CLMatrixLoader eigenVectors(eigenpair.getVectors(), &ctx, &queue);
-    CLMatrixProduct eigenVectorsOnValues( normalized2.getNormalizedMatrix(),
+
+#if defined(NORMALIZE_PXL) || defined(PREPROCESSING)
+    CLMatrixProduct eigenVectorsOnValues( normalized.getNormalizedMatrix(),
                                           eigenVectors.getResult(),
                                           &ctx, &queue );
-    CLMatrixUnloader localEigenVectorsOnVars( eigenVectorsOnValues.getResult(),
-                                              &ctx, &queue );
-#ifndef NDEBUG
-    cout << "localEigenVectorsOnVars " << localEigenVectorsOnVars.getResult()->getHeight()
-         << "x" << localEigenVectorsOnVars.getResult()->getWidth() << endl;
+#else
+    CLMatrixProduct eigenVectorsOnValues( imagesInCL.getResult(),
+                                          eigenVectors.getResult(),
+                                          &ctx, &queue );
+
 #endif
+    CLMatrixNorm eigenVecOnValsNorm( eigenVectorsOnValues.getResult(),
+                                     &ctx, &queue );
+    CLMatrixUnloader localEigenVectorsOnVars(
+          eigenVecOnValsNorm.getNormalizedMatrix(),
+          &ctx, &queue );
+
+    // get biggest eigen values
     InertiaSort<cl_float> sort( eigenpair.getValues(), 0.9, true, 0, true );
     localEigenVectorsOnVars.getResult()->evaluate();
     localEigenVectorsOnVars.getResult()->waitEndOfEvaluation();
     sort.getSorted()->evaluate();
     sort.getSorted()->waitEndOfEvaluation();
+
+#ifndef NDEBUG
+    cout << "# images" << endl;
+    images->print();
+    save(*images,"/tmp/images.csv");
+    cout << "# covariance matrix" << endl;
+    localCovMat.getResult()->print();
+    cout << "values: \n";
+    eigenpair.getValues()->print();
+    cout << "Total inertia: " << sort.getTotalInertia() << "\n";
+    cout << "biggest values: " << endl;
     sort.getSorted()->print();
-    sort.getSortIdx()->print();
-    cout << "\nNumber of important vectors: " << sort.getNbSortedValues() << "\n";
-    cout << "total inertia: " << sort.getTotalInertia() << "\n";
+#endif
     Matrix* vectors = localEigenVectorsOnVars.getResult().get();
 
     int nbVectors = sort.getNbSortedValues();
+
+    // export sample of the normalization
+#ifndef NDEBUG
+#if defined(NORMALIZE_PXL) || defined(PREPROCESSING)
+    CLMatrixUnloader localNormalized(normalized.getNormalizedMatrix(),
+                                     &ctx, &queue);
+    localNormalized.getResult()->evaluate();
+    localNormalized.getResult()->waitEndOfEvaluation();
+    cout << "# normalized" << endl;
+    localNormalized.getResult()->print();
+    for( int i=0; i<1;i++ ){
+      MatrixToImage(*localNormalized.getResult().get(),
+                    array.avgHeight,
+                    array.avgWidth,
+                    i,
+                    true,
+                    "/tmp/sampleNormalized"+to_string(i)+".jpg");
+    }
+#endif
+#endif
+
+    // export pictures of the eigen vectors
+#ifndef NDEBUG
     for ( int i = 0; i < nbVectors; i++) {
       std::stringstream ss;
       ss << "/tmp/vectorPreview" << i << ".jpg";
@@ -108,6 +142,18 @@ int main(int argc, char* argv[]){
                     true,
                     ss.str());
     }
+#endif
+
+    // save normalization coefficients
+#ifdef NORMALIZE_PXL
+    CLMatrixUnloader coeffs(normalized.getNormCoeffs(), &ctx, &queue );
+    coeffs.getResult()->evaluate();
+    coeffs.getResult()->waitEndOfEvaluation();
+    save(*coeffs.getResult(), "/tmp/coeffs.csv" );
+#endif
+
+    // save eigen vectors
+    save(*vectors, "/tmp/vectors.csv", *sort.getSortIdx().get());
 
   } catch ( Error& err ) {
     err.printMsg();
