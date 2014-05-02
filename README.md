@@ -2,6 +2,8 @@
 LIBLOOKLIKE
 ===========
 
+Online documentation is available at 
+http://pixelou.github.io/liblooklike/html/index.html
 
 REQUIREMENTS
 ============
