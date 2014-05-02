@@ -29,6 +29,5 @@ necessary to understand the global architecture:
 Tutorials
 ---------
 
-An example is often worth a lot of words, the following pages provide tutorials
-in order to get familiar with the project.
-- coming soon
+An example is often worth a lot of words, the @ref tutorials page provides a
+comprehensive introduction to the project both for users and developers.
