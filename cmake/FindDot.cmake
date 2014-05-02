@@ -14,5 +14,5 @@ else()
     set( DOT_EXECUTABLE_PATH_FOUND TRUE )
     execute_process(COMMAND "dot -V"
                 OUTPUT_VARIABLE DOT_VERSION)
-    message("-- Found dot (${DOT_VERSION})")
+    message(STATUS "-- Found dot (${DOT_VERSION})")
 endif()
