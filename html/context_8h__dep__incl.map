@@ -1,6 +1,6 @@
 <map id="context.h" name="context.h">
-<area shape="rect" id="node2" href="$clalgorithm_8hpp_source.html" title="clalgorithm.hpp" alt="" coords="94,80,204,107"/>
+<area shape="rect" id="node2" href="$clalgorithm_8hpp.html" title="clalgorithm.hpp" alt="" coords="94,80,204,107"/>
 <area shape="rect" id="node3" href="$clmatrix_8hpp.html" title="clmatrix.hpp" alt="" coords="103,155,196,181"/>
-<area shape="rect" id="node4" href="$clmatrixnorm_8hpp_source.html" title="clmatrixnorm.hpp" alt="" coords="5,229,128,256"/>
-<area shape="rect" id="node5" href="$clmatrixoperations_8hpp.html" title="clmatrixoperations.hpp" alt="" coords="155,229,308,256"/>
+<area shape="rect" id="node4" href="$clmatrixnorm_8hpp.html" title="define algorithms on matrices related to the norms and distances " alt="" coords="5,229,128,256"/>
+<area shape="rect" id="node5" href="$clmatrixoperations_8hpp.html" title="set of basic algorithms on matrices for CLMatrix objects " alt="" coords="155,229,308,256"/>
 </map>

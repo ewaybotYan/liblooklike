@@ -1,8 +1,8 @@
 <map id="clmatrix.hpp" name="clmatrix.hpp">
-<area shape="rect" id="node4" href="$expression_8hpp.html" title="expression.hpp" alt="" coords="517,155,627,181"/>
-<area shape="rect" id="node7" href="$clalgorithm_8hpp_source.html" title="clalgorithm.hpp" alt="" coords="322,80,432,107"/>
-<area shape="rect" id="node14" href="$simplematrix_8hpp.html" title="simplematrix.hpp" alt="" coords="531,80,652,107"/>
-<area shape="rect" id="node5" href="$algorithm_8h.html" title="The evaluation of a whole expression is handled by an Expression object. It makes it easier to unders..." alt="" coords="503,229,589,256"/>
-<area shape="rect" id="node8" href="$context_8h.html" title="Defines a Context class that has pretty much the same role as the standard OpenCL Context..." alt="" coords="145,155,220,181"/>
-<area shape="rect" id="node11" href="$exception_8h.html" title="liblooklike specific exceptions are usefull, the are defined here " alt="" coords="231,229,377,256"/>
+<area shape="rect" id="node4" href="$expression_8hpp.html" title="expression.hpp" alt="" coords="210,155,320,181"/>
+<area shape="rect" id="node7" href="$clalgorithm_8hpp.html" title="clalgorithm.hpp" alt="" coords="117,80,227,107"/>
+<area shape="rect" id="node14" href="$simplematrix_8hpp.html" title="simplematrix.hpp" alt="" coords="491,80,612,107"/>
+<area shape="rect" id="node6" href="$algorithm_8h.html" title="Define a generic algorithm representation. " alt="" coords="178,229,264,256"/>
+<area shape="rect" id="node8" href="$context_8h.html" title="Defines a Context class that has pretty much the same role as the standard OpenCL Context..." alt="" coords="345,155,420,181"/>
+<area shape="rect" id="node11" href="$exception_8h.html" title="liblooklike specific exceptions are usefull, the are defined here " alt="" coords="568,229,715,256"/>
 </map>

@@ -1,5 +1,5 @@
 <map id="CLMatrixNorm" name="CLMatrixNorm">
-<area shape="rect" id="node2" href="$classClAlgorithm.html" title="ClAlgorithm" alt="" coords="275,97,365,124"/>
-<area shape="rect" id="node3" href="$classAlgorithm.html" title="Abstract class that describes a mathematical object that needs (or not) to be evaluated before having..." alt="" coords="113,5,189,32"/>
-<area shape="rect" id="node5" href="$classExpression.html" title="Expression" alt="" coords="5,97,91,124"/>
+<area shape="rect" id="node2" href="$classClAlgorithm.html" title="OpenCL aware specialization of Algorithm. " alt="" coords="275,97,365,124"/>
+<area shape="rect" id="node3" href="$classAlgorithm.html" title="Algorithms class as described in Algorithm. " alt="" coords="113,5,189,32"/>
+<area shape="rect" id="node5" href="$classExpression.html" title="Expression object as defined in Expression. " alt="" coords="5,97,91,124"/>
 </map>

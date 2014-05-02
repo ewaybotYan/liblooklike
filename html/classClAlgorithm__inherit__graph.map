@@ -1,8 +1,10 @@
 <map id="ClAlgorithm" name="ClAlgorithm">
-<area shape="rect" id="node3" href="$classCLMatrixCovariance.html" title="CLMatrixCovariance" alt="" coords="5,155,145,181"/>
-<area shape="rect" id="node4" href="$classCLMatrixLoader.html" title="CLMatrixLoader" alt="" coords="171,155,285,181"/>
-<area shape="rect" id="node5" href="$classCLMatrixNorm.html" title="CLMatrixNorm" alt="" coords="309,155,416,181"/>
-<area shape="rect" id="node6" href="$classCLMatrixProduct.html" title="CLMatrixProduct" alt="" coords="440,155,560,181"/>
-<area shape="rect" id="node7" href="$classCLMatrixUnloader.html" title="CLMatrixUnloader" alt="" coords="585,155,711,181"/>
-<area shape="rect" id="node2" href="$classAlgorithm.html" title="Abstract class that describes a mathematical object that needs (or not) to be evaluated before having..." alt="" coords="324,5,400,32"/>
+<area shape="rect" id="node3" href="$classCLInterDistance.html" title="Algorithm that computes the distances between all the vectors for the euclidian distance. " alt="" coords="281,5,399,32"/>
+<area shape="rect" id="node4" href="$classCLMatrixCovariance.html" title="for a given matrix A, compute t(A)*A with t() the transpose function and * the dot product for matric..." alt="" coords="269,56,411,83"/>
+<area shape="rect" id="node5" href="$classCLMatrixLoader.html" title="specialization of ClAlgorithm that handles creates a CLMatrix with the values of an SimpleMatrix&lt;cl_f..." alt="" coords="283,107,397,133"/>
+<area shape="rect" id="node6" href="$classCLMatrixNorm.html" title="ClAlgorithm specialization for normalization of the lines or columns of a CLMatrix object ..." alt="" coords="287,157,393,184"/>
+<area shape="rect" id="node7" href="$classCLMatrixProduct.html" title="performs the dot product of two matrices " alt="" coords="280,208,400,235"/>
+<area shape="rect" id="node8" href="$classCLMatrixScale.html" title="For a given matrix A of height h and a vector V of size h, divide each line of A by the corresponding..." alt="" coords="286,259,394,285"/>
+<area shape="rect" id="node9" href="$classCLMatrixUnloader.html" title="handles conversion from CLMatrix to SimpleMatrix&lt;cl_float&gt; " alt="" coords="277,309,403,336"/>
+<area shape="rect" id="node2" href="$classAlgorithm.html" title="Algorithms class as described in Algorithm. " alt="" coords="5,157,83,184"/>
 </map>

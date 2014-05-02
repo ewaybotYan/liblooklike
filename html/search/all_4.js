@@ -1,10 +1,20 @@
 var searchData=
 [
-  ['getcontext',['getContext',['../classContext.html#a5f6861a281dfcc2c28d5f46b335328c8',1,'Context']]],
+  ['getcommandqueue',['getCommandQueue',['../classClAlgorithm.html#ab7f8c996adb41959c136b9a83658acf5',1,'ClAlgorithm']]],
+  ['getcontext',['getContext',['../classClAlgorithm.html#ad245c03771e967fd0f5dd0ade10b6bb8',1,'ClAlgorithm::getContext()'],['../classContext.html#a5f6861a281dfcc2c28d5f46b335328c8',1,'Context::getContext()']]],
   ['getdevices',['getDevices',['../classContext.html#a2cc249da1463e6cab071a42db51bf17f',1,'Context']]],
+  ['getdistances',['getDistances',['../classCLInterDistance.html#a6cce789b93ed540bf04196af4a0451ab',1,'CLInterDistance']]],
   ['getendofevaluation',['getEndOfEvaluation',['../classClAlgorithm.html#a0e7ea7e7b24dc3a7bb75d0d56a697067',1,'ClAlgorithm']]],
   ['getheight',['getHeight',['../classCLMatrix.html#a03fbe455bbeeb7699cbbfc2fe94fc9ef',1,'CLMatrix::getHeight()'],['../classImageInFile.html#a4d876905b25604f164aaeb9242d1dd45',1,'ImageInFile::getHeight()'],['../classSimpleMatrix.html#a85c715b42e743844e6ab9aacc2c1a2f2',1,'SimpleMatrix::getHeight()']]],
   ['getkernel',['getKernel',['../classContext.html#aac933ac2cacaf68b22cd1c138b6a99b5',1,'Context']]],
-  ['getvalues',['getValues',['../classCLMatrix.html#a0db9023231f5328ed0ba3db2ff609a6f',1,'CLMatrix::getValues()'],['../classSimpleMatrix.html#af47bfa5345b02612b3d13dc061c96b37',1,'SimpleMatrix::getValues()']]],
+  ['getnbsortedvalues',['getNbSortedValues',['../classInertiaSort.html#afb06c3a10e4b019c5221910789876a1b',1,'InertiaSort']]],
+  ['getnormalizedmatrix',['getNormalizedMatrix',['../classCLMatrixNorm.html#a7153b82c4d0bcf1c72a7900f2de35cbd',1,'CLMatrixNorm']]],
+  ['getnormcoeffs',['getNormCoeffs',['../classCLMatrixNorm.html#a1f91575c54d59d6def9622b0d15b26ec',1,'CLMatrixNorm']]],
+  ['getparentalgorithm',['getParentAlgorithm',['../classExpression.html#a01dcdbf968c65f02ad54fee636de7710',1,'Expression']]],
+  ['getresult',['getResult',['../classCLMatrixLoader.html#a7f2dee5ece585c72b4fdc6d944baa9a7',1,'CLMatrixLoader::getResult()'],['../classCLMatrixUnloader.html#ae4c3da659df39f02cb666c14eb0d921f',1,'CLMatrixUnloader::getResult()'],['../classCLMatrixProduct.html#a5e8d6f4548cc0ecd0c8ad0c53cf4e9ec',1,'CLMatrixProduct::getResult()'],['../classCLMatrixCovariance.html#adc2a3fdb234c0df91ca95fd2b4050f7b',1,'CLMatrixCovariance::getResult()'],['../classCLMatrixScale.html#a9ded0fefd09a909c2ec7fc4b6a72e7ac',1,'CLMatrixScale::getResult()']]],
+  ['getsorted',['getSorted',['../classSort.html#a9aa01f42ee29c746d00d5d654bfb21b3',1,'Sort']]],
+  ['getsortidx',['getSortIdx',['../classSort.html#a10d0775bab77d54d97821ff5d1ca5698',1,'Sort']]],
+  ['getvalues',['getValues',['../classCLMatrix.html#a0db9023231f5328ed0ba3db2ff609a6f',1,'CLMatrix::getValues()'],['../classEigenPair.html#aa48d3b8c60a89a2569acc51c65fc99a8',1,'EigenPair::getValues()'],['../classSimpleMatrix.html#af47bfa5345b02612b3d13dc061c96b37',1,'SimpleMatrix::getValues()']]],
+  ['getvectors',['getVectors',['../classEigenPair.html#a8c97cb4f34304c133b32ca5e4eda712d',1,'EigenPair']]],
   ['getwidth',['getWidth',['../classCLMatrix.html#a2ba4a31f2f4ef1867eb8362360673108',1,'CLMatrix::getWidth()'],['../classImageInFile.html#aeaa71ba7a9e4739db10aad167167ce7e',1,'ImageInFile::getWidth()'],['../classSimpleMatrix.html#a2eade46dc9e2ba5fc3798066e24dafc3',1,'SimpleMatrix::getWidth()']]]
 ];

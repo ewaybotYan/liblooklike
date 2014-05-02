@@ -1,4 +1,4 @@
 <map id="CLMatrixProduct" name="CLMatrixProduct">
-<area shape="rect" id="node2" href="$classClAlgorithm.html" title="ClAlgorithm" alt="" coords="20,80,111,107"/>
-<area shape="rect" id="node3" href="$classAlgorithm.html" title="Abstract class that describes a mathematical object that needs (or not) to be evaluated before having..." alt="" coords="27,5,103,32"/>
+<area shape="rect" id="node2" href="$classClAlgorithm.html" title="OpenCL aware specialization of Algorithm. " alt="" coords="20,80,111,107"/>
+<area shape="rect" id="node3" href="$classAlgorithm.html" title="Algorithms class as described in Algorithm. " alt="" coords="27,5,103,32"/>
 </map>

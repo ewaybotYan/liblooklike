@@ -1,0 +1,9 @@
+<map id="clmatrixnorm.hpp" name="clmatrixnorm.hpp">
+<area shape="rect" id="node3" href="$clalgorithm_8hpp.html" title="clalgorithm.hpp" alt="" coords="423,155,533,181"/>
+<area shape="rect" id="node14" href="$clmatrix_8hpp.html" title="clmatrix.hpp" alt="" coords="289,80,383,107"/>
+<area shape="rect" id="node4" href="$algorithm_8h.html" title="Define a generic algorithm representation. " alt="" coords="374,229,460,256"/>
+<area shape="rect" id="node8" href="$context_8h.html" title="Defines a Context class that has pretty much the same role as the standard OpenCL Context..." alt="" coords="693,229,768,256"/>
+<area shape="rect" id="node5" href="$expression_8hpp.html" title="expression.hpp" alt="" coords="299,304,409,331"/>
+<area shape="rect" id="node11" href="$exception_8h.html" title="liblooklike specific exceptions are usefull, the are defined here " alt="" coords="536,304,683,331"/>
+<area shape="rect" id="node15" href="$simplematrix_8hpp.html" title="simplematrix.hpp" alt="" coords="177,229,297,256"/>
+</map>

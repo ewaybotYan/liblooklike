@@ -1,4 +1,4 @@
 <map id="Expression" name="Expression">
-<area shape="rect" id="node2" href="$classCLMatrix.html" title="CLMatrix" alt="" coords="5,80,79,107"/>
+<area shape="rect" id="node2" href="$classCLMatrix.html" title="An Expression implementation for matrices of cl_float values stored in OpenCL memory. " alt="" coords="5,80,79,107"/>
 <area shape="rect" id="node3" href="$classSimpleMatrix.html" title="SimpleMatrix\&lt; Scalar \&gt;" alt="" coords="105,80,263,107"/>
 </map>

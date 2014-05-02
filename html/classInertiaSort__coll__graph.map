@@ -1,5 +1,5 @@
 <map id="InertiaSort&lt; Scalar &gt;" name="InertiaSort&lt; Scalar &gt;">
-<area shape="rect" id="node2" href="$classSort.html" title="Sort\&lt; Scalar \&gt;" alt="" coords="23,97,129,124"/>
-<area shape="rect" id="node3" href="$classAlgorithm.html" title="Abstract class that describes a mathematical object that needs (or not) to be evaluated before having..." alt="" coords="135,5,211,32"/>
-<area shape="rect" id="node5" href="$classExpression.html" title="Expression" alt="" coords="154,97,240,124"/>
+<area shape="rect" id="node2" href="$classSort.html" title="abstract class for sort algorithms on SimpleMatrix objects " alt="" coords="23,97,129,124"/>
+<area shape="rect" id="node3" href="$classAlgorithm.html" title="Algorithms class as described in Algorithm. " alt="" coords="135,5,211,32"/>
+<area shape="rect" id="node5" href="$classExpression.html" title="Expression object as defined in Expression. " alt="" coords="154,97,240,124"/>
 </map>

@@ -1,12 +1,14 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classAlgorithm.html" title="Abstract class that describes a mathematical object that needs (or not) to be evaluated before having..." alt="" coords="5,171,83,197"/>
-<area shape="rect" id="node2" href="$classClAlgorithm.html" title="ClAlgorithm" alt="" coords="139,113,229,140"/>
-<area shape="rect" id="node8" href="$classEigenPair.html" title="EigenPair" alt="" coords="145,171,223,197"/>
-<area shape="rect" id="node9" href="$classSort.html" title="Sort\&lt; Scalar \&gt;" alt="" coords="131,233,237,260"/>
-<area shape="rect" id="node3" href="$classCLMatrixCovariance.html" title="CLMatrixCovariance" alt="" coords="287,5,428,32"/>
-<area shape="rect" id="node4" href="$classCLMatrixLoader.html" title="CLMatrixLoader" alt="" coords="300,56,415,83"/>
-<area shape="rect" id="node5" href="$classCLMatrixNorm.html" title="CLMatrixNorm" alt="" coords="304,107,411,133"/>
-<area shape="rect" id="node6" href="$classCLMatrixProduct.html" title="CLMatrixProduct" alt="" coords="297,157,417,184"/>
-<area shape="rect" id="node7" href="$classCLMatrixUnloader.html" title="CLMatrixUnloader" alt="" coords="294,208,421,235"/>
-<area shape="rect" id="node10" href="$classInertiaSort.html" title="InertiaSort\&lt; Scalar \&gt;" alt="" coords="286,259,429,285"/>
+<area shape="rect" id="node1" href="$classAlgorithm.html" title="Algorithms class as described in Algorithm. " alt="" coords="5,245,83,272"/>
+<area shape="rect" id="node2" href="$classClAlgorithm.html" title="OpenCL aware specialization of Algorithm. " alt="" coords="139,183,229,209"/>
+<area shape="rect" id="node10" href="$classEigenPair.html" title="EigenPair" alt="" coords="145,245,223,272"/>
+<area shape="rect" id="node11" href="$classSort.html" title="abstract class for sort algorithms on SimpleMatrix objects " alt="" coords="131,321,237,348"/>
+<area shape="rect" id="node3" href="$classCLInterDistance.html" title="Algorithm that computes the distances between all the vectors for the euclidian distance. " alt="" coords="299,5,416,32"/>
+<area shape="rect" id="node4" href="$classCLMatrixCovariance.html" title="for a given matrix A, compute t(A)*A with t() the transpose function and * the dot product for matric..." alt="" coords="287,56,428,83"/>
+<area shape="rect" id="node5" href="$classCLMatrixLoader.html" title="specialization of ClAlgorithm that handles creates a CLMatrix with the values of an SimpleMatrix&lt;cl_f..." alt="" coords="300,107,415,133"/>
+<area shape="rect" id="node6" href="$classCLMatrixNorm.html" title="ClAlgorithm specialization for normalization of the lines or columns of a CLMatrix object ..." alt="" coords="304,157,411,184"/>
+<area shape="rect" id="node7" href="$classCLMatrixProduct.html" title="performs the dot product of two matrices " alt="" coords="297,208,417,235"/>
+<area shape="rect" id="node8" href="$classCLMatrixScale.html" title="For a given matrix A of height h and a vector V of size h, divide each line of A by the corresponding..." alt="" coords="303,259,411,285"/>
+<area shape="rect" id="node9" href="$classCLMatrixUnloader.html" title="handles conversion from CLMatrix to SimpleMatrix&lt;cl_float&gt; " alt="" coords="294,309,421,336"/>
+<area shape="rect" id="node12" href="$classInertiaSort.html" title="Performs inertia sort on value. " alt="" coords="286,360,429,387"/>
 </map>
