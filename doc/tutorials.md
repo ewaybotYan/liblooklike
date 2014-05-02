@@ -57,6 +57,7 @@ Using OpenCL requires a few extra steps in order to setup the environment.
 We use the Context wrapper for that purpose.
 
 This example can be compiled using a command like:
+
     clang++ -g clexample.cpp \
     -std=c++11 -llooklike -lOpenCL \
     -L/path/to/liblooklike.a \
