@@ -32,9 +32,9 @@ if(BUILD_DOCUMENTATION)
     SET( doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
     SET( doxy_output_root     ${DOC_OUTPUT_PATH}                          )
     SET( doxy_input           "${CMAKE_CURRENT_SOURCE_DIR}/../include"    )
-    set( doxy_input           "${doxy_input} ${CMAKE_CURRENT_SOURCE_DIR}/../examples" )
+    set( doxy_input           "${doxy_input} ${CMAKE_CURRENT_SOURCE_DIR}/../tutorials" )
     set( doxy_input           "${doxy_input} ${CMAKE_CURRENT_SOURCE_DIR}" )
-    set( examples             "${CMAKE_CURRENT_SOURCE_DIR}/../examples" )
+    set( examples             "${CMAKE_CURRENT_SOURCE_DIR}/../tutorials" )
     set( doxygen_log          "${CMAKE_CURRENT_BINARY_DIR}/doxygen.log"   )
 
     ADD_CUSTOM_COMMAND( OUTPUT ${doxy_html_index_file}
