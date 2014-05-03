@@ -63,6 +63,17 @@ so we choose the cpu option corei7.
     sudo make install
 
 
+Dependencies installation for fedora
+------------------------------------
+
+The tools used to build the project can be obtained with:
+
+    sudo yum install make automake gcc gcc-c++ cmake pocl armadillo \
+	git armadillo-devel opencl-headers pkgconfig \
+	mesa-libGL-devel pocl-devel libjpeg-turbo-devel \
+	libjpeg turbojpeg turbojpeg-devel
+
+
 OBTAINING THE PROJECT
 =====================
 
