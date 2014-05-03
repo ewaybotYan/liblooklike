@@ -164,7 +164,7 @@ add_executable(
 target_link_libraries(test_file "jpeg")
 target_link_libraries(test_file ${LIBS})
 
- test_files
+# test_files
 
 add_executable(
    test_files
@@ -179,7 +179,7 @@ add_executable(
 
  target_link_libraries(test_files ${LIBS})
 
- test_sort
+# test_sort
 
 add_executable(
   test_sort
