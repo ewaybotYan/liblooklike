@@ -2,6 +2,7 @@
 #include <fstream>
 #include<CL/cl.hpp>
 #include<memory>
+#include<cmath>
 #include "../include/simplematrix.hpp"
 #include "../include/matrixImportExport.h"
 
@@ -26,30 +27,36 @@ int main(){
 	cout << "The matrix shoud have been saved." << endl;
 	
 	SimpleMatrix<cl_float>* testMatrix = load("testMatrixBackup.txt");
-	cl_float* array = testMatrix->getValues();
 	
 	bool isEqual = 1;
 	int i = 0, j = 0;
 	
-	isEqual = (((testMatrix->getHeight() * testMatrix->getWidth()) == (int) (matrix.getHeight() * matrix.getWidth())) ? 1 : 0);
-	
-	if (isEqual != 1)
-		cout << "The matrix created have not the right size!" << endl;
-	else
+	isEqual = ((testMatrix->getHeight() == (int) (matrix.getHeight()) ? 1 : 0) * (testMatrix->getWidth() == (int) (matrix.getWidth()) ? 1 : 0));
+	if (isEqual != 1){
+		cout << "The matrix created have not the right size! "<< testMatrix->getHeight() << "x" << testMatrix->getWidth() << endl;
+		return -1;
+	}else
 		cout << "All the values were loaded in a Matrix." << endl;
 	
-	while ((i < (int) matrix.getWidth()) && (isEqual == 1)){
-		while ((j < (int) matrix.getHeight()) && (isEqual == 1)){
-			isEqual = ((array[i+j*n_columns] == matrix.at(i,j)) ? 1 : 0);
-			j++;
+	while ((j < (int) matrix.getWidth()) && (isEqual == 1)){
+		while ((i < (int) matrix.getHeight()) && (isEqual == 1)){
+			isEqual = ( abs(testMatrix->at(i,j) - matrix.at(i,j)) < 0.000001 ? 1 : 0);
+			i++;
 		}
-	i++;
+	j++;
 	}
+	testMatrix->print();
+
+	cout << endl;
+
+	matrix.print();
 	
 	if (isEqual == 1)
 		cout << "The saving and loading of a simple matrix are a success." << endl;
-	else
+	else{
 		cout << "We encountered a problem : the values loaded are not those saved..." << endl;
+		return -1;
+	}
 	
 	return 0;
 }

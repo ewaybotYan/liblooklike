@@ -22,12 +22,12 @@ int save(SimpleMatrix<cl_float> mat, string filepath){
 	
 	int columnNumber = mat.getWidth();
 	int rowNumber = mat.getHeight();
-	
-	for (int i = 0; i < rowNumber; i++){
-		for (int j = 0; j < columnNumber; j++){
+
+	for (int j = 0; j < columnNumber; j++){	
+		for (int i = 0; i < rowNumber; i++){
 			f << scientific << setprecision(8) << mat.at(i,j);
 
-			if (j < (columnNumber - 1))
+			if (i < (rowNumber - 1))
 				f << ",";
 		}
 		f << endl;
