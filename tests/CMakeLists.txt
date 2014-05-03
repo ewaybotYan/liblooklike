@@ -164,7 +164,7 @@ add_executable(
 target_link_libraries(test_file "jpeg")
 target_link_libraries(test_file ${LIBS})
 
-# test_files
+# test_matrixImportExport
 
 add_executable(
    test_matrixImportExport
@@ -177,7 +177,7 @@ add_executable(
    ${PROJECT_SOURCE_DIR}/src/exception.cpp
    )
 
- target_link_libraries(test_files ${LIBS})
+ target_link_libraries(test_matrixImportExport ${LIBS})
 
 # test_sort
 
@@ -217,8 +217,8 @@ add_test( test_clmatrixnorm ${EXECUTABLE_OUTPUT_PATH}/test_clmatrixnorm "${PROJE
 # test_file
 add_test( test_file ${EXECUTABLE_OUTPUT_PATH}/test_file "${IMAGES_SAMPLE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/sample_file.txt" )
 
-# test_files
-add_test( test_files ${EXECUTABLE_OUTPUT_PATH}/test_files )
+# test_matrixImportExport
+add_test( test_matrixImportExport ${EXECUTABLE_OUTPUT_PATH}/test_matrixImportExport )
 
 # test_sort
 add_test( test_sort ${EXECUTABLE_OUTPUT_PATH}/test_sort )

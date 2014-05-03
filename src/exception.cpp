@@ -228,3 +228,19 @@ InvalidAlgorithmParameter::InvalidAlgorithmParameter
   Error( msg )
 {
 }
+
+
+// #############
+// # IOException
+
+IOException::IOException
+(const string& msg) throw():
+  Error( msg )
+{
+}
+
+IOException::IOException
+(const char *msg) throw():
+  Error( msg )
+{
+}

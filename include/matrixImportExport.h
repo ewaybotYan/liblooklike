@@ -8,7 +8,8 @@
 #define MATRIXIMPORTEXPORT_H
 
 #include "simplematrix.hpp"
-#include <CL/cl.hpp> // for cl_float
+#include <memory>
+#include <CL/cl.hpp> //for cl_float
 
 /**
  * @page mat_import_export Matrix importation and exportation
@@ -42,6 +43,6 @@ int save( SimpleMatrix<cl_float>mat, std::string filepath);
 /// @throw IOException thrown if not all lines have the same number of
 ///        values, or if any value cannot be read/casted properly.
 /// @todo create the exception
-SimpleMatrix<cl_float> load(std::string filepath);
+SimpleMatrix<cl_float>* load(std::string filepath);
 
 #endif

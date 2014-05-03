@@ -9,7 +9,7 @@
 #include "../include/simplematrix.hpp"
 #include "../include/exception.h"
 
-#define u_int unsigned int
+typedef unsigned int u_int;
 
 using namespace std;
 
@@ -23,8 +23,8 @@ int save(SimpleMatrix<cl_float> mat, string filepath){
 	int columnNumber = mat.getWidth();
 	int rowNumber = mat.getHeight();
 	
-	for (u_int i = 0; i < rowNumber; i++){
-		for (u_int j = 0; j < columnNumber; j++){
+	for (int i = 0; i < rowNumber; i++){
+		for (int j = 0; j < columnNumber; j++){
 			f << scientific << setprecision(8) << mat.at(i,j);
 
 			if (j < (columnNumber - 1))
@@ -35,15 +35,13 @@ int save(SimpleMatrix<cl_float> mat, string filepath){
 	return 0;
 }
 
-SimpleMatrix<cl_float> load(string filepath){
+SimpleMatrix<cl_float>* load(string filepath){
 	
 	ifstream f(filepath.c_str());
 	if (!f) throw IOException ("Impossible to read the file.");
-	// actually, float should be cl_float
-	shared_ptr<vector<float>> data = make_shared<vector<float>>();
+	shared_ptr< vector<cl_float> > data = make_shared< vector<cl_float> >();
 
 	u_int rowNumber = 0;
-	u_int actualNbRowsByLine = 0;
 	u_int columnNumber = 0;
 
 	string line;
@@ -53,8 +51,7 @@ SimpleMatrix<cl_float> load(string filepath){
 		stringstream lineStream(line);
 		while (getline(lineStream, cell, ',')){
 			stringstream value(cell);
-			tmp << value;
-			//tmp = stof(cell);
+			value >> tmp;
 			data -> push_back(tmp);
 			if (columnNumber < 1)
 				rowNumber++;
@@ -68,7 +65,7 @@ SimpleMatrix<cl_float> load(string filepath){
 		if (s != "")
 			throw IOException ("Corrupted file : some values of the matrix could not be loaded.");
 	}
-	SimpleMatrix<cl_float> mat = SimpleMatrix<cl_float>(data, rowNumber, columnNumber);
-	return mat;
-	
+	SimpleMatrix<cl_float>* mat = 
+		new SimpleMatrix<cl_float>(data, rowNumber, columnNumber);
+	return mat;	
 }
