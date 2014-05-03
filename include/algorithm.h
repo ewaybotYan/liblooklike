@@ -13,9 +13,31 @@ class Expression;
 
 #include<vector>
 
+/// @page algorithm Algorithm
+/// @brief Description of the Algorithm class
+///
+/// This library automates the memory allocations, dependencies and execution
+/// for the computation of expressions automatically. This is achieved by using
+/// a standardized interface on the operations which is called Algorithm.
+///
+/// An algorithm takes expressions in and yields results which are expressions
+/// themselves.
+/// The input can also be considered as dependencies of the algorithm.
+///
+/// The method @ref evaluateTree is used to start the computation in the
+/// algorithm. If the input values are not yet enqueued, it will automatically
+/// start their evaluation.
+///
+/// Then the actual computation performed by the algorithm will start with
+/// a call to @ref enqueue.
+///
+/// @warning When @ref enqueue is called, the dependencies are only enqueued,
+///          not computed, @ref enqueue should use synchronisation mechanism if
+///          necessary.
+///
+/// For details on the Algorithm class and its methods, see @ref algorithm.h.
 
-/// Algorithms offers a generic framework to create . It allows the automation
-/// of memory managment and dependencies management.
+/// Algorithms class as described in @ref algorithm
 class Algorithm {
     friend class Expression;
 
@@ -71,7 +93,7 @@ class Algorithm {
 
         /// @brief  recursively evaluate the expression tree
         /// @note   for a clear understanding of its behavour, see
-        ///         @computation_tree and @tree_evaluation
+        ///         @ref computation_tree and @ref tree_evaluation
         /// @param  depth depth in the recursion (0 is the root of the tree)
         /// @return true if computation of the algorithm has started, false
         ///         otherwise

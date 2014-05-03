@@ -12,6 +12,7 @@
 
 /**
  * @page mat_import_export Matrix importation and exportation
+ * @brief Specify file format
  *
  * The matrices are saved following the csv format.
  * It means that consecutive values are comma separated and end of lines
@@ -26,6 +27,8 @@
  * \f$\begin{bmatrix} 1 & 2 & 4 \\ 9 & 2 & 0 \end{bmatrix}\f$
  *     is stored as:
  * \f$\begin{bmatrix} 1 & 9 \\ 2 & 2 \\ 4 & 0 \end{bmatrix}\f$
+ *
+ * For details about the save and load functions, see @ref files.hpp.
  */
 
 /// @brief Save a matrix in a text file

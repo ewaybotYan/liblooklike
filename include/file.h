@@ -1,5 +1,5 @@
 /**
- * @file   algorithm.h
+ * @file   file.h
  * @author Nicolas Granger <nicolas.granger@telecom-sudparis.eu>
  * @brief  Quick and dirty wrapper for c-style file management used in jpeglib
  */

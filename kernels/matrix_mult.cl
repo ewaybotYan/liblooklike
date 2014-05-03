@@ -31,9 +31,13 @@ matrix_transpose_matrix_multiplication ( __global float* C,
     float tmp = 0;
     const int j = get_global_id(0);
     const int i = get_global_id(1);
+    float err = 0;
     for( int k=0; k < depth; k++ ){
-        tmp += A[k+i*depth] * B[k+depth*j];
-    }
+            float y =  A[k+i*depth] * B[k+depth*j] - err;
+            float t = tmp + y;
+            err = t - tmp - y;
+            tmp = t;
+        }
     C[i+h*j] = tmp;
 }
 
@@ -73,8 +77,12 @@ matrix_covariance ( __global float* C,
     float tmp = 0;
     const int i = get_global_id(0);
     const int j = get_global_id(1);
-    for( int k=0; k < w; k++ ){
-        tmp += T[i*h+k] * T[j*h+k];
+    float err = 0;
+    for( int k=0; k < h; k++ ){
+        float y =  T[i*h+k] * T[j*h+k] - err;
+        float t = tmp + y;
+        err = t - tmp - y;
+        tmp = t;
     }
-    C[i+h*j] = tmp;
+    C[i+w*j] = tmp / w;
 }

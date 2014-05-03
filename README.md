@@ -2,6 +2,8 @@
 LIBLOOKLIKE
 ===========
 
+Online documentation is available at 
+http://pixelou.github.io/liblooklike/html/index.html
 
 REQUIREMENTS
 ============
@@ -61,6 +63,16 @@ so we choose the cpu option corei7.
     sudo make install
 
 
+Dependencies installation for fedora
+------------------------------------
+
+The tools used to build the project can be obtained with:
+
+    sudo yum install make automake gcc gcc-c++ cmake pocl armadillo \
+        git armadillo-devel opencl-headers pkgconfig \
+        mesa-libGL-devel pocl-devel libjpeg-turbo-devel libjpeg \
+
+
 OBTAINING THE PROJECT
 =====================
 
@@ -76,49 +88,8 @@ You can set this variable just after cloning the repo by issuing:
     export LLL_ROOT=`pwd`/liblooklike
 
 
-TEST ENVIRONMENT
-================
-
-Sample images
--------------
-
-This software was developped using essentialy the image set from this
-webiste: http://fei.edu.br/~cet/facedatabase.html
-
-To run the tests, you can use the centered portraits. In the project
-directory, run:
-
-    cd ${LLL_ROOT}
-    mkdir data
-    cd data
-    wget http://fei.edu.br/~cet/frontalimages_manuallyaligned_part1.zip
-    unzip frontalimages_manuallyaligned_part1.zip
-
-To keep only the neutral faces:
-
-    rm *b.jpg
-
-Tests
------
-
-Tests programs are available in tests/ .  
-They are a good entry point to the project and can be read as
-examples. Tests are build along the rest if the project. To run the
-tests, execute the build steps detailed below and then in the build
-directory run:
-
-    make test
-
-
 BUILDING
 ========
-
-Retrieve project
-----------------
-
-To download the lastest version of the project, use the git repository.
-
-    git clone https://github.com/pixelou/liblooklike.git
 
 Preparation
 -----------
@@ -153,6 +124,40 @@ Targets
 * tests in tests/bin
 * documentation in output/doc
 * libraries in output/lib
+
+
+TEST ENVIRONMENT
+================
+
+Sample images
+-------------
+
+This software was developped using essentialy the image set from this
+webiste: http://fei.edu.br/~cet/facedatabase.html
+
+To run the tests, you can use the centered portraits. In the project
+directory, run:
+
+    cd ${LLL_ROOT}
+    mkdir data
+    cd data
+    wget http://fei.edu.br/~cet/frontalimages_manuallyaligned_part1.zip
+    unzip frontalimages_manuallyaligned_part1.zip
+
+To keep only the neutral faces:
+
+    rm *b.jpg
+
+Tests
+-----
+
+Tests programs are available in tests/ .
+They are a good entry point to the project and can be read as
+examples. Tests are build along the rest if the project. To run the
+tests, execute the build steps detailed below and then in the build
+directory run:
+
+    make test
 
 
 USAGE
