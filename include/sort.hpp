@@ -235,7 +235,8 @@ void InertiaSort<Scalar>::InertiaSortWithThreshold( InertiaSort<Scalar>* s )
   }
 
   // resize indexes and sort array to the number of sorted values
-  s->getSortIdx()->resizeVecHeight(i);
+  if( s->m_appendIdx )
+    s->getSortIdx()->resizeVecHeight(i);
   s->getSorted()->resizeVecHeight(i);
 
   s->m_nbSortedValues = i;
