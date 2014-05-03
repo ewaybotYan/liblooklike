@@ -31,8 +31,8 @@ add_library (looklike
 
              ../include/file.h
              ../src/file.cpp
-             ../include/files.hpp
-             ../src/files.cpp
+             ../include/matrixImportExport.h
+             ../src/matrixImportExport.cpp
              ../include/image.h
              ../src/image.cpp
              ../include/jpegfile.h

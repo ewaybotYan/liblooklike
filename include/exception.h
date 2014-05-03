@@ -43,7 +43,6 @@ class Error: public std::exception{
 
 };
 
-
 /// exception that prints a human readable message for OpenCL error
 class CLError : public Error{
 
@@ -66,6 +65,13 @@ class InvalidAlgorithmParameter : public Error
   public:
     InvalidAlgorithmParameter(const std::string& msg) throw();
     InvalidAlgorithmParameter(const char* msg) throw();
+};
+
+class IOException : public Error
+{
+  public:
+    IOException(const std::string& msg) throw();
+    IOException(const char* msg) throw();
 };
 
 #endif //EXCEPTION_H

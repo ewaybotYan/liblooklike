@@ -167,9 +167,9 @@ target_link_libraries(test_file ${LIBS})
 # test_files
 
 add_executable(
-   test_files
-   test_files.cpp
-   ${PROJECT_SOURCE_DIR}/src/files.cpp
+   test_matrixImportExport
+   test_matrixImportExport.cpp
+   ${PROJECT_SOURCE_DIR}/src/matrixImportExport.cpp
    ${PROJECT_SOURCE_DIR}/src/algorithm.cpp
    ${PROJECT_SOURCE_DIR}/src/expression.cpp
    ${PROJECT_SOURCE_DIR}/include/simplematrix.hpp
