@@ -35,6 +35,29 @@ int save(SimpleMatrix<cl_float> mat, string filepath){
 	return 0;
 }
 
+int save(SimpleMatrix<cl_float> mat, string filepath,
+                   SimpleMatrix<unsigned int>indexes)
+{
+  ofstream f(filepath.c_str());
+  if (!f){
+    throw IOException("Impossible to create the file.");
+  }
+
+  int rowNumber = mat.getHeight();
+
+  for ( int idx=0; idx< indexes.getHeight(); idx++ ){
+    int j = indexes.getValues()[idx];
+    for (int i = 0; i < rowNumber; i++){
+      f << scientific << setprecision(8) << mat.at(i,j);
+
+      if (i < (rowNumber - 1))
+        f << ",";
+    }
+    f << endl;
+  }
+  return 0;
+}
+
 SimpleMatrix<cl_float>* load(string filepath){
 	
 	ifstream f(filepath.c_str());

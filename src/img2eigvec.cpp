@@ -153,7 +153,7 @@ int main(int argc, char* argv[]){
 #endif
 
     // save eigen vectors
-    save(*vectors, "/tmp/vectors.csv");
+    save(*vectors, "/tmp/vectors.csv", *sort.getSortIdx().get());
 
   } catch ( Error& err ) {
     err.printMsg();
