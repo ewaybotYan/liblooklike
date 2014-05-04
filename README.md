@@ -26,8 +26,8 @@ optionnaly intel.
 * Intel sdk for OpenCL not available on linux.
 
 
-Dependencies installation for debian
-------------------------------------
+Dependencies installation for Debian or Ubuntu
+----------------------------------------------
 
 The tools used to build the project can be obtained with:
     
@@ -39,7 +39,7 @@ can be installed by running:
 
     sudo apt-get install ocl-icd-dev llvm clang libclang-dev hwloc \
         libhwloc-dev libarmadillo4 libarmadillo-dev mesa-common-dev \
-        libjpeg-dev
+        libjpeg-dev ocl-icd-libopencl1
 
 Unfortunately, pocl is not available in debian repositories, so we need
 to install opencl manually:
