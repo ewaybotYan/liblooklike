@@ -13,7 +13,7 @@ typedef unsigned int u_int;
 
 using namespace std;
 
-int save(SimpleMatrix<cl_float> mat, string filepath){
+void save(SimpleMatrix<cl_float> mat, string filepath){
 	
 	ofstream f(filepath.c_str());
 	if (!f){
@@ -32,10 +32,9 @@ int save(SimpleMatrix<cl_float> mat, string filepath){
 		}
 		f << endl;
 	}
-	return 0;
 }
 
-int save(SimpleMatrix<cl_float> mat, string filepath,
+void save(SimpleMatrix<cl_float> mat, string filepath,
                    SimpleMatrix<unsigned int>indexes)
 {
   ofstream f(filepath.c_str());
@@ -55,7 +54,6 @@ int save(SimpleMatrix<cl_float> mat, string filepath,
     }
     f << endl;
   }
-  return 0;
 }
 
 SimpleMatrix<cl_float>* load(string filepath){

@@ -34,7 +34,7 @@
 /// @param filepath path to the saved file (you might want to use the .csv
 ///        extension)
 /// @throw IOException thrown if file cannot be opened
-int save( SimpleMatrix<cl_float>mat, std::string filepath);
+void save( SimpleMatrix<cl_float>mat, std::string filepath);
 
 /// @brief Save a matrix in a text file
 /// @param mat a matrix
@@ -43,7 +43,7 @@ int save( SimpleMatrix<cl_float>mat, std::string filepath);
 /// @param indexes vector(matrix of width 1) with indexes of the columns of mat
 ///        to save.
 /// @throw IOException thrown if file cannot be opened
-int save( SimpleMatrix<cl_float>mat, std::string filepath,
+void save( SimpleMatrix<cl_float>mat, std::string filepath,
           SimpleMatrix<unsigned int>indexes);
 
 /// @brief Load the values of a text file into a Matrix
