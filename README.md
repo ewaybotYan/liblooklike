@@ -125,6 +125,12 @@ Targets
 * documentation in output/doc
 * libraries in output/lib
 
+You can add the executables to the path by running:
+
+    export PATH=$PATH:$PWD/output/bin
+
+In the build directory.
+
 
 TEST ENVIRONMENT
 ================
@@ -163,12 +169,39 @@ directory run:
 USAGE
 =====
 
+LibLookLike.sh
+--------------
+
+This program provides a simple GUI using zenity to help run the programs below.
+To run it, you just need to execute:
+
+    sh ${LLL_ROOT}/LibLookLike.sh
+
 img2eigenvec
 ------------
 
-img2eigenvec generates the eigenvectors from a set of images.
+img2eigvec generates the eigenvectors of the PCA for a set of images.
 Supposing the pictures are in ${LLL_ROOT}/data, you can run:
 
-    img2eigenvec ${LLL_ROOT}/kernels ${LLL_ROOT}/data
+    img2eigvec ${LLL_ROOT}/kernels outputdir ${LLL_ROOT}/data
 
-It will generate previews of the eigen vectors as jpeg files in /tmp
+It will generate previews of the eigen vectors as jpeg files and a .csv file
+with the eigen vectors in outputdir.
+
+imgProjection
+-------------
+
+imgProjection performs the projection of a group of images on the eigen
+vectors. It will also generate a sample reconstituted image as the linear
+combination of the eigen vectors.
+
+    imgProjection ${LL_ROOT}/kernels outputdir imagespath
+
+With outputdir the same directory as above and imagespath a directory with the
+faces to project.
+
+It will generate:
+- a sample reconstituted image
+- a .csv file with the faces coordinates
+- a .csv file with the inter-images distances (for i>=j the element i,j is the
+  euclidian distance between image i and j)
