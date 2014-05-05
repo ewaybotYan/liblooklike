@@ -17,17 +17,18 @@ typedef SimpleMatrix<cl_float> Matrix;
 /// @todo support the options
 void usage(){
   cout << "Usage:\n";
-  cout << "img2eigvec path_to_kernels path_to_pictures\n";
+  cout << "img2eigvec path_to_kernels path_to_vectors path_to_pictures\n";
 }
 
 
 int main(int argc, char* argv[]){
-  if(argc < 2){
+  if(argc < 4){
     usage();
     return -1;
   }
   string imagePath(argv[argc-1]);
-  string kernelPath(argv[argc-2]);
+  string vectorPath(argv[argc-2]);
+  string kernelPath(argv[argc-3]);
 
   try {
     // create OpenCL objects
@@ -96,7 +97,7 @@ int main(int argc, char* argv[]){
 #ifndef NDEBUG
     cout << "# images" << endl;
     images->print();
-    save(*images,"/tmp/images.csv");
+    save(*images,vectorPath+"/images.csv");
     cout << "# covariance matrix" << endl;
     localCovMat.getResult()->print();
     cout << "values: \n";
@@ -124,7 +125,7 @@ int main(int argc, char* argv[]){
                     array.avgWidth,
                     i,
                     true,
-                    "/tmp/sampleNormalized"+to_string(i)+".jpg");
+                    vectorPath+"/sampleNormalized"+to_string(i)+".jpg");
     }
 #endif
 #endif
@@ -133,7 +134,7 @@ int main(int argc, char* argv[]){
 #ifndef NDEBUG
     for ( int i = 0; i < nbVectors; i++) {
       std::stringstream ss;
-      ss << "/tmp/vectorPreview" << i << ".jpg";
+      ss << vectorPath << "/vectorPreview" << i << ".jpg";
       cout << "saving: " << ss.str() << endl;
       MatrixToImage(*vectors,
                     array.avgHeight,
@@ -149,11 +150,11 @@ int main(int argc, char* argv[]){
     CLMatrixUnloader coeffs(normalized.getNormCoeffs(), &ctx, &queue );
     coeffs.getResult()->evaluate();
     coeffs.getResult()->waitEndOfEvaluation();
-    save(*coeffs.getResult(), "/tmp/coeffs.csv" );
+    save(*coeffs.getResult(), vectorPath+"/coeffs.csv" );
 #endif
 
     // save eigen vectors
-    save(*vectors, "/tmp/vectors.csv", *sort.getSortIdx().get());
+    save(*vectors, vectorPath+"/vectors.csv", *sort.getSortIdx().get());
 
   } catch ( Error& err ) {
     err.printMsg();

@@ -23,10 +23,10 @@ int main(){
 	
 	SimpleMatrix<cl_float> matrix = SimpleMatrix<cl_float>(data, n_rows, n_columns);
 	
-	save(matrix, "testMatrixBackup.txt");
+	save(matrix, "testMatrixBackup.csv");
 	cout << "The matrix shoud have been saved." << endl;
 	
-	SimpleMatrix<cl_float>* testMatrix = load("testMatrixBackup.txt");
+	SimpleMatrix<cl_float>* testMatrix = load("testMatrixBackup.csv");
 	
 	bool isEqual = 1;
 	int i = 0, j = 0;
