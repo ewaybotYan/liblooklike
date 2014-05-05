@@ -4,11 +4,11 @@ choice=$(zenity --entry --title "Menu" --text "What do you want to do?" "Recogni
 
 case "$choice" in
 "Recalculate the eigenfaces")
-	srcDirectory=$(zenity --file-selection --filename="./*" --directory --title="Select a directory with a database of faces")
+	srcDirectory=$(zenity --file-selection --filename="~/*" --directory --title="Select a directory with a database of faces")
 	if [ $? = 0 ]; then
-		targetDirectory=$(zenity --file-selection --filename="./*" --directory --title="Select a directory where the eigenfaces should be saved")
+		targetDirectory=$(zenity --file-selection --filename="~/*" --directory --title="Select a directory where the eigenfaces should be saved")
 		if [ $? = 0 ]; then
-			kernelDirectory=$(zenity --file-selection --filename="./*" --directory --title="Select the directory where the OpenCL kernels are")
+			kernelDirectory=$(zenity --file-selection --filename="~/*" --directory --title="Select the directory where the OpenCL kernels are")
 			if [ $? = 0 ]; then
 				echo img2eigvec $kernelDirectory $targetDirectory $srcDirectory
 				img2eigvec $kernelDirectory $targetDirectory $srcDirectory
