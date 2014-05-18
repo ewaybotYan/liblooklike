@@ -60,7 +60,7 @@ int main( int argc, char* argv[] )
     CLMatrixLoader avgsInCL( avgs, &ctx, &queue );
 
     // normalize images
-    CLMatrixNorm imagesInCLStdContrast( imagesInCL.getResult(), &ctx, &queue );
+    CLMatrixNorm imagesInCLStdContrast( imagesInCL.getResult(), &ctx, &queue, true);
 
     // apply same normalization as for the eigenvectors
     CLMatrixScale normalizedImages( imagesInCLStdContrast.getNormalizedMatrix(),
@@ -80,7 +80,7 @@ int main( int argc, char* argv[] )
     results.getResult()->evaluate();
     results.getResult()->waitEndOfEvaluation();
 
-    save( *results.getResult().get(), "/tmp/projections.csv" );
+    save( *results.getResult().get(), vectorsAndCoefsPath+"/projections.csv" );
 
     // make the interdistance matrix between the projections
 #ifndef NDEBUG
@@ -89,7 +89,7 @@ int main( int argc, char* argv[] )
     CLMatrixUnloader localDistances( interDistances.getDistances(), &ctx, &queue);
     localDistances.getResult()->evaluate();
     localDistances.getResult()->waitEndOfEvaluation();
-    save( *localDistances.getResult().get(), "/tmp/distances.csv");
+    save( *localDistances.getResult().get(), vectorsAndCoefsPath+"/distances.csv");
 #endif
 
 

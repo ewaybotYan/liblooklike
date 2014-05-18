@@ -88,7 +88,7 @@ int main(int argc, char* argv[]){
     CLMatrixUnloader avgs(normalized.getAvgs(), &ctx, &queue );
     avgs.getResult()->evaluate();
     avgs.getResult()->waitEndOfEvaluation();
-    save(*coeffs.getResult(), outputPath+"/avgs.csv" );
+    save(*avgs.getResult(), outputPath+"/avgs.csv" );
 
     // save eigen vectors
     Matrix* vectors = localEigenVectorsOnVars.getResult().get();

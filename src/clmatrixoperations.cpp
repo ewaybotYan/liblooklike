@@ -216,7 +216,7 @@ void CLMatrixScale::enqueue()
   error = getCommandQueue()->enqueueNDRangeKernel (
             kernel,
             cl::NullRange,
-            cl::NDRange ( m_result->getWidth(), m_result->getHeight() ),
+            cl::NDRange ( m_result->getHeight(), m_result->getWidth() ),
             cl::NDRange ( 1, 1 ),
             &m_dependenciesEvents,
             &(getEndOfEvaluation())
