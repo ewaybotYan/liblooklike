@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.7"/>
-<title>liblooklike: Examples</title>
+<title>liblooklike: file.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -45,8 +45,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
-      <li class="current"><a href="examples.html"><span>Examples</span></a></li>
+      <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -65,7 +64,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-</div><!-- top -->
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
+    </ul>
+  </div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -80,19 +84,51 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_75b82e7e4a5feb05200b9ad7adf06257.html">home</a></li><li class="navelem"><a class="el" href="dir_d5ecdf7cc0cee18d5a6e4e9a62157c12.html">nicolas</a></li><li class="navelem"><a class="el" href="dir_1efd163828ce4ec3e7115a82a0cd5085.html">dev</a></li><li class="navelem"><a class="el" href="dir_47e4c00eae198789b89f4267acf76e2d.html">liblooklike</a></li><li class="navelem"><a class="el" href="dir_81c1bbe1001654d92c46513b6d92b787.html">include</a></li>  </ul>
+</div>
+</div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a>  </div>
   <div class="headertitle">
-<div class="title">Examples</div>  </div>
+<div class="title">file.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
-<li><a class="el" href="tutorial1_8cpp-example.html">tutorial1.cpp</a></li>
 
-</ul>
-</div><!-- contents -->
+<p>Quick and dirty wrapper for c-style file management used in jpeglib.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;cstdio&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for file.h:</div>
+<div class="dyncontent">
+<div class="center"><img src="file_8h__incl.png" border="0" usemap="#file_8h" alt=""/></div>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><img src="file_8h__dep__incl.png" border="0" usemap="#file_8hdep" alt=""/></div>
+<map name="file_8hdep" id="file_8hdep">
+<area shape="rect" id="node2" href="image_8h.html" title="classes for image files " alt="" coords="5,80,72,107"/><area shape="rect" id="node3" href="jpegfile_8h_source.html" title="jpegfile.h" alt="" coords="37,155,111,181"/></map>
+</div>
+</div>
+<p><a href="file_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFile.html">File</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">file management is done C-style in libjpeg, we wrap the FILE object with <a class="el" href="classFile.html" title="file management is done C-style in libjpeg, we wrap the FILE object with File to handle errors and cl...">File</a> to handle errors and close automatically.  <a href="classFile.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Quick and dirty wrapper for c-style file management used in jpeglib. </p>
+<dl class="section author"><dt>Author</dt><dd>Nicolas Granger <a href="#" onclick="location.href='mai'+'lto:'+'nic'+'ol'+'as.'+'gr'+'ang'+'er'+'@te'+'le'+'com'+'-s'+'udp'+'ar'+'is.'+'eu'; return false;">nicol<span style="display: none;">.nosp@m.</span>as.g<span style="display: none;">.nosp@m.</span>range<span style="display: none;">.nosp@m.</span>r@te<span style="display: none;">.nosp@m.</span>lecom<span style="display: none;">.nosp@m.</span>-sud<span style="display: none;">.nosp@m.</span>paris<span style="display: none;">.nosp@m.</span>.eu</a> </dd></dl>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 2 2014 19:24:21 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun May 18 2014 21:27:24 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

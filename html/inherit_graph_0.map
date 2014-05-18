@@ -8,7 +8,7 @@
 <area shape="rect" id="node5" href="$classCLMatrixLoader.html" title="specialization of ClAlgorithm that handles creates a CLMatrix with the values of an SimpleMatrix&lt;cl_f..." alt="" coords="300,107,415,133"/>
 <area shape="rect" id="node6" href="$classCLMatrixNorm.html" title="ClAlgorithm specialization for normalization of the lines or columns of a CLMatrix object ..." alt="" coords="304,157,411,184"/>
 <area shape="rect" id="node7" href="$classCLMatrixProduct.html" title="performs the dot product of two matrices " alt="" coords="297,208,417,235"/>
-<area shape="rect" id="node8" href="$classCLMatrixScale.html" title="For a given matrix A of height h and a vector V of size h, divide each line of A by the corresponding..." alt="" coords="303,259,411,285"/>
+<area shape="rect" id="node8" href="$classCLMatrixScale.html" title="For a given matrix A of height h and a vector V of size h, substract the offset values and divide by ..." alt="" coords="303,259,411,285"/>
 <area shape="rect" id="node9" href="$classCLMatrixUnloader.html" title="handles conversion from CLMatrix to SimpleMatrix&lt;cl_float&gt; " alt="" coords="294,309,421,336"/>
 <area shape="rect" id="node12" href="$classInertiaSort.html" title="Performs inertia sort on value. " alt="" coords="286,360,429,387"/>
 </map>

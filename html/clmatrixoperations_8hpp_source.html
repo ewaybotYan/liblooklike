@@ -165,40 +165,42 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;{</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="classCLMatrixScale.html#a62247dc328ce1b3b963b8754e61dd846">CLMatrixScale</a>( std::shared_ptr&lt;CLMatrix&gt; m,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                   std::shared_ptr&lt;CLMatrix&gt; v,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                   <a class="code" href="classContext.html">Context</a> *context,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                   cl::CommandQueue *queue );</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classCLMatrixScale.html#a97b3b0fae36a4762132efe19aea9570d">waitEndOfEvaluation</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <a class="code" href="classCLMatrixScale.html#a05416770b58dffade9831ee995262075">CLMatrixScale</a>( std::shared_ptr&lt;CLMatrix&gt; m,</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                   std::shared_ptr&lt;CLMatrix&gt; o,</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                   std::shared_ptr&lt;CLMatrix&gt; v,</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                   <a class="code" href="classContext.html">Context</a> *context,</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                   cl::CommandQueue *queue );</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; <a class="code" href="classCLMatrixScale.html#a9ded0fefd09a909c2ec7fc4b6a72e7ac">getResult</a>();</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classCLMatrixScale.html#a97b3b0fae36a4762132efe19aea9570d">waitEndOfEvaluation</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; <a class="code" href="classCLMatrixScale.html#a9ded0fefd09a909c2ec7fc4b6a72e7ac">getResult</a>();</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="classCLMatrixScale.html#a43f4867f71c6bd9a29efdec4feb2a404">  113</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classCLMatrixScale.html#a43f4867f71c6bd9a29efdec4feb2a404">allocateTmpMem</a>() {<span class="keywordflow">return</span> <span class="keyword">true</span>;}</div>
-<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classCLMatrixScale.html#a9ada160001b0fe2920485ede3fa942cd">  114</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classCLMatrixScale.html#a9ada160001b0fe2920485ede3fa942cd">releaseTmpMem</a>() {}</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classCLMatrixScale.html#a126df387e1a86ef80fee03dbcf41d640">enqueue</a>();</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="classCLMatrixScale.html#a43f4867f71c6bd9a29efdec4feb2a404">  115</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classCLMatrixScale.html#a43f4867f71c6bd9a29efdec4feb2a404">allocateTmpMem</a>() {<span class="keywordflow">return</span> <span class="keyword">true</span>;}</div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classCLMatrixScale.html#a9ada160001b0fe2920485ede3fa942cd">  116</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classCLMatrixScale.html#a9ada160001b0fe2920485ede3fa942cd">releaseTmpMem</a>() {}</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classCLMatrixScale.html#a126df387e1a86ef80fee03dbcf41d640">enqueue</a>();</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; m_src;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; m_coeffs;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; m_result;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;};</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="preprocessor">#endif // CLMATRIXOPERATIONS_HPP</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; m_src;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; m_offsets;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; m_coeffs;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    std::shared_ptr&lt;CLMatrix&gt; m_result;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;};</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="preprocessor">#endif // CLMATRIXOPERATIONS_HPP</span></div>
 <div class="ttc" id="classCLMatrixProduct_html_a0bf6d07820b00cfec703e5382ed98b5e"><div class="ttname"><a href="classCLMatrixProduct.html#a0bf6d07820b00cfec703e5382ed98b5e">CLMatrixProduct::allocateTmpMem</a></div><div class="ttdeci">bool allocateTmpMem()</div><div class="ttdoc">allocate any temporary memory needed to perform computation </div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:43</div></div>
 <div class="ttc" id="classCLMatrixScale_html_a97b3b0fae36a4762132efe19aea9570d"><div class="ttname"><a href="classCLMatrixScale.html#a97b3b0fae36a4762132efe19aea9570d">CLMatrixScale::waitEndOfEvaluation</a></div><div class="ttdeci">void waitEndOfEvaluation() override</div><div class="ttdoc">blocking function that returns when computation is finished. </div></div>
 <div class="ttc" id="classCLMatrixCovariance_html_a1891a8c03a24548dff55b843c31ea81d"><div class="ttname"><a href="classCLMatrixCovariance.html#a1891a8c03a24548dff55b843c31ea81d">CLMatrixCovariance::releaseTmpMem</a></div><div class="ttdeci">void releaseTmpMem()</div><div class="ttdoc">realease any temporary memory reserved for computation </div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:78</div></div>
+<div class="ttc" id="classCLMatrixScale_html_a05416770b58dffade9831ee995262075"><div class="ttname"><a href="classCLMatrixScale.html#a05416770b58dffade9831ee995262075">CLMatrixScale::CLMatrixScale</a></div><div class="ttdeci">CLMatrixScale(std::shared_ptr&lt; CLMatrix &gt; m, std::shared_ptr&lt; CLMatrix &gt; o, std::shared_ptr&lt; CLMatrix &gt; v, Context *context, cl::CommandQueue *queue)</div></div>
 <div class="ttc" id="classCLMatrixProduct_html"><div class="ttname"><a href="classCLMatrixProduct.html">CLMatrixProduct</a></div><div class="ttdoc">performs the dot product of two matrices </div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:19</div></div>
-<div class="ttc" id="classCLMatrixScale_html_a9ada160001b0fe2920485ede3fa942cd"><div class="ttname"><a href="classCLMatrixScale.html#a9ada160001b0fe2920485ede3fa942cd">CLMatrixScale::releaseTmpMem</a></div><div class="ttdeci">void releaseTmpMem()</div><div class="ttdoc">realease any temporary memory reserved for computation </div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:114</div></div>
+<div class="ttc" id="classCLMatrixScale_html_a9ada160001b0fe2920485ede3fa942cd"><div class="ttname"><a href="classCLMatrixScale.html#a9ada160001b0fe2920485ede3fa942cd">CLMatrixScale::releaseTmpMem</a></div><div class="ttdeci">void releaseTmpMem()</div><div class="ttdoc">realease any temporary memory reserved for computation </div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:116</div></div>
 <div class="ttc" id="classCLMatrixProduct_html_abb9f4bfeecc758b08542530a475b4d66"><div class="ttname"><a href="classCLMatrixProduct.html#abb9f4bfeecc758b08542530a475b4d66">CLMatrixProduct::waitEndOfEvaluation</a></div><div class="ttdeci">void waitEndOfEvaluation() override</div><div class="ttdoc">blocking function that returns when computation is finished. </div></div>
 <div class="ttc" id="classCLMatrixProduct_html_a56612b18fa1d25859a86dfe6b70de6e4"><div class="ttname"><a href="classCLMatrixProduct.html#a56612b18fa1d25859a86dfe6b70de6e4">CLMatrixProduct::CLMatrixProduct</a></div><div class="ttdeci">CLMatrixProduct(std::shared_ptr&lt; CLMatrix &gt; lop, std::shared_ptr&lt; CLMatrix &gt; rop, Context *context, cl::CommandQueue *queue, bool transposeLop=false)</div></div>
 <div class="ttc" id="classContext_html"><div class="ttname"><a href="classContext.html">Context</a></div><div class="ttdoc">Manages the OpenCL environment during the program execution. </div><div class="ttdef"><b>Definition:</b> context.h:24</div></div>
-<div class="ttc" id="classCLMatrixScale_html_a43f4867f71c6bd9a29efdec4feb2a404"><div class="ttname"><a href="classCLMatrixScale.html#a43f4867f71c6bd9a29efdec4feb2a404">CLMatrixScale::allocateTmpMem</a></div><div class="ttdeci">bool allocateTmpMem()</div><div class="ttdoc">allocate any temporary memory needed to perform computation </div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:113</div></div>
-<div class="ttc" id="classCLMatrixScale_html_a62247dc328ce1b3b963b8754e61dd846"><div class="ttname"><a href="classCLMatrixScale.html#a62247dc328ce1b3b963b8754e61dd846">CLMatrixScale::CLMatrixScale</a></div><div class="ttdeci">CLMatrixScale(std::shared_ptr&lt; CLMatrix &gt; m, std::shared_ptr&lt; CLMatrix &gt; v, Context *context, cl::CommandQueue *queue)</div></div>
+<div class="ttc" id="classCLMatrixScale_html_a43f4867f71c6bd9a29efdec4feb2a404"><div class="ttname"><a href="classCLMatrixScale.html#a43f4867f71c6bd9a29efdec4feb2a404">CLMatrixScale::allocateTmpMem</a></div><div class="ttdeci">bool allocateTmpMem()</div><div class="ttdoc">allocate any temporary memory needed to perform computation </div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:115</div></div>
 <div class="ttc" id="classCLMatrixProduct_html_a2b24793e5b5d5bb3e92ce7c57519970a"><div class="ttname"><a href="classCLMatrixProduct.html#a2b24793e5b5d5bb3e92ce7c57519970a">CLMatrixProduct::enqueue</a></div><div class="ttdeci">void enqueue()</div><div class="ttdoc">launch evaluation of the object This function can assumes memory was allocated for all results and th...</div></div>
 <div class="ttc" id="expression_8hpp_html"><div class="ttname"><a href="expression_8hpp.html">expression.hpp</a></div></div>
 <div class="ttc" id="classCLMatrixProduct_html_a5e8d6f4548cc0ecd0c8ad0c53cf4e9ec"><div class="ttname"><a href="classCLMatrixProduct.html#a5e8d6f4548cc0ecd0c8ad0c53cf4e9ec">CLMatrixProduct::getResult</a></div><div class="ttdeci">std::shared_ptr&lt; CLMatrix &gt; getResult()</div></div>
@@ -208,7 +210,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classCLMatrixCovariance_html_abb82004590d250f8010204aed3a39aa3"><div class="ttname"><a href="classCLMatrixCovariance.html#abb82004590d250f8010204aed3a39aa3">CLMatrixCovariance::allocateTmpMem</a></div><div class="ttdeci">bool allocateTmpMem()</div><div class="ttdoc">allocate any temporary memory needed to perform computation </div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:77</div></div>
 <div class="ttc" id="classCLMatrixCovariance_html_abf55db04f1788b2b489194e4a72cdeb8"><div class="ttname"><a href="classCLMatrixCovariance.html#abf55db04f1788b2b489194e4a72cdeb8">CLMatrixCovariance::CLMatrixCovariance</a></div><div class="ttdeci">CLMatrixCovariance(std::shared_ptr&lt; CLMatrix &gt; m, Context *context, cl::CommandQueue *queue)</div></div>
 <div class="ttc" id="clalgorithm_8hpp_html"><div class="ttname"><a href="clalgorithm_8hpp.html">clalgorithm.hpp</a></div></div>
-<div class="ttc" id="classCLMatrixScale_html"><div class="ttname"><a href="classCLMatrixScale.html">CLMatrixScale</a></div><div class="ttdoc">For a given matrix A of height h and a vector V of size h, divide each line of A by the corresponding...</div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:91</div></div>
+<div class="ttc" id="classCLMatrixScale_html"><div class="ttname"><a href="classCLMatrixScale.html">CLMatrixScale</a></div><div class="ttdoc">For a given matrix A of height h and a vector V of size h, substract the offset values and divide by ...</div><div class="ttdef"><b>Definition:</b> clmatrixoperations.hpp:91</div></div>
 <div class="ttc" id="classCLMatrixCovariance_html_afa1393e573bf9fa592e90689d8ba3bbc"><div class="ttname"><a href="classCLMatrixCovariance.html#afa1393e573bf9fa592e90689d8ba3bbc">CLMatrixCovariance::waitEndOfEvaluation</a></div><div class="ttdeci">void waitEndOfEvaluation() override</div><div class="ttdoc">blocking function that returns when computation is finished. </div></div>
 <div class="ttc" id="classCLMatrixCovariance_html_a892789e1c7e2dc37d95a841619c670c6"><div class="ttname"><a href="classCLMatrixCovariance.html#a892789e1c7e2dc37d95a841619c670c6">CLMatrixCovariance::enqueue</a></div><div class="ttdeci">void enqueue()</div><div class="ttdoc">launch evaluation of the object This function can assumes memory was allocated for all results and th...</div></div>
 <div class="ttc" id="classCLMatrixCovariance_html_adc2a3fdb234c0df91ca95fd2b4050f7b"><div class="ttname"><a href="classCLMatrixCovariance.html#adc2a3fdb234c0df91ca95fd2b4050f7b">CLMatrixCovariance::getResult</a></div><div class="ttdeci">std::shared_ptr&lt; CLMatrix &gt; getResult()</div></div>
@@ -218,7 +220,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 2 2014 21:40:34 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun May 18 2014 21:27:24 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

@@ -12,7 +12,7 @@ var searchData=
   ['clmatrixnorm_2ehpp',['clmatrixnorm.hpp',['../clmatrixnorm_8hpp.html',1,'']]],
   ['clmatrixoperations_2ehpp',['clmatrixoperations.hpp',['../clmatrixoperations_8hpp.html',1,'']]],
   ['clmatrixproduct',['CLMatrixProduct',['../classCLMatrixProduct.html',1,'CLMatrixProduct'],['../classCLMatrixProduct.html#a56612b18fa1d25859a86dfe6b70de6e4',1,'CLMatrixProduct::CLMatrixProduct()']]],
-  ['clmatrixscale',['CLMatrixScale',['../classCLMatrixScale.html',1,'CLMatrixScale'],['../classCLMatrixScale.html#a62247dc328ce1b3b963b8754e61dd846',1,'CLMatrixScale::CLMatrixScale()']]],
+  ['clmatrixscale',['CLMatrixScale',['../classCLMatrixScale.html',1,'CLMatrixScale'],['../classCLMatrixScale.html#a05416770b58dffade9831ee995262075',1,'CLMatrixScale::CLMatrixScale()']]],
   ['clmatrixunloader',['CLMatrixUnloader',['../classCLMatrixUnloader.html',1,'CLMatrixUnloader'],['../classCLMatrixUnloader.html#a989a1b926ba4df987a333af6d85fdf7b',1,'CLMatrixUnloader::CLMatrixUnloader()']]],
   ['computation_20tree',['Computation tree',['../computation_tree.html',1,'']]],
   ['computed',['COMPUTED',['../expression_8hpp.html#a949e75e393982b1c04460ffe7d7c2a2ca0ca1494db640cc226c268953fd47ff0e',1,'expression.hpp']]],

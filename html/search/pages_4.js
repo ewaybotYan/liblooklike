@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['todo_20list',['Todo List',['../todo.html',1,'']]],
-  ['tree_20evaluation',['Tree evaluation',['../tree_evaluation.html',1,'']]],
-  ['tutorials',['Tutorials',['../tutorials.html',1,'']]]
+  ['parallelization_20and_20opencl_20_3a_20an_20example_20with_20facial_20recognition',['Parallelization and OpenCL : an example with facial recognition',['../project_presentation.html',1,'']]]
 ];

@@ -1,10 +1,10 @@
 <map id="simplematrix.hpp" name="simplematrix.hpp">
-<area shape="rect" id="node2" href="$clmatrix_8hpp.html" title="clmatrix.hpp" alt="" coords="101,80,195,107"/>
-<area shape="rect" id="node5" href="$eigenpair_8hpp.html" title="eigenpair.hpp" alt="" coords="219,80,317,107"/>
-<area shape="rect" id="node6" href="$files_8hpp.html" title="Saving and loading matrices to and from text files. " alt="" coords="342,80,412,107"/>
-<area shape="rect" id="node7" href="$image_8h.html" title="classes for image files " alt="" coords="437,80,504,107"/>
-<area shape="rect" id="node9" href="$sort_8hpp.html" title="sort.hpp" alt="" coords="529,80,599,107"/>
+<area shape="rect" id="node2" href="$clmatrix_8hpp.html" title="clmatrix.hpp" alt="" coords="137,80,231,107"/>
+<area shape="rect" id="node5" href="$eigenpair_8hpp.html" title="eigenpair.hpp" alt="" coords="255,80,353,107"/>
+<area shape="rect" id="node6" href="$image_8h.html" title="classes for image files " alt="" coords="378,80,445,107"/>
+<area shape="rect" id="node8" href="$matrixImportExport_8h.html" title="Saving and loading matrices to and from text files. " alt="" coords="471,80,615,107"/>
+<area shape="rect" id="node9" href="$sort_8hpp.html" title="sort.hpp" alt="" coords="639,80,708,107"/>
 <area shape="rect" id="node3" href="$clmatrixnorm_8hpp.html" title="define algorithms on matrices related to the norms and distances " alt="" coords="5,155,128,181"/>
 <area shape="rect" id="node4" href="$clmatrixoperations_8hpp.html" title="set of basic algorithms on matrices for CLMatrix objects " alt="" coords="153,155,305,181"/>
-<area shape="rect" id="node8" href="$jpegfile_8h_source.html" title="jpegfile.h" alt="" coords="433,155,507,181"/>
+<area shape="rect" id="node7" href="$jpegfile_8h_source.html" title="jpegfile.h" alt="" coords="375,155,448,181"/>
 </map>

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.7"/>
-<title>liblooklike: files.hpp File Reference</title>
+<title>liblooklike: matrixImportExport.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,33 +93,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">files.hpp File Reference</div>  </div>
+<div class="title">matrixImportExport.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p>Saving and loading matrices to and from text files.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="simplematrix_8hpp_source.html">simplematrix.hpp</a>&quot;</code><br />
+<code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;CL/cl.hpp&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
-Include dependency graph for files.hpp:</div>
+Include dependency graph for matrixImportExport.h:</div>
 <div class="dyncontent">
-<div class="center"><img src="files_8hpp__incl.png" border="0" usemap="#files_8hpp" alt=""/></div>
-<map name="files_8hpp" id="files_8hpp">
-<area shape="rect" id="node2" href="simplematrix_8hpp.html" title="simplematrix.hpp" alt="" coords="159,80,279,107"/><area shape="rect" id="node7" href="expression_8hpp.html" title="expression.hpp" alt="" coords="221,155,331,181"/><area shape="rect" id="node9" href="exception_8h.html" title="liblooklike specific exceptions are usefull, the are defined here " alt="" coords="421,155,510,181"/><area shape="rect" id="node8" href="algorithm_8h.html" title="Define a generic algorithm representation. " alt="" coords="231,229,317,256"/></map>
+<div class="center"><img src="matrixImportExport_8h__incl.png" border="0" usemap="#matrixImportExport_8h" alt=""/></div>
+<map name="matrixImportExport_8h" id="matrixImportExport_8h">
+<area shape="rect" id="node2" href="simplematrix_8hpp.html" title="simplematrix.hpp" alt="" coords="150,80,271,107"/><area shape="rect" id="node7" href="expression_8hpp.html" title="expression.hpp" alt="" coords="249,155,359,181"/><area shape="rect" id="node9" href="exception_8h.html" title="liblooklike specific exceptions are usefull, the are defined here " alt="" coords="439,155,528,181"/><area shape="rect" id="node8" href="algorithm_8h.html" title="Define a generic algorithm representation. " alt="" coords="249,229,335,256"/></map>
 </div>
 </div>
-<p><a href="files_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="matrixImportExport_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae9f6821f4522e9954653482f7b568a27"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="files_8hpp.html#ae9f6821f4522e9954653482f7b568a27">save</a> (<a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt; &amp;mat, std::string filepath)</td></tr>
-<tr class="memdesc:ae9f6821f4522e9954653482f7b568a27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a matrix in a text file.  <a href="#ae9f6821f4522e9954653482f7b568a27">More...</a><br /></td></tr>
-<tr class="separator:ae9f6821f4522e9954653482f7b568a27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e3f5d16728df223a4d6e17d0cc08470"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="files_8hpp.html#a6e3f5d16728df223a4d6e17d0cc08470">save</a> (<a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt; &amp;mat, std::string filepath, <a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; unsigned int &gt; &amp;indexes)</td></tr>
-<tr class="memdesc:a6e3f5d16728df223a4d6e17d0cc08470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a matrix in a text file.  <a href="#a6e3f5d16728df223a4d6e17d0cc08470">More...</a><br /></td></tr>
-<tr class="separator:a6e3f5d16728df223a4d6e17d0cc08470"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a278916de0468a0262bc08ae0d3127ba6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="files_8hpp.html#a278916de0468a0262bc08ae0d3127ba6">load</a> (std::string filepath)</td></tr>
+<tr class="memitem:a4c21a9828ee25314b29c28911ace6946"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="matrixImportExport_8h.html#a4c21a9828ee25314b29c28911ace6946">save</a> (<a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt;mat, std::string filepath)</td></tr>
+<tr class="memdesc:a4c21a9828ee25314b29c28911ace6946"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a matrix in a text file.  <a href="#a4c21a9828ee25314b29c28911ace6946">More...</a><br /></td></tr>
+<tr class="separator:a4c21a9828ee25314b29c28911ace6946"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7538816d0d1d2039a541cd3c30522f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="matrixImportExport_8h.html#ab7538816d0d1d2039a541cd3c30522f5">save</a> (<a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt;mat, std::string filepath, <a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; unsigned int &gt;indexes)</td></tr>
+<tr class="memdesc:ab7538816d0d1d2039a541cd3c30522f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a matrix in a text file.  <a href="#ab7538816d0d1d2039a541cd3c30522f5">More...</a><br /></td></tr>
+<tr class="separator:ab7538816d0d1d2039a541cd3c30522f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a278916de0468a0262bc08ae0d3127ba6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="matrixImportExport_8h.html#a278916de0468a0262bc08ae0d3127ba6">load</a> (std::string filepath)</td></tr>
 <tr class="memdesc:a278916de0468a0262bc08ae0d3127ba6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load the values of a text file into a Matrix.  <a href="#a278916de0468a0262bc08ae0d3127ba6">More...</a><br /></td></tr>
 <tr class="separator:a278916de0468a0262bc08ae0d3127ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -151,7 +152,7 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A matrix with the loaded value </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">CorruptedMatrixFile</td><td>thrown if not all lines have the same number of values, or if any value cannot be read/casted properly. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classIOException.html">IOException</a></td><td>thrown if not all lines have the same number of values, or if any value cannot be read/casted properly. </td></tr>
   </table>
   </dd>
 </dl>
@@ -159,14 +160,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae9f6821f4522e9954653482f7b568a27"></a>
+<a class="anchor" id="a4c21a9828ee25314b29c28911ace6946"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void save </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt;&#160;</td>
           <td class="paramname"><em>mat</em>, </td>
         </tr>
         <tr>
@@ -193,21 +194,21 @@ Functions</h2></td></tr>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classError.html" title="default class for exception handling ">Error</a></td><td>thrown if file cannot be opened </td></tr>
+    <tr><td class="paramname"><a class="el" href="classIOException.html">IOException</a></td><td>thrown if file cannot be opened </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a6e3f5d16728df223a4d6e17d0cc08470"></a>
+<a class="anchor" id="ab7538816d0d1d2039a541cd3c30522f5"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void save </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; cl_float &gt;&#160;</td>
           <td class="paramname"><em>mat</em>, </td>
         </tr>
         <tr>
@@ -219,7 +220,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classSimpleMatrix.html">SimpleMatrix</a>&lt; unsigned int &gt;&#160;</td>
           <td class="paramname"><em>indexes</em>&#160;</td>
         </tr>
         <tr>
@@ -235,12 +236,13 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">mat</td><td>a matrix </td></tr>
     <tr><td class="paramname">filepath</td><td>path to the saved file (you might want to use the .csv extension) </td></tr>
+    <tr><td class="paramname">indexes</td><td>vector(matrix of width 1) with indexes of the columns of mat to save. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classError.html" title="default class for exception handling ">Error</a></td><td>thrown if file cannot be opened </td></tr>
+    <tr><td class="paramname"><a class="el" href="classIOException.html">IOException</a></td><td>thrown if file cannot be opened </td></tr>
   </table>
   </dd>
 </dl>
@@ -250,7 +252,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 2 2014 21:40:34 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun May 18 2014 21:27:24 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

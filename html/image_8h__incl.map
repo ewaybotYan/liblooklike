@@ -1,5 +1,5 @@
 <map id="image.h" name="image.h">
-<area shape="rect" id="node2" href="$file_8h_source.html" title="file.h" alt="" coords="75,80,125,107"/>
+<area shape="rect" id="node2" href="$file_8h.html" title="Quick and dirty wrapper for c&#45;style file management used in jpeglib. " alt="" coords="75,80,125,107"/>
 <area shape="rect" id="node5" href="$simplematrix_8hpp.html" title="simplematrix.hpp" alt="" coords="319,80,440,107"/>
 <area shape="rect" id="node9" href="$expression_8hpp.html" title="expression.hpp" alt="" coords="546,155,656,181"/>
 <area shape="rect" id="node11" href="$exception_8h.html" title="liblooklike specific exceptions are usefull, the are defined here " alt="" coords="282,155,371,181"/>

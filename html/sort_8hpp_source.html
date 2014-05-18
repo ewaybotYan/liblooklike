@@ -301,30 +301,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  }</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;</div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;  <span class="comment">// resize indexes and sort array to the number of sorted values</span></div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  s-&gt;<a class="code" href="classSort.html#a10d0775bab77d54d97821ff5d1ca5698">getSortIdx</a>()-&gt;resizeVecHeight(i);</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;  s-&gt;<a class="code" href="classSort.html#a9aa01f42ee29c746d00d5d654bfb21b3">getSorted</a>()-&gt;resizeVecHeight(i);</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  s-&gt;m_nbSortedValues = i;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;}</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> Scalar&gt;</div>
-<div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="classInertiaSort.html#abda1e831f5b5aaf3a569a8a78f578799">  245</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classInertiaSort.html#abda1e831f5b5aaf3a569a8a78f578799">InertiaSort&lt;Scalar&gt;::enqueue</a>()</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;{</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;  <span class="keyword">typedef</span> <a class="code" href="classSort.html">Sort&lt;Scalar&gt;</a> S;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> child : S::m_dependencies) {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    child-&gt;<a class="code" href="classAlgorithm.html#ab07f910bbb784a430e4fe75e1a7f199c">waitEndOfEvaluation</a>();</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;  }</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;  m_t = std::thread( <a class="code" href="classInertiaSort.html">InertiaSort&lt;Scalar&gt;::InertiaSortWithThreshold</a>, <span class="keyword">this</span> );</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;}</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;  <span class="keywordflow">if</span>( s-&gt;<a class="code" href="classSort.html#a5ee99c682611e133e7d3b4342204ac83">m_appendIdx</a> )</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    s-&gt;<a class="code" href="classSort.html#a10d0775bab77d54d97821ff5d1ca5698">getSortIdx</a>()-&gt;resizeVecHeight(i);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  s-&gt;<a class="code" href="classSort.html#a9aa01f42ee29c746d00d5d654bfb21b3">getSorted</a>()-&gt;resizeVecHeight(i);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  s-&gt;m_nbSortedValues = i;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;}</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> Scalar&gt;</div>
+<div class="line"><a name="l00246"></a><span class="lineno"><a class="line" href="classInertiaSort.html#abda1e831f5b5aaf3a569a8a78f578799">  246</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classInertiaSort.html#abda1e831f5b5aaf3a569a8a78f578799">InertiaSort&lt;Scalar&gt;::enqueue</a>()</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;{</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;  <span class="keyword">typedef</span> <a class="code" href="classSort.html">Sort&lt;Scalar&gt;</a> S;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">auto</span> child : S::m_dependencies) {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    child-&gt;<a class="code" href="classAlgorithm.html#ab07f910bbb784a430e4fe75e1a7f199c">waitEndOfEvaluation</a>();</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;  }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;  m_t = std::thread( <a class="code" href="classInertiaSort.html">InertiaSort&lt;Scalar&gt;::InertiaSortWithThreshold</a>, <span class="keyword">this</span> );</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;}</div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="preprocessor">#endif // SORT_HPP</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="preprocessor">#endif // SORT_HPP</span></div>
 <div class="ttc" id="classAlgorithm_html"><div class="ttname"><a href="classAlgorithm.html">Algorithm</a></div><div class="ttdoc">Algorithms class as described in Algorithm. </div><div class="ttdef"><b>Definition:</b> algorithm.h:41</div></div>
 <div class="ttc" id="classSort_html_a5ee99c682611e133e7d3b4342204ac83"><div class="ttname"><a href="classSort.html#a5ee99c682611e133e7d3b4342204ac83">Sort::m_appendIdx</a></div><div class="ttdeci">bool m_appendIdx</div><div class="ttdoc">wether indexes of the sorted elements should be generated too </div><div class="ttdef"><b>Definition:</b> sort.hpp:68</div></div>
 <div class="ttc" id="classAlgorithm_html_ae0e234e47f4b4d68cb43754b6e577af4"><div class="ttname"><a href="classAlgorithm.html#ae0e234e47f4b4d68cb43754b6e577af4">Algorithm::isEnqueued</a></div><div class="ttdeci">bool isEnqueued() const </div><div class="ttdoc">Indicates the state of the algorithm. </div></div>
 <div class="ttc" id="algorithm_8h_html"><div class="ttname"><a href="algorithm_8h.html">algorithm.h</a></div><div class="ttdoc">Define a generic algorithm representation. </div></div>
-<div class="ttc" id="classInertiaSort_html_abda1e831f5b5aaf3a569a8a78f578799"><div class="ttname"><a href="classInertiaSort.html#abda1e831f5b5aaf3a569a8a78f578799">InertiaSort::enqueue</a></div><div class="ttdeci">void enqueue()</div><div class="ttdoc">launch evaluation of the object This function can assumes memory was allocated for all results and th...</div><div class="ttdef"><b>Definition:</b> sort.hpp:245</div></div>
+<div class="ttc" id="classInertiaSort_html_abda1e831f5b5aaf3a569a8a78f578799"><div class="ttname"><a href="classInertiaSort.html#abda1e831f5b5aaf3a569a8a78f578799">InertiaSort::enqueue</a></div><div class="ttdeci">void enqueue()</div><div class="ttdoc">launch evaluation of the object This function can assumes memory was allocated for all results and th...</div><div class="ttdef"><b>Definition:</b> sort.hpp:246</div></div>
 <div class="ttc" id="classSort_html_afd25112b039c16df11c108253bfe9c81"><div class="ttname"><a href="classSort.html#afd25112b039c16df11c108253bfe9c81">Sort::m_sorted</a></div><div class="ttdeci">std::shared_ptr&lt; SimpleMatrix&lt; Scalar &gt; &gt; m_sorted</div><div class="ttdoc">the sorted result </div><div class="ttdef"><b>Definition:</b> sort.hpp:55</div></div>
 <div class="ttc" id="classSort_html_ad5583c40901d3bcbf2381e7c86297e93"><div class="ttname"><a href="classSort.html#ad5583c40901d3bcbf2381e7c86297e93">Sort::m_sortOnColumns</a></div><div class="ttdeci">bool m_sortOnColumns</div><div class="ttdoc">wether sort is done horizontaly or vertiacally </div><div class="ttdef"><b>Definition:</b> sort.hpp:61</div></div>
 <div class="ttc" id="classSort_html_ab2a9d06b797a4e6d74e331945c8ce1cb"><div class="ttname"><a href="classSort.html#ab2a9d06b797a4e6d74e331945c8ce1cb">Sort::m_indexes</a></div><div class="ttdeci">std::shared_ptr&lt; SimpleMatrix&lt; unsigned int &gt; &gt; m_indexes</div><div class="ttdoc">the indexes of the sorted elements in the m_data </div><div class="ttdef"><b>Definition:</b> sort.hpp:58</div></div>
@@ -339,7 +340,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classSort_html_a0c9b43515c0411d43eff1358d21fbfb6"><div class="ttname"><a href="classSort.html#a0c9b43515c0411d43eff1358d21fbfb6">Sort::Sort</a></div><div class="ttdeci">Sort(std::shared_ptr&lt; SimpleMatrix&lt; Scalar &gt; &gt; data, bool sortOnColumns=true, unsigned int sortRefIdx=0, bool appendIndex=false)</div><div class="ttdef"><b>Definition:</b> sort.hpp:116</div></div>
 <div class="ttc" id="classInertiaSort_html"><div class="ttname"><a href="classInertiaSort.html">InertiaSort</a></div><div class="ttdoc">Performs inertia sort on value. </div><div class="ttdef"><b>Definition:</b> sort.hpp:80</div></div>
 <div class="ttc" id="classInertiaSort_html_afb06c3a10e4b019c5221910789876a1b"><div class="ttname"><a href="classInertiaSort.html#afb06c3a10e4b019c5221910789876a1b">InertiaSort::getNbSortedValues</a></div><div class="ttdeci">unsigned int getNbSortedValues() const </div><div class="ttdoc">number of values sorted before reaching target inertia </div><div class="ttdef"><b>Definition:</b> sort.hpp:177</div></div>
-<div class="ttc" id="classEvaluationProcessViolation_html"><div class="ttname"><a href="classEvaluationProcessViolation.html">EvaluationProcessViolation</a></div><div class="ttdef"><b>Definition:</b> exception.h:57</div></div>
+<div class="ttc" id="classEvaluationProcessViolation_html"><div class="ttname"><a href="classEvaluationProcessViolation.html">EvaluationProcessViolation</a></div><div class="ttdef"><b>Definition:</b> exception.h:56</div></div>
 <div class="ttc" id="classSort_html_a10d0775bab77d54d97821ff5d1ca5698"><div class="ttname"><a href="classSort.html#a10d0775bab77d54d97821ff5d1ca5698">Sort::getSortIdx</a></div><div class="ttdeci">std::shared_ptr&lt; SimpleMatrix&lt; unsigned int &gt; &gt; &amp; getSortIdx()</div><div class="ttdef"><b>Definition:</b> sort.hpp:144</div></div>
 <div class="ttc" id="classSort_html_a82f119c5e569a91b9a13d517c8bc2932"><div class="ttname"><a href="classSort.html#a82f119c5e569a91b9a13d517c8bc2932">Sort::m_data</a></div><div class="ttdeci">std::shared_ptr&lt; SimpleMatrix&lt; Scalar &gt; &gt; m_data</div><div class="ttdoc">the unsorted values </div><div class="ttdef"><b>Definition:</b> sort.hpp:52</div></div>
 <div class="ttc" id="classInertiaSort_html_a22e56caf969b565f2b9d5a1fcbd14834"><div class="ttname"><a href="classInertiaSort.html#a22e56caf969b565f2b9d5a1fcbd14834">InertiaSort::releaseTmpMem</a></div><div class="ttdeci">void releaseTmpMem() override</div><div class="ttdoc">realease any temporary memory reserved for computation </div><div class="ttdef"><b>Definition:</b> sort.hpp:93</div></div>
@@ -347,7 +348,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 2 2014 21:40:34 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun May 18 2014 21:27:24 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

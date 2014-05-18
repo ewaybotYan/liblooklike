@@ -97,7 +97,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>For a given matrix A of height h and a vector V of size h, <em>divide</em> each line of A by the corresponding coefficient in V.  
+<p>For a given matrix A of height h and a vector V of size h, substract the offset values and <em>divide</em> by the coefficients.  
  <a href="classCLMatrixScale.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="clmatrixoperations_8hpp_source.html">clmatrixoperations.hpp</a>&gt;</code></p>
@@ -118,8 +118,8 @@ Collaboration diagram for CLMatrixScale:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a62247dc328ce1b3b963b8754e61dd846"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCLMatrixScale.html#a62247dc328ce1b3b963b8754e61dd846">CLMatrixScale</a> (std::shared_ptr&lt; <a class="el" href="classCLMatrix.html">CLMatrix</a> &gt; m, std::shared_ptr&lt; <a class="el" href="classCLMatrix.html">CLMatrix</a> &gt; v, <a class="el" href="classContext.html">Context</a> *context, cl::CommandQueue *queue)</td></tr>
-<tr class="separator:a62247dc328ce1b3b963b8754e61dd846"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05416770b58dffade9831ee995262075"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCLMatrixScale.html#a05416770b58dffade9831ee995262075">CLMatrixScale</a> (std::shared_ptr&lt; <a class="el" href="classCLMatrix.html">CLMatrix</a> &gt; m, std::shared_ptr&lt; <a class="el" href="classCLMatrix.html">CLMatrix</a> &gt; o, std::shared_ptr&lt; <a class="el" href="classCLMatrix.html">CLMatrix</a> &gt; v, <a class="el" href="classContext.html">Context</a> *context, cl::CommandQueue *queue)</td></tr>
+<tr class="separator:a05416770b58dffade9831ee995262075"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97b3b0fae36a4762132efe19aea9570d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCLMatrixScale.html#a97b3b0fae36a4762132efe19aea9570d">waitEndOfEvaluation</a> () override</td></tr>
 <tr class="memdesc:a97b3b0fae36a4762132efe19aea9570d"><td class="mdescLeft">&#160;</td><td class="mdescRight">blocking function that returns when computation is finished.  <a href="#a97b3b0fae36a4762132efe19aea9570d">More...</a><br /></td></tr>
 <tr class="separator:a97b3b0fae36a4762132efe19aea9570d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,9 +179,9 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a6fe7d41672f7c3f3ac3a5c7af133d8cb inherit pro_attribs_classAlgorithm"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>For a given matrix A of height h and a vector V of size h, <em>divide</em> each line of A by the corresponding coefficient in V. </p>
+<div class="textblock"><p>For a given matrix A of height h and a vector V of size h, substract the offset values and <em>divide</em> by the coefficients. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a62247dc328ce1b3b963b8754e61dd846"></a>
+<a class="anchor" id="a05416770b58dffade9831ee995262075"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -190,6 +190,12 @@ Additional Inherited Members</h2></td></tr>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classCLMatrix.html">CLMatrix</a> &gt;&#160;</td>
           <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classCLMatrix.html">CLMatrix</a> &gt;&#160;</td>
+          <td class="paramname"><em>o</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -219,7 +225,8 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">m</td><td>the input matrix </td></tr>
-    <tr><td class="paramname">v</td><td>the coefficient vector (matrix of width 1) </td></tr>
+    <tr><td class="paramname">o</td><td>offsets vector </td></tr>
+    <tr><td class="paramname">v</td><td>the coefficient vector </td></tr>
     <tr><td class="paramname">context</td><td>The OpenCL context that will hold the matrix </td></tr>
     <tr><td class="paramname">queue</td><td>a cl::CommandQueue in wich memory transfer will be launched </td></tr>
   </table>
@@ -313,7 +320,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 2 2014 21:40:34 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun May 18 2014 21:27:24 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

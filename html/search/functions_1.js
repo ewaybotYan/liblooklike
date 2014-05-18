@@ -8,7 +8,7 @@ var searchData=
   ['clmatrixloader',['CLMatrixLoader',['../classCLMatrixLoader.html#ac4894e19aff26fc3f1cbd8a959c4244a',1,'CLMatrixLoader']]],
   ['clmatrixnorm',['CLMatrixNorm',['../classCLMatrixNorm.html#a34097b5f2bd99c85acb0bfae7a8ce9e3',1,'CLMatrixNorm']]],
   ['clmatrixproduct',['CLMatrixProduct',['../classCLMatrixProduct.html#a56612b18fa1d25859a86dfe6b70de6e4',1,'CLMatrixProduct']]],
-  ['clmatrixscale',['CLMatrixScale',['../classCLMatrixScale.html#a62247dc328ce1b3b963b8754e61dd846',1,'CLMatrixScale']]],
+  ['clmatrixscale',['CLMatrixScale',['../classCLMatrixScale.html#a05416770b58dffade9831ee995262075',1,'CLMatrixScale']]],
   ['clmatrixunloader',['CLMatrixUnloader',['../classCLMatrixUnloader.html#a989a1b926ba4df987a333af6d85fdf7b',1,'CLMatrixUnloader']]],
   ['context',['Context',['../classContext.html#a90a8684348acb45d2d69793a64275cee',1,'Context']]],
   ['createqueue',['createQueue',['../classContext.html#a66348d7240c61d311a9b1a42684ed87c',1,'Context']]]

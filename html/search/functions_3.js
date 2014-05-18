@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['getavgs',['getAvgs',['../classCLMatrixNorm.html#a3be9da06f56d7414e46c44c3f2874143',1,'CLMatrixNorm']]],
   ['getcommandqueue',['getCommandQueue',['../classClAlgorithm.html#ab7f8c996adb41959c136b9a83658acf5',1,'ClAlgorithm']]],
   ['getcontext',['getContext',['../classClAlgorithm.html#ad245c03771e967fd0f5dd0ade10b6bb8',1,'ClAlgorithm::getContext()'],['../classContext.html#a5f6861a281dfcc2c28d5f46b335328c8',1,'Context::getContext()']]],
   ['getdevices',['getDevices',['../classContext.html#a2cc249da1463e6cab071a42db51bf17f',1,'Context']]],

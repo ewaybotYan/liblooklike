@@ -1,7 +1,8 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title="STL class. " alt="" coords="5,56,109,83"/>
-<area shape="rect" id="node2" href="$classError.html" title="default class for exception handling " alt="" coords="157,56,208,83"/>
+<area shape="rect" id="node1" title="STL class. " alt="" coords="5,81,109,108"/>
+<area shape="rect" id="node2" href="$classError.html" title="default class for exception handling " alt="" coords="157,81,208,108"/>
 <area shape="rect" id="node3" href="$classCLError.html" title="exception that prints a human readable message for OpenCL error " alt="" coords="313,5,380,32"/>
 <area shape="rect" id="node4" href="$classEvaluationProcessViolation.html" title="EvaluationProcessViolation" alt="" coords="256,56,437,83"/>
 <area shape="rect" id="node5" href="$classInvalidAlgorithmParameter.html" title="InvalidAlgorithmParameter" alt="" coords="259,107,434,133"/>
+<area shape="rect" id="node6" href="$classIOException.html" title="IOException" alt="" coords="299,157,394,184"/>
 </map>

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.7"/>
-<title>liblooklike: files.hpp Source File</title>
+<title>liblooklike: matrixImportExport.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -91,33 +91,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">files.hpp</div>  </div>
+<div class="title">matrixImportExport.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="files_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef FILES_HPP</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#define FILES_HPP</span></div>
+<a href="matrixImportExport_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef MATRIXIMPORTEXPORT_H</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#define MATRIXIMPORTEXPORT_H</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="simplematrix_8hpp.html">simplematrix.hpp</a>&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;CL/cl.hpp&gt;</span> <span class="comment">// for cl_float</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keywordtype">void</span> <a class="code" href="files_8hpp.html#ae9f6821f4522e9954653482f7b568a27">save</a>( <a class="code" href="classSimpleMatrix.html">SimpleMatrix&lt;cl_float&gt;</a>&amp; mat, std::string filepath );</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keywordtype">void</span> <a class="code" href="files_8hpp.html#ae9f6821f4522e9954653482f7b568a27">save</a>( <a class="code" href="classSimpleMatrix.html">SimpleMatrix&lt;cl_float&gt;</a>&amp; mat, std::string filepath,</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;           <a class="code" href="classSimpleMatrix.html">SimpleMatrix&lt;unsigned int&gt;</a>&amp;indexes );</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;CL/cl.hpp&gt;</span> <span class="comment">//for cl_float</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keywordtype">void</span> <a class="code" href="matrixImportExport_8h.html#a4c21a9828ee25314b29c28911ace6946">save</a>( <a class="code" href="classSimpleMatrix.html">SimpleMatrix&lt;cl_float&gt;</a>mat, std::string filepath);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keywordtype">void</span> <a class="code" href="matrixImportExport_8h.html#a4c21a9828ee25314b29c28911ace6946">save</a>( <a class="code" href="classSimpleMatrix.html">SimpleMatrix&lt;cl_float&gt;</a>mat, std::string filepath,</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;          <a class="code" href="classSimpleMatrix.html">SimpleMatrix&lt;unsigned int&gt;</a>indexes);</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<a class="code" href="classSimpleMatrix.html">SimpleMatrix&lt;cl_float&gt;</a>* <a class="code" href="files_8hpp.html#a278916de0468a0262bc08ae0d3127ba6">load</a>(std::string filepath);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<a class="code" href="classSimpleMatrix.html">SimpleMatrix&lt;cl_float&gt;</a>* <a class="code" href="matrixImportExport_8h.html#a278916de0468a0262bc08ae0d3127ba6">load</a>(std::string filepath);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="simplematrix_8hpp_html"><div class="ttname"><a href="simplematrix_8hpp.html">simplematrix.hpp</a></div></div>
-<div class="ttc" id="files_8hpp_html_ae9f6821f4522e9954653482f7b568a27"><div class="ttname"><a href="files_8hpp.html#ae9f6821f4522e9954653482f7b568a27">save</a></div><div class="ttdeci">void save(SimpleMatrix&lt; cl_float &gt; &amp;mat, std::string filepath)</div><div class="ttdoc">Save a matrix in a text file. </div></div>
+<div class="ttc" id="matrixImportExport_8h_html_a278916de0468a0262bc08ae0d3127ba6"><div class="ttname"><a href="matrixImportExport_8h.html#a278916de0468a0262bc08ae0d3127ba6">load</a></div><div class="ttdeci">SimpleMatrix&lt; cl_float &gt; * load(std::string filepath)</div><div class="ttdoc">Load the values of a text file into a Matrix. </div></div>
+<div class="ttc" id="matrixImportExport_8h_html_a4c21a9828ee25314b29c28911ace6946"><div class="ttname"><a href="matrixImportExport_8h.html#a4c21a9828ee25314b29c28911ace6946">save</a></div><div class="ttdeci">void save(SimpleMatrix&lt; cl_float &gt;mat, std::string filepath)</div><div class="ttdoc">Save a matrix in a text file. </div></div>
 <div class="ttc" id="classSimpleMatrix_html"><div class="ttname"><a href="classSimpleMatrix.html">SimpleMatrix</a></div><div class="ttdef"><b>Definition:</b> simplematrix.hpp:21</div></div>
-<div class="ttc" id="files_8hpp_html_a278916de0468a0262bc08ae0d3127ba6"><div class="ttname"><a href="files_8hpp.html#a278916de0468a0262bc08ae0d3127ba6">load</a></div><div class="ttdeci">SimpleMatrix&lt; cl_float &gt; * load(std::string filepath)</div><div class="ttdoc">Load the values of a text file into a Matrix. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 2 2014 21:40:34 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun May 18 2014 21:27:24 for liblooklike by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>
