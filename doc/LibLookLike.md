@@ -1,13 +1,7 @@
-Parallelization and OpenCL : an example with facial recognition 
+Parallelization and OpenCL : an example with facial recognition {#project_presentation}
 ===============================================================
 
-
-Parallelization and OpenCL 
-==========================
-
-
-A short presentation of parallelization 
-=======================================
+## A short presentation of parallelization 
 
 The word parallelization is becoming very common in Computer Science, and has 
 spread outside laboratories. Intense computation tasks are widely used in 
@@ -45,8 +39,7 @@ They provide higher computation efficiency than a classical CPU which is
 designed for more complex tasks. 
 
 
-Parallelization with OpenCL
-===========================
+## Parallelization with OpenCL
 
 The diversity of graphic cards and more generally of devices with 
 parallelization abilities is wide.  As a consequence, a uniform programming 
@@ -72,15 +65,13 @@ libraries however do not always implement all the functionalities of the
 specification.
 
 
-Implementation of parallelization : the overall process as defined in OpenCL 
-============================================================================
+## Implementation of parallelization : the overall process as defined in OpenCL 
 
 The OpenCL specification divides the computation process into several parts.  
 We shall present each of them below, and introduce the naming convention used 
 in the specification. 
 
-Choosing a platform
--------------------
+### Choosing a platform
 
 The specification is implemented into a library, that is to say a piece of 
 computer program running on both the computer and the computation device. The 
@@ -96,8 +87,7 @@ Note that a platform can handle multiple devices at the time, provided that all
 of them are supported by the implementation. Thus you can imagine a computation 
 device that is actually an aggregation of several identical graphic cards. 
 
-Starting a context
-------------------
+### Starting a context
 
 A context has several roles, it manages memory buffers, devices and command 
 queues. The context in a Object oriented programming point of view is what 
@@ -107,8 +97,7 @@ object during the whole computation process.
 The context is usually created from a list of devices listed by the platform 
 selected during the previous step.
 
-Allocating memory
------------------
+### Allocating memory
 
 The memory model of OpenCL is more complicated than in a standard computer. For 
 example, data can be split or shared implicitly between devices. More generally 
@@ -126,8 +115,7 @@ the graphic cards memory models in order to optimize the configuration of these
 buffers, but this is not the purpose of this document.
 
 
-Creating a command queue
-------------------------
+### Creating a command queue
 
 For the same reasons that motivated the creation of a memory abstraction layer, 
 it is not possible to write a program that gets executed by the computation 
@@ -169,8 +157,7 @@ OpenCL parallelization is always range-based, so there is a range object. It is
 possible to specify up to 3 ranges of values for a single computation which is 
 useful for algorithms running on a discrete space problem. 
 
-Enqueuing data load and program execution
------------------------------------------
+### Enqueuing data load and program execution
 
 Since the kernels are executed without specific order, OpenCL offers a 
 mechanism to handle the order end the execution of tasks. Every OpenCL 
@@ -181,8 +168,7 @@ Commands in the queue are executed as soon as possible with respect to other
 events if dependencies are specified between commands.
 
 
-OpenCL in LibLookLike
-=====================
+## OpenCL in LibLookLike
 
 This project tries to simplify the integration of OpenCL and hence offers a
 wrapper around the OpenCL library in order to simplify the work of creating
@@ -193,8 +179,7 @@ and handling dependencies is done transparently thanks to a framework that
 standardizes algorithms and mathematical objects writing.
 
 
-Computation tree : expressions, operators and sets 
-==================================================
+## Computation tree : expressions, operators and sets 
 
 When we conceive a sequential algorithm, all functions are blocking the 
 execution flow until the instructions are completed. In the case of concurrent 
@@ -206,9 +191,10 @@ If you consider a sequence of operations such as the evaluation of a
 mathematical expression, it appears that some instructions cannot be started 
 until the result of another is available. 
 
-  Example:
-  a * ( b + c )
-  ( b + c ) must be computed before the product operation can start
+Example:
+
+In \f$a * ( b + c )\f$, \f$( b + c )\f$ must be computed before the product 
+operation can start.
 
 In LibLookLike, the operations are represented as a tree : the leaves of the 
 tree are expressions and the nodes are operators.  Each expression is of a 
@@ -229,11 +215,9 @@ dependencies which in turn will perform the necessary tasks to compute their
 resulting expressions.
 
 
-Expressions and operators : Expression and Algorithm classes 
-============================================================
+## Expressions and operators : Expression and Algorithm classes 
 
-Expression
-----------
+### Expression
 
 Expressions in LibLookLike are represented by the class Expression, which is an 
 abstract class defining a set of common characteristics.  When evaluating an 
@@ -241,8 +225,7 @@ expression, the operation attached to the expression will start its execution.
 If no operation is attached to an expression, it means that the expression does 
 not need to be computed. 
 
-Algorithm
----------
+### Algorithm
 
 Operations in LibLookLike are represented by the class Algorithm, which is a 
 standardized interface on the operations.  The Algorithm class automates the 
@@ -256,8 +239,7 @@ When executing an operation, if the input values are not yet evaluated, it will
 automatically start their evaluation. Then the actual computation performed by 
 the operation will start.
 
-Interactions between Expression and Algorithm 
----------------------------------------------
+### Interactions between Expression and Algorithm 
 
 The method getResult() (or an equivalent function depending on the algorithm) 
 applied on a algorithm returns an expression, not yet computed, but related to 
@@ -268,12 +250,10 @@ evaluate() will fill the expression with its actual value, after all the
 dependencies of this expression have been evaluated recursively.
 
 
-Facial recognition and parallelization in LibLookLike 
-=====================================================
+## Facial recognition and parallelization in LibLookLike 
 
 
-Facial recognition by principal components analysis in a nutshell 
-=================================================================
+### Facial recognition by principal components analysis in a nutshell 
 
 We assume that readers are familiar with data analysis by PCA (principal 
 component analysis).  We will only present our choices to realise a PCA on 
@@ -292,10 +272,7 @@ in the cloud of the persons (the correlation matrix is thus of size 200*200)
 and then we go from the cloud of persons to the cloud of pixels by multiplying 
 left by the matrix of the persons. 
 
-# normalization ???
-
-Parallelized algorithms in LibLookLike
-======================================
+### Parallelized algorithms in LibLookLike
 
 In LibLookLike, four major operations are parallelized: 
 - the multiplication of matrices
@@ -307,25 +284,22 @@ These parallelized algorithms are implemented, as usual, in Algorithm classes,
 which use OpenCL kernels to distribute computations on CPUs or GPUs.  We will 
 present here three of the four operations above.
 
-Multiplication of matrices
---------------------------
+### Multiplication of matrices
 
 The result of the multiplication of two matrices is computed by executing the 
 computation of each element of this matrix in parallel, this is to say, the 
 vectorial products between each row of A and each column of B in the product 
 A*B are executed in parallel. 
 
-Multiplication between a transposed matrix and a matrix 
--------------------------------------------------------
+### Multiplication between a transposed matrix and a matrix 
 
 The multiplication of a transposed matrix and another matrix is computed in the 
 same way than the multiplication of two matrices, except that the vectorial 
 products executed in parallel are between each column of A and each column of B 
-in the product t(A)*B, provided that the dimensions of the matrices allow to 
+in the product \f$\textbf{A}^T * \textbf{B}\f$, provided that the dimensions of the matrices allow to 
 compute such a product. 
 
-Normalization of a matrix
--------------------------
+### Normalization of a matrix
 
 The normalisation of a matrix can be executed in respect to the rows, or in 
 respect to the columns. Both are possible in LibLookLike.  We will present here 
@@ -336,6 +310,6 @@ variance, and then the new terms of the matrix X as themselves minus the
 average over the variance. Note that the computation of the variance in the column
 normalisation in LibLookLike is improved with the Kahan summation algorithm to avoid cancellation.
 
-Later, when computing the matrix t(X)*X, the result will be the matrix of 
-covariance. So, at this stage, we shall divide the result of the computation 
-of t(X)*X by n, in order to obtain the matrix of correlation.
+Later, when computing the matrix \f$\textbf{X}^T * \textbf{X}\f$, the result will be the matrix of 
+covariance. So, at this stage, we will divide the result of the computation 
+of \f$\textbf{X}^T * \textbf{X}\f$ by n, in order to obtain the matrix of correlation.

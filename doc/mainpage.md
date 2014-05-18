@@ -1,20 +1,19 @@
 Liblooklike documentation
 =========================
 
-This is the technical documentation of the liblooklike project.
-Liblooklike aims to provide an generic computation plateform. One of the main
+This is the documentation of the liblooklike project.
+Liblooklike aims to provide a generic computation plateform. One of the main
 features is the integration of OpenCL in the environment which simplifies the
 process of wrinting parallel algorithms.
+Liblooklike uses this platform to perform data analysis computation for face 
+recognition.
 
 Quick links
 -----------
 
-While this documentation only focuses on the project code, here are a few
-external links that might be useful:
-
+- Introduction to the project: @ref project_presentation 
 - Project page on github, also includes the installation procedure: https://github.com/pixelou/liblooklike
 - Online version of this documentation: http://pixelou.github.io/liblooklike/html/index.html
-- Project context (with an introduction to OpenCL): to come later
 
 General aspects
 ---------------
