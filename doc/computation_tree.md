@@ -25,12 +25,12 @@ object Sum
 object Result1
 object C
 object Product
-object Final_Result
+object FinalResult
 
 Sum -- A
 Sum -- B
 Result1 -- Sum
 Product -- Result1
 Product -- C
-Result2 -- Product
+FinalResult -- Product
 @enduml

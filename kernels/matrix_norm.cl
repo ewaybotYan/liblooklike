@@ -13,6 +13,7 @@
 __kernel void
 matrix_normalize_cols( __global float* R,
                        __global float* C,
+                       __global float* M,
                        __global float* A,
                        int h, int w ){
     // Thread index
@@ -45,6 +46,7 @@ matrix_normalize_cols( __global float* R,
     // Normalize the matrix
     float stdDev = sqrt(n_var);
     C[ty] = stdDev;
+    M[ty] = mu;
     for (int k = 0; k < h; ++k) {
         R[k+ty*h] = (A[k+ty*h] - mu) / stdDev;
     }
@@ -58,6 +60,7 @@ matrix_normalize_cols( __global float* R,
 __kernel void
 matrix_normalize_rows( __global float* R,
                        __global float* C,
+                       __global float* M,
                        __global float* A,
                        int h, int w){
     // Thread index
@@ -68,21 +71,29 @@ matrix_normalize_rows( __global float* R,
     float n_var = 0.0f; // total square distance to the average
 
     // Compute the row average;
-    for ( int k = 0; k < w; ++k ) {
-        // Calculation of the column average
-        mu += A[k*h+ty];
+    float err = 0.0f;
+    for (int k = 0; k < w; ++k) {
+        float val = A[ty+k*h] - err;
+        float t = mu + val;
+        err = t - mu - val;
+        mu = t;
     }
-
     mu = mu / (float)w;
 
     // Compute the column variance
-    for ( int k = 0; k < w; ++k ) {
-        n_var += pown( A[k*h+ty] - mu, 2 );
+    err = 0;
+    for (int k = 0; k < w; ++k) {
+        float d = pown( A[ty+k*h] - mu, 2 ) - err;
+        float t = n_var + d;
+        err = t - n_var - d;
+        n_var = t;
     }
+    n_var /= (float)(w-1);
 
     // Normalize the matrix
     float stdDev = sqrt(n_var);
     C[ty] = stdDev;
+    M[ty] = mu;
     for ( int k = 0; k < w; ++k ) {
         R[k*h+ty] = (A[k*h+ty] - mu) / stdDev;
     }

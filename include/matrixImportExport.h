@@ -1,18 +1,18 @@
 /**
- * @file files.hpp
+ * @file matrixImportExport.h
  * @author Gabriel de Longeaux
  * @brief Saving and loading matrices to and from text files.
  */
 
-#ifndef FILES_HPP
-#define FILES_HPP
+#ifndef MATRIXIMPORTEXPORT_H
+#define MATRIXIMPORTEXPORT_H
 
 #include "simplematrix.hpp"
-#include <CL/cl.hpp> // for cl_float
+#include <memory>
+#include <CL/cl.hpp> //for cl_float
 
 /**
  * @page mat_import_export Matrix importation and exportation
- * @brief Specify file format
  *
  * The matrices are saved following the csv format.
  * It means that consecutive values are comma separated and end of lines
@@ -27,30 +27,29 @@
  * \f$\begin{bmatrix} 1 & 2 & 4 \\ 9 & 2 & 0 \end{bmatrix}\f$
  *     is stored as:
  * \f$\begin{bmatrix} 1 & 9 \\ 2 & 2 \\ 4 & 0 \end{bmatrix}\f$
- *
- * For details about the save and load functions, see @ref files.hpp.
  */
 
 /// @brief Save a matrix in a text file
 /// @param mat a matrix
 /// @param filepath path to the saved file (you might want to use the .csv
 ///        extension)
-/// @throw Error thrown if file cannot be opened
-void save( SimpleMatrix<cl_float>& mat, std::string filepath );
+/// @throw IOException thrown if file cannot be opened
+void save( SimpleMatrix<cl_float>mat, std::string filepath);
 
 /// @brief Save a matrix in a text file
 /// @param mat a matrix
 /// @param filepath path to the saved file (you might want to use the .csv
 ///        extension)
-/// @throw Error thrown if file cannot be opened
-void save( SimpleMatrix<cl_float>& mat, std::string filepath,
-           SimpleMatrix<unsigned int>&indexes );
-
+/// @param indexes vector(matrix of width 1) with indexes of the columns of mat
+///        to save.
+/// @throw IOException thrown if file cannot be opened
+void save( SimpleMatrix<cl_float>mat, std::string filepath,
+          SimpleMatrix<unsigned int>indexes);
 
 /// @brief Load the values of a text file into a Matrix
 /// @param filepath Filepath to a matrix file (see: @ref mat_import_export).
 /// @return A matrix with the loaded value
-/// @throw CorruptedMatrixFile thrown if not all lines have the same number of
+/// @throw IOException thrown if not all lines have the same number of
 ///        values, or if any value cannot be read/casted properly.
 /// @todo create the exception
 SimpleMatrix<cl_float>* load(std::string filepath);

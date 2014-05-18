@@ -158,10 +158,11 @@ void CLMatrixCovariance::enqueue()
 // ###############
 // # CLMatrixScale
 
-CLMatrixScale::CLMatrixScale( std::shared_ptr<CLMatrix> m,
-                              std::shared_ptr<CLMatrix> v,
-                              Context *context,
-                              cl::CommandQueue *queue )
+CLMatrixScale::CLMatrixScale(std::shared_ptr<CLMatrix> m,
+                             std::shared_ptr<CLMatrix> o,
+                             std::shared_ptr<CLMatrix> v,
+                             Context *context,
+                             cl::CommandQueue *queue )
   : ClAlgorithm ( context, queue )
 {
   if( m->getHeight() != v->getHeight() )
@@ -170,6 +171,8 @@ CLMatrixScale::CLMatrixScale( std::shared_ptr<CLMatrix> m,
   addDependency(m.get());
   m_coeffs = v;
   addDependency(v.get());
+  m_offsets = o;
+  addDependency(o.get());
   m_result = std::make_shared<CLMatrix>( m->getHeight(), m->getWidth() );
   addResult(m_result.get());
 }
@@ -198,8 +201,9 @@ void CLMatrixScale::enqueue()
   // set arguments
   kernel.setArg ( 0, *(m_result->getValues().get()) );
   kernel.setArg ( 1, *(m_src->getValues().get()) );
-  kernel.setArg ( 2, *(m_coeffs->getValues().get()) );
-  kernel.setArg ( 3, m_src->getHeight() );
+  kernel.setArg ( 2, *(m_offsets->getValues().get()) );
+  kernel.setArg ( 3, *(m_coeffs->getValues().get()) );
+  kernel.setArg ( 4, m_src->getHeight() );
 
   // prepare dependencies
   m_dependenciesEvents.push_back(
@@ -207,12 +211,12 @@ void CLMatrixScale::enqueue()
   m_dependenciesEvents.push_back(
         ((ClAlgorithm*)m_coeffs->getParentAlgorithm())->getEndOfEvaluation() );
 
-  //enqueue kernel execution
+  // enqueue kernel execution
   cl_int error;
   error = getCommandQueue()->enqueueNDRangeKernel (
             kernel,
             cl::NullRange,
-            cl::NDRange ( m_result->getWidth(), m_result->getHeight() ),
+            cl::NDRange ( m_result->getHeight(), m_result->getWidth() ),
             cl::NDRange ( 1, 1 ),
             &m_dependenciesEvents,
             &(getEndOfEvaluation())

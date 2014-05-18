@@ -93,7 +93,7 @@ class Algorithm {
 
         /// @brief  recursively evaluate the expression tree
         /// @note   for a clear understanding of its behavour, see
-        ///         @computation_tree and @tree_evaluation
+        ///         @ref computation_tree and @ref tree_evaluation
         /// @param  depth depth in the recursion (0 is the root of the tree)
         /// @return true if computation of the algorithm has started, false
         ///         otherwise

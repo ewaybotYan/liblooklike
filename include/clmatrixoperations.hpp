@@ -86,19 +86,21 @@ class CLMatrixCovariance : public ClAlgorithm
 };
 
 
-/// For a given matrix A of height h and a vector V of size h, *divide* each
-/// line of A by the corresponding coefficient in V.
+/// For a given matrix A of height h and a vector V of size h, substract the
+/// offset values and *divide* by the coefficients
 class CLMatrixScale : public ClAlgorithm
 {
   public:
 
     /// @param  m the input matrix
-    /// @param  v the coefficient vector (matrix of width 1)
+    /// @param  o offsets vector
+    /// @param  v the coefficient vector
     /// @param  context The OpenCL context that will hold the matrix
     /// @param  queue a cl::CommandQueue in wich memory transfer will be
     ///         launched
     /// @throws InvalidAlgorithmParameter if dimensions do not match
     CLMatrixScale( std::shared_ptr<CLMatrix> m,
+                   std::shared_ptr<CLMatrix> o,
                    std::shared_ptr<CLMatrix> v,
                    Context *context,
                    cl::CommandQueue *queue );
@@ -118,6 +120,7 @@ class CLMatrixScale : public ClAlgorithm
   private:
 
     std::shared_ptr<CLMatrix> m_src;
+    std::shared_ptr<CLMatrix> m_offsets;
     std::shared_ptr<CLMatrix> m_coeffs;
     std::shared_ptr<CLMatrix> m_result;
 };

@@ -19,10 +19,15 @@ using namespace std;
 // #######################
 // # Functions declaration
 
-ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
+ArrayOfImages arrayOfImagesFromFiles (const std::string path)
+{
   DIR *dir;
   struct dirent *ent;
   std::deque<JPEGImageInFile> imagefiles;
+
+  // filenames backup for later identification
+  shared_ptr< vector<string> > fileNames =
+      make_shared< vector<string> >();
 
   // first, get all jpeg files fro path
   if ( ( dir = opendir ( path.c_str() ) ) == NULL )
@@ -34,6 +39,7 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
       continue;
     try {
       imagefiles.push_back ( path+"/"+fileName );
+      fileNames->push_back(string(ent->d_name));
     } catch ( Error const& e ) {
       // that was not a valid JPEG file, just skip it
     }
@@ -69,7 +75,8 @@ ArrayOfImages arrayOfImagesFromFiles ( const std::string path ) {
     avgWidth,
     avgHeight,
     imagefiles.size(),
-    values
+    values,
+    fileNames
   };
 #ifndef NDEBUG
   cout << imagefiles.size() << " images of size "
