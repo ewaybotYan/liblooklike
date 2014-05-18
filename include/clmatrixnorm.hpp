@@ -34,6 +34,10 @@ class CLMatrixNorm : public ClAlgorithm{
     /// @return the normalized matrix
     std::shared_ptr<CLMatrix> getNormalizedMatrix();
 
+    /// @return a vector (matrix of width 1) with the average computed during
+    ///         the normalization process
+    std::shared_ptr<CLMatrix> getAvgs();
+
     /// @return a vector (matrix of width 1) with the standard deviations
     ///         computed during the normalization process
     std::shared_ptr<CLMatrix> getNormCoeffs();
@@ -52,7 +56,7 @@ class CLMatrixNorm : public ClAlgorithm{
     std::shared_ptr<CLMatrix> m_src = 0;
     std::shared_ptr<CLMatrix> m_normalized = 0;
     std::shared_ptr<CLMatrix> m_normCoeffs = 0;
-
+    std::shared_ptr<CLMatrix> m_avgs = 0;
 };
 
 

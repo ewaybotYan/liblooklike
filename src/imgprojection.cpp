@@ -47,42 +47,33 @@ int main( int argc, char* argv[] )
                                   imagesData.nbImages );
     CLMatrixLoader imagesInCL( images, &ctx, &queue );
 
-    // and normalize contrasts
-#if defined(PREPROCESSING)||defined(NORMALIZE_PXL)
-    CLMatrixNorm imagesInCLStdContrast( imagesInCL.getResult(), &ctx, &queue );
-#endif
     // load vectors
     shared_ptr<Matrix> vectors( load( vectorsAndCoefsPath+"/vectors.csv" ) );
     CLMatrixLoader vectorsInCL( vectors, &ctx, &queue );
 
-#ifdef NORMALIZE_PXL
     // load normalization coefficients
     shared_ptr<Matrix> coeffs( load( vectorsAndCoefsPath+"/coeffs.csv" ) );
     CLMatrixLoader coeffsInCL( coeffs, &ctx, &queue );
 
-    // apply normalization coefficients to the images
+    // load averages on images
+    shared_ptr<Matrix> avgs( load( vectorsAndCoefsPath+"/avgs.csv" ) );
+    CLMatrixLoader avgsInCL( avgs, &ctx, &queue );
+
+    // normalize images
+    CLMatrixNorm imagesInCLStdContrast( imagesInCL.getResult(), &ctx, &queue );
+
+    // apply same normalization as for the eigenvectors
     CLMatrixScale normalizedImages( imagesInCLStdContrast.getNormalizedMatrix(),
+                                    avgsInCL.getResult(),
                                     coeffsInCL.getResult(),
                                     &ctx, &queue );
-#endif
+
 
     // make projections
-#ifdef NORMALIZE_PXL
     CLMatrixProduct projections( vectorsInCL.getResult(),
                                  normalizedImages.getResult(),
                                  &ctx, &queue,
                                  true );
-#elif PREPROCESSING
-    CLMatrixProduct projections( vectorsInCL.getResult(),
-                                 imagesInCLStdContrast.getNormalizedMatrix(),
-                                 &ctx, &queue,
-                                 true );
-#else
-    CLMatrixProduct projections( vectorsInCL.getResult(),
-                                 imagesInCl.getResult(),
-                                 &ctx, &queue,
-                                 true );
-#endif
 
     // retrieve
     CLMatrixUnloader results( projections.getResult(), &ctx, &queue );
@@ -116,8 +107,7 @@ int main( int argc, char* argv[] )
                    0, true,
                    "/tmp/reconstituted.jpg" );
 
-#ifdef PREPROCESSING
-    CLMatrixUnloader normalizedSamples( imagesInCLStdContrast.getNormalizedMatrix(),
+    CLMatrixUnloader normalizedSamples( normalizedImages.getResult(),
                                         &ctx, &queue );
     normalizedSamples.getResult()->evaluate();
     normalizedSamples.getResult()->waitEndOfEvaluation();
@@ -126,8 +116,10 @@ int main( int argc, char* argv[] )
                    0, true,
                    "/tmp/normalized.jpg" );
 #endif
-
-#endif
+    cout << "file names: \n";
+    for(string s : *(imagesData.fileNames))
+      cout << s << endl;
+    cout << endl;
 
   } catch ( Error& err ) {
     err.printMsg();

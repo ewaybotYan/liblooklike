@@ -29,6 +29,9 @@ struct ArrayOfImages{
     /// The pixels are read line by line and concatenated in pixels, and files
     /// picels are concatenated one after the other
     std::shared_ptr< std::vector<cl_float> > pixels;
+
+    /// names of the files in the order they were loaded
+    std::shared_ptr< std::vector< std::string > > fileNames;
 };
 
 /// @brief   Generates an array of monochomatic images from JPEG files in a

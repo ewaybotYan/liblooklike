@@ -16,6 +16,9 @@ CLMatrixNorm::CLMatrixNorm(std::shared_ptr<CLMatrix> A,
   m_normCoeffs = std::make_shared<CLMatrix>(
                    onCols? A->getWidth():A->getHeight(), 1 );
   addResult(m_normCoeffs.get());
+  m_avgs = std::make_shared<CLMatrix>(
+                   onCols? A->getWidth():A->getHeight(), 1 );
+  addResult(m_avgs.get());
 }
 
 void CLMatrixNorm::waitEndOfEvaluation()
@@ -37,6 +40,10 @@ std::shared_ptr< CLMatrix > CLMatrixNorm::getNormCoeffs(){
   return m_normCoeffs;
 }
 
+std::shared_ptr< CLMatrix > CLMatrixNorm::getAvgs(){
+  return m_avgs;
+}
+
 void CLMatrixNorm::enqueue(){
   // get kernel
   cl::Kernel kernel;
@@ -51,9 +58,10 @@ void CLMatrixNorm::enqueue(){
   // set arguments
   kernel.setArg ( 0, *(m_normalized->getValues().get()) );
   kernel.setArg ( 1, *(m_normCoeffs->getValues().get()) );
-  kernel.setArg ( 2, *(m_src->getValues().get()) );
-  kernel.setArg<int> ( 3, m_src->getHeight() );
-  kernel.setArg<int> ( 4, m_src->getWidth() );
+  kernel.setArg ( 2, *(m_avgs->getValues().get()) );
+  kernel.setArg ( 3, *(m_src->getValues().get()) );
+  kernel.setArg<int> ( 4, m_src->getHeight() );
+  kernel.setArg<int> ( 5, m_src->getWidth() );
 
   // prepare dependencies
   m_dependenciesEvents.push_back(

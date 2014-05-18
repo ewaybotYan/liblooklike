@@ -53,12 +53,13 @@ matrix_transpose_matrix_multiplication ( __global float* C,
 __kernel void
 matrix_matrix_scale ( __global float* C,
                       __global float* A,
+                      __global float* M,
                       __global float* V,
                       int h)
 {
     const int j = get_global_id(0);
     const int i = get_global_id(1);
-    C[i+h*j] = A[i+h*j]/V[i];
+    C[i+h*j] = (A[i+h*j]-M[i])/V[i];
 }
 
 
